@@ -13,10 +13,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // $this->call([
+        //     CountrySeeder::class,
+        //     ProvinceSeeder::class,
+        //     CitySeeder::class,
+        // ]);
+
         $this->call([
-            CountrySeeder::class,
-            ProvinceSeeder::class,
-            CitySeeder::class,
+            UserSeeder::class,
+            RoleSeeder::class,
+            RoleUserSeeder::class,
         ]);
     }
 }
