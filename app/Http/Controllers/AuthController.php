@@ -26,6 +26,7 @@ class AuthController extends Controller
         $token = $tokenResult->token;
         if ($request->remember_me) {
             $token->expires_at = Carbon::now()->addWeeks(1);
+            // $token->expires_at = Carbon::now()->addYear(1);
         }
         $token->save();
         
@@ -41,8 +42,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
-        return response()->json(['message' =>
-        'Successfully logged out']);
+        return response()->json(['message' => 'Successfully logged out']);
     }
     
     public function user(Request $request)
