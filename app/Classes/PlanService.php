@@ -3,6 +3,7 @@
 namespace App\Classes;
 
 use App\Models\Plan;
+use Log;
 
 class PlanService
 {

@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\{AuthController, PlansController};
+use App\Http\Controllers\{AuthController, PlansController, CountryController};
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,10 +35,9 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::group(['middleware' => 'admin'], function() {
 
         Route::resource('plans', PlansController::class);
+        Route::resource('countries', CountryController::class);
 
     });
-
-
 
 });
 
