@@ -4,6 +4,7 @@ namespace App\Http\Requests\PlanRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\FormValidatorTrait;
+use Illuminate\Http\Request;
 
 class UpdatePlanRequest extends FormRequest
 {
@@ -23,10 +24,10 @@ class UpdatePlanRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
         return [
-            'name' => 'unique:plans|string',
+            'name' => 'unique:plans,id'. $request->get('id') .'|string',
             'active' => 'boolean',
         ];
     }

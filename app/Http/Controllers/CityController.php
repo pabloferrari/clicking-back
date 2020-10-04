@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Classes\CountryService;
-use App\Http\Requests\CountryRequests\CreateCountryRequest;
-use App\Http\Requests\CountryRequests\UpdateCountryRequest;
+use App\Http\Requests\CityRequests\{CreateCityRequest, UpdateCityRequest};
+use App\Classes\CityService;
 use Log;
 
-class CountryController extends Controller
+class CityController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +15,8 @@ class CountryController extends Controller
      */
     public function index()
     {
-        $countries = CountryService::getCountries();
-        return response()->json(['data' => $countries]);
+        $cities = CityService::getCities();
+        return response()->json(['data' => $cities]);
     }
 
     /**
@@ -27,16 +25,15 @@ class CountryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateCountryRequest $request)
+    public function store(CreateCityRequest $request)
     {
         try {
-
-            $newCountry = CountryService::createCountry($request->all());
-            Log::debug(__METHOD__ . ' - NEW COUNTRY CREATED ' . json_encode($newCountry));
-            return response()->json($newCountry);
+            $newCity = CityService::createCity($request->all());
+            Log::debug(__METHOD__ . ' - NEW CITY CREATED ' . json_encode($newCity));
+            return response()->json(['data' => $newCity]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error creating country"], 400);
+            return response()->json(["message" => "Error creating city"], 400);
         }
     }
 
@@ -48,8 +45,8 @@ class CountryController extends Controller
      */
     public function show($id)
     {
-        $country = CountryService::getCountry($id);
-        return response()->json(['data' => $country]);
+        $city = CityService::getCity($id);
+        return response()->json(['data' => $city]);
     }
 
     /**
@@ -59,15 +56,15 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCountryRequest $request, $id)
+    public function update(UpdateCityRequest $request, $id)
     {
         try {
-            $country = CountryService::updateCountry($id, $request->all());
-            Log::debug(__METHOD__ . ' - COUNTRY UPDATED ' . json_encode($country));
-            return response()->json($country);
+            $city = CityService::updateCity($id, $request->all());
+            Log::debug(__METHOD__ . ' - CITY UPDATED ' . json_encode($city));
+            return response()->json(['data' => $city]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error updating country"], 400);
+            return response()->json(["message" => "Error updating city"], 400);
         }
     }
 
@@ -80,12 +77,12 @@ class CountryController extends Controller
     public function destroy($id)
     {
         try {
-            $deleted = CountryService::deleteCountry($id);
-            Log::debug(__METHOD__ . ' - COUNTRY DELETED id: ' . $id);
+            $deleted = CityService::deleteCity($id);
+            Log::debug(__METHOD__ . ' - CITY DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
-            return response()->json(["message" => "Error deleting country"], 400);
+            return response()->json(["message" => "Error deleting city"], 400);
         }
     }
 }

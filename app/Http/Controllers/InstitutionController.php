@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Classes\CountryService;
-use App\Http\Requests\CountryRequests\CreateCountryRequest;
-use App\Http\Requests\CountryRequests\UpdateCountryRequest;
+use App\Classes\InstitutionService;
+use App\Http\Requests\InstitutionRequests\{CreateInstitutionRequest, UpdateInstitutionRequest};
 use Log;
 
-class CountryController extends Controller
+class InstitutionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +15,8 @@ class CountryController extends Controller
      */
     public function index()
     {
-        $countries = CountryService::getCountries();
-        return response()->json(['data' => $countries]);
+        $institutions = InstitutionService::getInstitutions();
+        return response()->json(['data' => $institutions]);
     }
 
     /**
@@ -27,16 +25,15 @@ class CountryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateCountryRequest $request)
+    public function store(CreateInstitutionRequest $request)
     {
         try {
-
-            $newCountry = CountryService::createCountry($request->all());
-            Log::debug(__METHOD__ . ' - NEW COUNTRY CREATED ' . json_encode($newCountry));
-            return response()->json($newCountry);
+            $newInstitution = InstitutionService::createInstitution($request->all());
+            Log::debug(__METHOD__ . ' - NEW INSTITUTION CREATED ' . json_encode($newInstitution));
+            return response()->json(['data' => $newInstitution]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error creating country"], 400);
+            return response()->json(["message" => "Error creating institution"], 400);
         }
     }
 
@@ -48,9 +45,10 @@ class CountryController extends Controller
      */
     public function show($id)
     {
-        $country = CountryService::getCountry($id);
-        return response()->json(['data' => $country]);
+        $institution = InstitutionService::getInstitution($id);
+        return response()->json(['data' => $institution]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -59,15 +57,15 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCountryRequest $request, $id)
+    public function update(UpdateInstitutionRequest $request, $id)
     {
         try {
-            $country = CountryService::updateCountry($id, $request->all());
-            Log::debug(__METHOD__ . ' - COUNTRY UPDATED ' . json_encode($country));
-            return response()->json($country);
+            $institution = InstitutionService::updateInstitution($id, $request->all());
+            Log::debug(__METHOD__ . ' - INSTITUTION UPDATED ' . json_encode($institution));
+            return response()->json(['data' => $institution]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error updating country"], 400);
+            return response()->json(["message" => "Error updating institution"], 400);
         }
     }
 
@@ -80,12 +78,12 @@ class CountryController extends Controller
     public function destroy($id)
     {
         try {
-            $deleted = CountryService::deleteCountry($id);
-            Log::debug(__METHOD__ . ' - COUNTRY DELETED id: ' . $id);
+            $deleted = InstitutionService::deleteInstitution($id);
+            Log::debug(__METHOD__ . ' - INSTITUTION DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
-            return response()->json(["message" => "Error deleting country"], 400);
+            return response()->json(["message" => "Error deleting institution"], 400);
         }
     }
 }

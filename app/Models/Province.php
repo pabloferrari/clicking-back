@@ -5,21 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Plan extends Model
+class Province extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'active',
+        'iso31662',
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at',
+        'country_id'
     ];
 
-    public function institutions() {
-        return $this->hasMany(\App\Models\Institution::class);
-    }
+    public function country()
+	{
+		return $this->belongsTo(\App\Models\Country::class);
+	}
 }
