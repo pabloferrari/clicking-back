@@ -4,6 +4,7 @@ namespace App\Http\Requests\CountryRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\FormValidatorTrait;
+use Illuminate\Http\Request;
 
 class UpdateCountryRequest extends FormRequest
 {
@@ -23,12 +24,11 @@ class UpdateCountryRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
-        #$id = \Request::segment(3);
         return [
-            'name' => 'unique:countries,name,' . \Request::instance()->id . '|regex:/^[\pL\s\-]+$/u',
-            'code' => 'unique:countries,code,' . \Request::instance()->id . '|regex:/^[\pL\s\-]+$/u',
+            'name' => 'required|unique:countries,id,' . $request->get('id') . '|regex:/^[\pL\s\-]+$/u',
+            'code' => 'required|unique:countries,id,' . $request->get('id') . '|regex:/^[\pL\s\-]+$/u',
             #'code' => 'unique:countries,code,' . $id . '|alpha|size:2'
             #'code' => 'unique:countries,code,' . $id . '|alpha|size:2'
         ];

@@ -18,7 +18,7 @@ class PlansController extends Controller
     public function index()
     {
         $plans = PlanService::getPlans();
-        return response()->json(['plans' => $plans]);
+        return response()->json(['data' => $plans]);
     }
 
     /**
@@ -32,7 +32,7 @@ class PlansController extends Controller
         try {
             $newPlan = PlanService::createPlan($request->all());
             Log::debug(__METHOD__ . ' - NEW PLAN CREATED ' . json_encode($newPlan));
-            return response()->json($newPlan);
+            return response()->json(['data' => $newPlan]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
             return response()->json(["message" => "Error creating plan"], 400);
@@ -48,7 +48,7 @@ class PlansController extends Controller
     public function show($id)
     {
         $plan = PlanService::getPlan($id);
-        return response()->json($plan);
+        return response()->json(['data' => $plan]);
     }
 
     /**
@@ -63,7 +63,7 @@ class PlansController extends Controller
         try {
             $plan = PlanService::updatePlan($id, $request->all());
             Log::debug(__METHOD__ . ' - PLAN UPDATED ' . json_encode($plan));
-            return response()->json($plan);
+            return response()->json(['data' => $plan]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
             return response()->json(["message" => "Error updating plan"], 400);
