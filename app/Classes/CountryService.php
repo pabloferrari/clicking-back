@@ -3,19 +3,18 @@
 namespace App\Classes;
 
 use App\Models\Country;
-use Log;
 
 class CountryService
 {
 
     public static function getCountries()
     {
-        return Country::get();
+        return Country::with(['province.cities'])->get();
     }
 
     public static function getCountry($id)
     {
-        return Country::where('id', $id)->first();
+        return Country::with(['province.cities'])->where('id', $id)->first();
     }
 
     public static function createCountry($data)
@@ -24,13 +23,13 @@ class CountryService
         $newCountry->name = $data['name'];
         $newCountry->code = $data['code'];
         $newCountry->save();
-        return $newCountry;
+        return Country::with(['province.cities'])->where('id', $newCountry->id)->first();
     }
 
     public static function updateCountry($id, $data)
     {
         Country::where('id', $id)->update($data);
-        return Country::where('id', $id)->first();
+        return Country::where('id', $id)->with(['province.cities'])->first();
     }
 
     public static function deleteCountry($id)
