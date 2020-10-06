@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AdminValidate
+class TeacherValidate
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class AdminValidate
      */
     public function handle(Request $request, Closure $next)
     {
-        if(!Auth::user()->hasRole('admin')){
+        if(!Auth::user()->hasRole('teacher')){
             return response()->json(["message" => "Unauthorized"], 403);
         }
         return $next($request);

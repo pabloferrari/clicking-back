@@ -31,14 +31,33 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'auth:api'], function () {
+    
     Route::get('/test', [AuthController::class, 'test']);
+    
     Route::group(['middleware' => 'admin'], function () {
+
         Route::resource('cities', CityController::class);
         Route::resource('countries', CountryController::class);
         Route::resource('institutions', InstitutionController::class);
         Route::resource('plans', PlansController::class);
         Route::resource('users', UsersController::class);
+
     });
+
+
+    Route::group(['middleware' => 'institution'], function () {
+        
+    });
+
+
+    Route::group(['middleware' => 'teacher'], function () {
+        
+    });
+
+    Route::group(['middleware' => 'student'], function () {
+        
+    });
+
 });
 
-Route::get('unauthorized', [AuthController::class, 'unauthorized'])->name('unauthorized');
+// Route::get('unauthorized', [AuthController::class, 'unauthorized'])->name('unauthorized');
