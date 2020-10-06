@@ -14,7 +14,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        
+
         $credentials = request(['email', 'password']);
 
         if (!Auth::attempt($credentials)) {
@@ -29,22 +29,24 @@ class AuthController extends Controller
             // $token->expires_at = Carbon::now()->addYear(1);
         }
         $token->save();
-        
+
         $user = User::with(['roles'])->find($user->id);
         return response()->json([
-            'access_token' => $tokenResult->accessToken,
-            'token_type'   => 'Bearer',
-            'expires_at'   => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString(),
-            'user'         => $user
+            'data' => [
+                'access_token' => $tokenResult->accessToken,
+                'token_type'   => 'Bearer',
+                'expires_at'   => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString(),
+                'user'         => $user
+            ]
         ]);
     }
-    
+
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
         return response()->json(['message' => 'Successfully logged out']);
     }
-    
+
     public function user(Request $request)
     {
         return response()->json($request->user());
