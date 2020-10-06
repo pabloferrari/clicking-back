@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -32,6 +34,47 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        //
+    }
+
+   /**
+    * Report or log an exception.
+    *
+    * @param  \Exception  $exception
+    * @return void
+    */
+    public function report(Throwable $exception)
+    {
+       parent::report($exception);
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable  $exception
+     * @return \Illuminate\Http\Response
+     */
+    function render($request, Throwable $exception)
+    {
+        if ($exception instanceof ValidationException) {
+            $errors = self::getCustomMessagesByValidator($exception->errors());
+            return response()->json(["error" => $errors], 422);
+        }
+        return response()->json($exception);
+    }
+
+    /**
+     * [customize message errors by validator request]
+     *
+     * @param   array  $errors  [array of errores]
+     *
+     * @return  string          [errores]
+     */
+    static function getCustomMessagesByValidator(array $errors)
+    {
+        foreach ($errors as $key => $value) {
+            $errors[$key] = implode(" | ", $value);
+        }
+        return $errors;
     }
 }

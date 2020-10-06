@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class UpdatePlanRequest extends FormRequest
 {
-    use FormValidatorTrait;
     /**
      * Determine if the user is authorized to make this request.
      *

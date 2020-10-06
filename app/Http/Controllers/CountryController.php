@@ -33,7 +33,7 @@ class CountryController extends Controller
 
             $newCountry = CountryService::createCountry($request->all());
             Log::debug(__METHOD__ . ' - NEW COUNTRY CREATED ' . json_encode($newCountry));
-            return response()->json($newCountry);
+            return response()->json(['data' => $newCountry]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
             return response()->json(["message" => "Error creating country"], 400);
@@ -64,7 +64,7 @@ class CountryController extends Controller
         try {
             $country = CountryService::updateCountry($id, $request->all());
             Log::debug(__METHOD__ . ' - COUNTRY UPDATED ' . json_encode($country));
-            return response()->json($country);
+            return response()->json(['data' => $country]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
             return response()->json(["message" => "Error updating country"], 400);

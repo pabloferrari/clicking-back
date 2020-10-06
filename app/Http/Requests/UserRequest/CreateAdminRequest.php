@@ -7,7 +7,6 @@ use App\Traits\FormValidatorTrait;
 
 class CreateAdminRequest extends FormRequest
 {
-    use FormValidatorTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
