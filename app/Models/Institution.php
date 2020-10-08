@@ -17,11 +17,11 @@ class Institution extends Model
         'cuit',
         'image',
         'active',
+        'plan_id',
+        'city_id',
     ];
 
     protected $hidden = [
-        'plan_id',
-        'city_id',
         'created_at',
         'updated_at',
         'deleted_at'
@@ -31,7 +31,7 @@ class Institution extends Model
 	{
 		return $this->belongsTo(\App\Models\Plan::class);
     }
-    
+
     public function city()
 	{
 		return $this->belongsTo(\App\Models\City::class);
