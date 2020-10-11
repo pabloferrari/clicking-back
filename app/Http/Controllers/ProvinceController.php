@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Classes\PlanService;
-use App\Http\Requests\PlanRequests\CreatePlanRequest;
-use App\Http\Requests\PlanRequests\UpdatePlanRequest;
+use App\Http\Requests\ProvinceRequests\{CreateProvinceRequest, UpdateProvinceRequest};
+use App\Classes\ProvinceService;
 use Log;
 
-class PlansController extends Controller
+class ProvinceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +15,9 @@ class PlansController extends Controller
      */
     public function index()
     {
-        $plans = PlanService::getPlans();
-        return response()->json(['data' => $plans]);
+        $provinces =
+            ProvinceService::getProvinces();
+        return response()->json(['data' => $provinces]);
     }
 
     /**
@@ -27,15 +26,15 @@ class PlansController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreatePlanRequest $request)
+    public function store(CreateProvinceRequest $request)
     {
         try {
-            $newPlan = PlanService::createPlan($request->all());
-            Log::debug(__METHOD__ . ' - NEW PLAN CREATED ' . json_encode($newPlan));
-            return response()->json(['data' => $newPlan]);
+            $newProvince = ProvinceService::createProvince($request->all());
+            Log::debug(__METHOD__ . ' - NEW PROVINCE CREATED ' . json_encode($newProvince));
+            return response()->json(['data' => $newProvince]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error creating plan"], 400);
+            return response()->json(["message" => "Error creating province"], 400);
         }
     }
 
@@ -47,8 +46,8 @@ class PlansController extends Controller
      */
     public function show($id)
     {
-        $plan = PlanService::getPlan($id);
-        return response()->json(['data' => $plan]);
+        $province = ProvinceService::getProvince($id);
+        return response()->json(['data' => $province]);
     }
 
     /**
@@ -58,15 +57,15 @@ class PlansController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePlanRequest $request, $id)
+    public function update(UpdateProvinceRequest $request, $id)
     {
         try {
-            $plan = PlanService::updatePlan($id, $request->all());
-            Log::debug(__METHOD__ . ' - PLAN UPDATED ' . json_encode($plan));
-            return response()->json(['data' => $plan]);
+            $province = ProvinceService::updateProvince($id, $request->all());
+            Log::debug(__METHOD__ . ' - PROVINCE UPDATED ' . json_encode($province));
+            return response()->json(['data' => $province]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error updating plan"], 400);
+            return response()->json(["message" => "Error updating province"], 400);
         }
     }
 
@@ -79,12 +78,12 @@ class PlansController extends Controller
     public function destroy($id)
     {
         try {
-            $deleted = PlanService::deletePlan($id);
-            Log::debug(__METHOD__ . ' - PLAN DELETED id: ' . $id);
+            $deleted = ProvinceService::deleteProvince($id);
+            Log::debug(__METHOD__ . ' - PROVINCE DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
-            return response()->json(["message" => "Error deleting plan"], 400);
+            return response()->json(["message" => "Error deleting province"], 400);
         }
     }
 }
