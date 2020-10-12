@@ -29,6 +29,7 @@ class CreateAdminRequest extends FormRequest
             'name' => 'required|string',
             'password' => 'required|string',
             'description' => 'nullable|string',
+            'institution_id' => 'required|exists:App\Models\Institution,id',
             'images' => 'nullable|string',
             'description' => 'nullable|string',
         ];
