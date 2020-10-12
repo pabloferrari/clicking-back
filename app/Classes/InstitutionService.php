@@ -4,6 +4,8 @@ namespace App\Classes;
 
 use App\Models\Institution;
 
+use App\Classes\Helpers;
+
 class InstitutionService
 {
 
@@ -19,22 +21,15 @@ class InstitutionService
 
     public static function createInstitution($data)
     {
-        $new = new Institution();
-        $new->name = $data['name']; 
-        $new->email = $data['email']; 
-        $new->phone = $data['phone']; 
-        $new->cuit = $data['cuit']; 
-        $new->image = $data['image']; 
-        $new->active = $data['active']; 
-        $new->plan_id = $data['plan_id']; 
-        $new->city_id = $data['city_id']; 
-        $new->save();
-        return Institution::where('id', $new->id)->with(['plan', 'city.province.country'])->first();
+        $params = Helpers::paramBuilder('Institution', $data);
+        $newInstitution = Institution::create($params);
+        return self::getInstitution($newInstitution->id);
     }
 
     public static function updateInstitution($id, $data)
     {
-        Institution::where('id', $id)->update($data);
+        $params = Helpers::paramBuilder('Institution', $data);
+        Institution::where('id', $id)->update($params);
         return Institution::where('id', $id)->with(['plan', 'city.province.country'])->first();
     }
 

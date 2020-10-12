@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class UpdateCityRequest extends FormRequest
 {
-    use FormValidatorTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -27,9 +26,9 @@ class UpdateCityRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            'name' => 'required|unique:cities,id,' . $request->get('id'),
+            'name' => 'required|unique:cities,name,' . $request->get('id'),
             'province_id' => 'required|exists:provinces,id',
-            'zip_code' => 'required|unique:cities,id,' . $request->get('id') . '|regex:/\b\d{5}\b/',
+            'zip_code' => 'required|unique:cities,zip_code,' . $request->get('id') . '|regex:/\b\d{4}\b/',
         ];
     }
 

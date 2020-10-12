@@ -29,8 +29,14 @@ class CityService
 
     public static function updateCity($id, $data)
     {
-        City::where('id', $id)->update($data);
-        return City::where('id', $id)->with(['province.country'])->first();
+        // City::where('id', $id)->update($data);
+        // return City::where('id', $id)->with(['province.country'])->first();
+        $province = City::where('id', $id)->with(['province.country'])->first();
+        $province->name        = $data['name'];
+        $province->zip_code    = $data['zip_code'];
+        $province->province_id = $data['province_id'];
+        $province->save();
+        return $province;
     }
 
     public static function deleteCity($id)

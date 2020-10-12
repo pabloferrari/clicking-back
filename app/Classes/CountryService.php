@@ -28,8 +28,11 @@ class CountryService
 
     public static function updateCountry($id, $data)
     {
-        Country::where('id', $id)->update($data);
-        return Country::where('id', $id)->with(['provinces.cities'])->first();
+        $country = Country::where('id', $id)->with(['provinces.cities'])->first();
+        $country->name = $data['name'];
+        $country->code = $data['code'];
+        $country->save();
+        return $country;
     }
 
     public static function deleteCountry($id)

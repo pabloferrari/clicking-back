@@ -7,7 +7,6 @@ use App\Traits\FormValidatorTrait;
 
 class CreateAdminRequest extends FormRequest
 {
-    use FormValidatorTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -30,6 +29,7 @@ class CreateAdminRequest extends FormRequest
             'name' => 'required|string',
             'password' => 'required|string',
             'description' => 'nullable|string',
+            'institution_id' => 'required|exists:App\Models\Institution,id',
             'images' => 'nullable|string',
             'description' => 'nullable|string',
         ];

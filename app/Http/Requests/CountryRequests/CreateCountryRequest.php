@@ -7,7 +7,7 @@ use App\Traits\FormValidatorTrait;
 
 class CreateCountryRequest extends FormRequest
 {
-    use FormValidatorTrait;
+    // use FormValidatorTrait;
     /**
      * Determine if the user is authorized to make this request.
      *

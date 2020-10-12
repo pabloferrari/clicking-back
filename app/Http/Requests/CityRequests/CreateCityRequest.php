@@ -7,7 +7,6 @@ use App\Traits\FormValidatorTrait;
 
 class CreateCityRequest extends FormRequest
 {
-    use FormValidatorTrait;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +28,7 @@ class CreateCityRequest extends FormRequest
         return [
             'name' => 'required|unique:cities|string',
             'province_id' => 'required|exists:provinces,id',
-            'zip_code' => 'required|unique:cities|regex:/\b\d{5}\b/'
+            'zip_code' => 'required|unique:cities|regex:/\b\d{4}\b/'
         ];
     }
 

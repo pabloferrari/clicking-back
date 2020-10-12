@@ -42,5 +42,15 @@ class User extends Authenticatable
     public function roles()
 	{
 		return $this->belongsToMany(\App\Models\Role::class)->withPivot('id')->withTimestamps();
-	}
+    }
+    
+    public function hasRole($role)
+    {
+        return (bool) $this->roles()->where(function($query) use ($role) {
+            $query->where('roles.slug', $role)
+                ->orWhere('roles.slug', 'root');
+        })->first();
+    }
 }
+
+    
