@@ -24,19 +24,17 @@ class ProvinceService
         $new->iso31662 = $data['iso31662'];
         $new->country_id = $data['country_id'];
         $new->save();
-        return Province::where('id', $new->id)->with(['country'])->first();
+        return self::getProvince($new->id);
     }
 
     public static function updateProvince($id, $data)
     {
-        //$province = Province::where('id', $id)->update($data);
         $province = Province::where('id', $id)->with(['country'])->first();
         $province->name       = $data['name'];
         $province->iso31662   = $data['iso31662'];
         $province->country_id = $data['country_id'];
         $province->save();
-        return $province;
-        //return Province::where('id', $id)->with(['country'])->first();
+        return self::getProvince($province->id);
     }
 
     public static function deleteProvince($id)

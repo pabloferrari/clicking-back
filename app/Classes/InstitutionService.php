@@ -23,7 +23,7 @@ class InstitutionService
     {
         $params = Helpers::paramBuilder('Institution', $data);
         $newInstitution = Institution::create($params);
-        return $newInstitution;
+        return self::getInstitution($newInstitution->id);
     }
 
     public static function updateInstitution($id, $data)
