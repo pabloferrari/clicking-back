@@ -69,6 +69,20 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::group(['middleware' => 'student'], function () {
     });
+
+
+    Route::group(['middleware' => 'institution'], function () {
+
+        Route::get('/testInstitution', [AuthController::class, 'test']);
+
+    });
+
+
+    Route::group(['middleware' => 'teacher'], function () {
+    });
+
+    Route::group(['middleware' => 'student'], function () {
+    });
 });
 
 // Route::get('unauthorized', [AuthController::class, 'unauthorized'])->name('unauthorized');
