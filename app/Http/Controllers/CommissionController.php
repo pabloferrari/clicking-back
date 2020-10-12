@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Classes\CommissionService;
 use Illuminate\Http\Request;
-use App\Classes\PlanService;
-use App\Http\Requests\PlanRequests\CreatePlanRequest;
-use App\Http\Requests\PlanRequests\UpdatePlanRequest;
+use App\Http\Requests\CommissionRequests\{CreateCommissionRequest,UpdateCommissionRequest};
 use Log;
 
-class PlansController extends Controller
+class CommissionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +16,10 @@ class PlansController extends Controller
      */
     public function index()
     {
-        $plans = PlanService::getPlans();
-        return response()->json(['data' => $plans]);
+        $commissions = CommissionService::getCommissions();
+        return response()->json(['data' => $commissions]);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -27,15 +27,15 @@ class PlansController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreatePlanRequest $request)
+    public function store(CreateCommissionRequest $request)
     {
         try {
-            $newPlan = PlanService::createPlan($request->all());
-            Log::debug(__METHOD__ . ' - NEW PLAN CREATED ' . json_encode($newPlan));
-            return response()->json(['data' => $newPlan]);
+            $newCommission = CommissionService::createCommision($request->all());
+            Log::debug(__METHOD__ . ' - NEW COMMISSION CREATED ' . json_encode($newCommission));
+            return response()->json(['data' => $newCommission]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error creating plan"], 400);
+            return response()->json(["message" => "Error creating Commission"], 400);
         }
     }
 
@@ -47,9 +47,10 @@ class PlansController extends Controller
      */
     public function show($id)
     {
-        $plan = PlanService::getPlan($id);
-        return response()->json(['data' => $plan]);
+        $commission = CommissionService::getCommission($id);
+        return response()->json(['data' => $commission]);
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -58,15 +59,15 @@ class PlansController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePlanRequest $request, $id)
+    public function update(UpdateCommissionRequest $request, $id)
     {
         try {
-            $plan = PlanService::updatePlan($id, $request->all());
-            Log::debug(__METHOD__ . ' - PLAN UPDATED ' . json_encode($plan));
-            return response()->json(['data' => $plan]);
+            $Commission = CommissionService::updateCommission($id, $request->all());
+            Log::debug(__METHOD__ . ' - COMMISSION UPDATED ' . json_encode($Commission));
+            return response()->json(['data' => $Commission]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error updating plan"], 400);
+            return response()->json(["message" => "Error updating Commission"], 400);
         }
     }
 
@@ -79,12 +80,12 @@ class PlansController extends Controller
     public function destroy($id)
     {
         try {
-            $deleted = PlanService::deletePlan($id);
-            Log::debug(__METHOD__ . ' - PLAN DELETED id: ' . $id);
+            $deleted = CommissionService::deleteCommission($id);
+            Log::debug(__METHOD__ . ' - COMMISSION DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
-            return response()->json(["message" => "Error deleting plan"], 400);
+            return response()->json(["message" => "Error deleting Commission"], 400);
         }
     }
 }

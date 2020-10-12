@@ -32,10 +32,12 @@ class AuthController extends Controller
         
         $user = User::with(['roles'])->find($user->id);
         return response()->json([
-            'access_token' => $tokenResult->accessToken,
+            'data' => [
+                'access_token' => $tokenResult->accessToken,
             'token_type'   => 'Bearer',
             'expires_at'   => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString(),
             'user'         => $user
+            ]
         ]);
     }
     

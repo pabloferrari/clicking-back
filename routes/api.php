@@ -10,6 +10,10 @@ use App\Http\Controllers\{
     InstitutionController,
     PlansController,
     UsersController,
+    TeacherController,
+    InstitutionYearController,
+    TurnController,
+    CommissionController
 };
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +42,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('institutions', InstitutionController::class);
         Route::resource('plans', PlansController::class);
         Route::resource('users', UsersController::class);
+        Route::resource('teachers', TeacherController::class);
+        Route::resource('institutions-years', InstitutionYearController::class);
+        Route::resource('turns', TurnController::class);
+        Route::resource('commissions', CommissionController::class);
     });
 });
 
