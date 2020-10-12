@@ -24,18 +24,21 @@ use App\Http\Controllers\{
 */
 
 Route::group(['prefix' => 'auth'], function () {
+
     Route::post('login', [AuthController::class, 'login']);
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
     });
+    
 });
 
 Route::group(['middleware' => 'auth:api'], function () {
 
-    Route::get('/test', [AuthController::class, 'test']);
-
     Route::group(['middleware' => 'admin'], function () {
+
+
+        Route::get('/testAdmin', [AuthController::class, 'test']);
 
         Route::resource('countries', CountryController::class);
         Route::resource('provinces', ProvinceController::class);
@@ -47,6 +50,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
     Route::group(['middleware' => 'institution'], function () {
+
+        Route::get('/testInstitution', [AuthController::class, 'test']);
+
     });
 
 

@@ -15,18 +15,17 @@ class Authenticate extends Middleware
      * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
-    protected function redirectTo($request, Closure $next, $guard = null)
+    protected function redirectTo($request)
     {
 
-        die('FLAG');
-        if (Auth::guard($guard)->guest()) {
-            if ($guard === 'api') {
-                return response('Unauthorized.', 401);
-            } else {
-                return redirect()->guest('login');
-            }
-        }
-        return $next($request);
+        // if (Auth::guard($guard)->guest()) {
+        //     if ($guard === 'api') {
+        //         return response('Unauthorized.', 401);
+        //     } else {
+        //         return redirect()->guest('login');
+        //     }
+        // }
+        // return $next($request);
     }
 
 }

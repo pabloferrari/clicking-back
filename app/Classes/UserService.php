@@ -50,6 +50,7 @@ class UserService
         $newUser->name = $data['name'];
         $newUser->email = $data['email'];
         $newUser->description = $data['description'] ?? null;
+        $newUser->institution_id = $data['institution_id'];
         $newUser->image = $data['image'] ?? null;
         $newUser->password = Hash::make($data['password']);
         $newUser->save();

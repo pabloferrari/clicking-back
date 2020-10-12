@@ -46,6 +46,11 @@ class User extends Authenticatable
     
     public function hasRole($role)
     {
-        return (bool) $this->roles()->where('roles.name', $role)->orWhere('roles.name', 'root')->first();
+        return (bool) $this->roles()->where(function($query) use ($role) {
+            $query->where('roles.slug', $role)
+                ->orWhere('roles.slug', 'root');
+        })->first();
     }
 }
+
+    

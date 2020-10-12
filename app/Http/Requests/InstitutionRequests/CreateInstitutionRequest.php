@@ -27,7 +27,7 @@ class CreateInstitutionRequest extends FormRequest
         return [
             'name' => 'required|unique:institutions|string',
             'email' => 'required|unique:institutions|email',
-            'phone' => 'required|regex:/(01)[0-9]{9}/',
+            'phone' => 'required|regex:/[0-9]/',
             'cuit' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg',
             'active' => 'nullable|boolean',
