@@ -71,6 +71,12 @@ class UserService
         User::where('id', $id)->update($data);
         return User::where('id', $id)->first();
     }
+
+    public function resetPassword($id, $newPassword)
+    {
+        User::where('id', $id)->update(['password' => Hash::make($newPassword)]);
+        return User::where('id', $id)->first();
+    }
     
     public function deleteUser($id)
     {

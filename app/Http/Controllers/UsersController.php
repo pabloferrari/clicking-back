@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\UserRequest\CreateAdminRequest;
-use App\Classes\UserService;
+use App\Http\Requests\UserRequest\{CreateAdminRequest,UpdateProfileRequest, RessetPasswordRequest};
+use App\Classes\{UserService,Helpers};
 use Log;
 
 class UsersController extends Controller
@@ -44,4 +44,24 @@ class UsersController extends Controller
             return response()->json(["message" => "Error creating user"], 400);
         }
     }
+
+    public function getProfile()
+    {
+
+    }
+
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        $data = $request->all();
+        $params = Helpers::paramBuilder('User', $data);
+        $response = $this->userService->updateUser($request->user()->id, $params);
+        return response()->json($response);
+    }
+
+    public function resetPassword(RessetPasswordRequest $request)
+    {   
+        $response = $this->userService->resetPassword($request->user()->id, $request->input('new-password'));
+        return response()->json($response);
+    }
+
 }
