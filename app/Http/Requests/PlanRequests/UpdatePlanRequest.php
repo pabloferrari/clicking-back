@@ -26,7 +26,7 @@ class UpdatePlanRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            'name' => 'unique:plans,id'. $request->get('id') .'|string',
+            'name' => 'unique:plans,name,' . $request->get('id') . '|string',
             'active' => 'boolean',
         ];
     }
@@ -42,5 +42,4 @@ class UpdatePlanRequest extends FormRequest
             'name.unique' => 'Name will be unique'
         ];
     }
-
 }

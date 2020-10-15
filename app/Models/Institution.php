@@ -31,9 +31,21 @@ class Institution extends Model
 	{
 		return $this->belongsTo(\App\Models\Plan::class);
     }
-    
+
     public function city()
 	{
 		return $this->belongsTo(\App\Models\City::class);
-	}
+    }
+
+    public function commissions() {
+        return $this->hasMany(\App\Models\Commission::class);
+    }
+
+    public function turns() {
+        return $this->hasMany(\App\Models\Turn::class);
+    }
+
+    public function institutionsYear() {
+        return $this->hasMany(\App\Models\InstitutionsYear::class);
+    }
 }

@@ -26,8 +26,8 @@ class UpdateCountryRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            'name' => 'required|unique:countries,id,' . $request->get('id') . '|regex:/^[\pL\s\-]+$/u',
-            'code' => 'required|unique:countries,id,' . $request->get('id') . '|alpha|size:2',
+            'name' => 'required|unique:countries,name,' . $request->get('id') . '|regex:/^[\pL\s\-]+$/u',
+            'code' => 'required|unique:countries,code,' . $request->get('id') . '|alpha|size:2',
             #'code' => 'unique:countries,code,' . $id . '|alpha|size:2'
             #'code' => 'unique:countries,code,' . $id . '|alpha|size:2'
         ];
