@@ -5,6 +5,7 @@ namespace App\Classes;
 use App\Models\{ User, Role, RoleUser};
 use Log;
 use Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
