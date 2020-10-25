@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Turn extends Model
+class Shift extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -24,7 +24,7 @@ class Turn extends Model
     }
 
     public function teachers() {
-         return $this->belongsToMany(\App\Models\Teacher::class, 'teachers_turns', 
-      'teacher_id', 'turn_id');
+         return $this->belongsToMany(\App\Models\Teacher::class, 'teachers_shifts', 
+      'teacher_id', 'shift_id');
     }
 }

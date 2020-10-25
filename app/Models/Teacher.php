@@ -33,9 +33,9 @@ class Teacher extends Model
       'teacher_id', 'commission_id');
     }
 
-    public function turns() {
-        return $this->belongsToMany(\App\Models\Turn::class, 'teachers_turns', 
-        'teacher_id', 'turn_id');
+    public function shifts() {
+        return $this->belongsToMany(\App\Models\Turn::class, 'teachers_shifts', 
+        'teacher_id', 'shift_id');
         
     }
 }
