@@ -2,12 +2,18 @@
 
 namespace App\Classes;
 use App\Models\Teacher;
+use Illuminate\Support\Facades\Auth;
+use App\Classes\UserService;
+use Log;
+use DB;
 
 class TeacherService {
 
     public static function getTeachers()
     {
-        return Teacher::with(['turns','commissions'])->get();
+        return Teacher::whereHas('user', function ($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })->get();
     }
 
     public static function getTeacher($id)
@@ -16,17 +22,28 @@ class TeacherService {
     }
 
     public static function createTeacher($data)
-    {
-        $newTeacher = new Teacher();
-        $newTeacher->name    = $data['name'];
-        $newTeacher->email   = $data['email'];
-        $newTeacher->phone   = $data['phone'];
-        $newTeacher->user_id = $data['user_id'];
-        $newTeacher->active  = $data['active'];
-        $newTeacher->save();
-        $newTeacher->turns()->attach($data['turns']);
-        $newTeacher->commissions()->attach($data['commissions']);
-        return self::getTeacher($newTeacher->id);
+    {  
+        DB::beginTransaction();
+        try {
+            $data['institution_id'] = $data['institution_id'] ?? Auth::user()->institution_id;
+            $userService = new UserService();
+            $newUser = $userService->createTeacherUser($data);
+            Log::debug(__METHOD__ . ' -> NEW USER ' . json_encode($newUser));
+            $newTeacher = new Teacher();
+            $newTeacher->name    = $data['name'];
+            $newTeacher->email   = $data['email'];
+            $newTeacher->phone   = $data['phone'];
+            $newTeacher->user_id = $newUser->id;
+            $newTeacher->active  = $data['active'] ?? true;
+            $newTeacher->save();
+            Log::debug(__METHOD__ . ' -> NEW TEACHER ' . json_encode($newTeacher));
+            DB::commit();
+            return $newTeacher;
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error(__METHOD__ . ' - ROLLBACK user -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
+            return false;
+        }
     }
 
     public static function updateTeacher($id,$data)
