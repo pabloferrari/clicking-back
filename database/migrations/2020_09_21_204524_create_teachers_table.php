@@ -17,7 +17,8 @@ class CreateTeachersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->unsignedBigInteger('user_id')->unsigned()->index();
+            $table->string('phone')->nullable();
+            $table->unsignedBigInteger('user_id')->unsigned()->index()->nullable();
             $table->boolean('active')->default(true);
             $table->foreign('user_id')->references('id')->on('users');
             $table->softDeletes();
