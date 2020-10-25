@@ -17,7 +17,6 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-
         // if (Auth::guard($guard)->guest()) {
         //     if ($guard === 'api') {
         //         return response('Unauthorized.', 401);
@@ -27,5 +26,4 @@ class Authenticate extends Middleware
         // }
         // return $next($request);
     }
-
 }

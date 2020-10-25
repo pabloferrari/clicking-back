@@ -19,5 +19,5 @@ trait FormValidatorTrait
     public function failedValidation(Validator $validator) { 
         //write your bussiness logic here otherwise it will give same old JSON response
        throw new HttpResponseException(response()->json($validator->errors(), 422)); 
-   }
+    }
 }
