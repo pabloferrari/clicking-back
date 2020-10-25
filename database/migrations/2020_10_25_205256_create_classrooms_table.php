@@ -15,7 +15,16 @@ class CreateClassroomsTable extends Migration
     {
         Schema::create('classrooms', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->unsignedBigInteger('shift_id')->unsigned()->index();
+            $table->unsignedBigInteger('institution_id')->unsigned()->index();
+            
+            
+            
+            $table->foreign('shift_id')->references('id')->on('shifts');
+            $table->foreign('institution_id')->references('id')->on('institutions');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
