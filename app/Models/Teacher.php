@@ -28,14 +28,13 @@ class Teacher extends Model
         return $this->belongsTo(\App\Models\User::class);
     }
 
-    public function commissions() {
-        return $this->belongsToMany(\App\Models\Commission::class, 'commissions_teachers', 
-      'teacher_id', 'commission_id');
+    public function courses() {
+        return $this->belongsToMany(\App\Models\Commission::class, 'courses', 'teacher_id', 'id');
     }
 
-    public function turns() {
-        return $this->belongsToMany(\App\Models\Turn::class, 'teachers_turns', 
-        'teacher_id', 'turn_id');
+    // public function shifts() {
+    //     return $this->belongsToMany(\App\Models\Turn::class, 'teachers_shifts', 
+    //     'teacher_id', 'shift_id');
         
-    }
+    // }
 }

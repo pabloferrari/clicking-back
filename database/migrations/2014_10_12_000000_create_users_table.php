@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->boolean('active')->default(true);
             $table->boolean('enabled')->default(true);
+            $table->unsignedBigInteger('institution_id')->unsigned()->index()->nullable();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

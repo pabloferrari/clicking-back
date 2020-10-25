@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTurnsTable extends Migration
+class CreateClassesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,16 @@ class CreateTurnsTable extends Migration
      */
     public function up()
     {
-        Schema::create('turns', function (Blueprint $table) {
+        Schema::create('classes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->unsignedBigInteger('institution_id')->unsigned()->index();
+            $table->string('title');
+            $table->string('description')->nullable();
+            $table->unsignedBigInteger('course_id')->unsigned()->index();
+
+            
+            
+            $table->foreign('course_id')->references('id')->on('courses');
             $table->timestamps();
-            $table->foreign('institution_id')->references('id')->on('institutions');
         });
     }
 
@@ -29,6 +33,6 @@ class CreateTurnsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('turns');
+        Schema::dropIfExists('classes');
     }
 }

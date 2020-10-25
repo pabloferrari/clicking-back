@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddInstitutionIdToUserTable extends Migration
+class CreateAssignmentTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class AddInstitutionIdToUserTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('institution_id')->unsigned()->index()->after('description')->nullable();
+        Schema::create('assignment_types', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->boolean('group_enabled')->default(false);
+            $table->timestamps();
         });
     }
 
@@ -25,8 +28,6 @@ class AddInstitutionIdToUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('assignment_types');
     }
 }
