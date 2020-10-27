@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Classes\TurnService;
 use Illuminate\Http\Request;
-use App\Http\Requests\TurnRequests\{CreateTurnRequest,UpdateTurnRequest};
+use App\Classes\StudentService;
+use App\Http\Requests\StudentRequests\{CreateStudentRequest, UpdateStudentRequest};
 use Log;
-class TurnController extends Controller
+
+class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +16,8 @@ class TurnController extends Controller
      */
     public function index()
     {
-        $turns = TurnService::getTurns();
-        return response()->json(['data' => $turns]);
+        $students = StudentService::getStudents();
+        return response()->json(['data' => $students]);
     }
 
 
@@ -26,15 +27,15 @@ class TurnController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateTurnRequest $request)
+    public function store(CreateStudentRequest $request)
     {
         try {
-            $newTurn = TurnService::createTurn($request->all());
-            Log::debug(__METHOD__ . ' - NEW TURN CREATED ' . json_encode($newTurn));
-            return response()->json(['data' => $newTurn]);
+            $newStudent = StudentService::createStudent($request->all());
+            Log::debug(__METHOD__ . ' - NEW STUDENT CREATED ' . json_encode($newStudent));
+            return response()->json(['data' => $newStudent]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error creating Turn"], 400);
+            return response()->json(["message" => "Error creating student"], 400);
         }
     }
 
@@ -46,8 +47,8 @@ class TurnController extends Controller
      */
     public function show($id)
     {
-        $turn = TurnService::getTurn($id);
-        return response()->json(['data' => $turn]);
+        $student = StudentService::getStudent($id);
+        return response()->json(['data' => $student]);
     }
 
     /**
@@ -57,15 +58,15 @@ class TurnController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTurnRequest $request, $id)
+    public function update(UpdateStudentRequest $request, $id)
     {
         try {
-            $Turn = TurnService::updateTurn($id, $request->all());
-            Log::debug(__METHOD__ . ' - TURN UPDATED ' . json_encode($Turn));
-            return response()->json(['data' => $Turn]);
+            $Student = StudentService::updateStudent($id, $request->all());
+            Log::debug(__METHOD__ . ' - STUDENT UPDATED ' . json_encode($Student));
+            return response()->json(['data' => $Student]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
-            return response()->json(["message" => "Error updating Turn"], 400);
+            return response()->json(["message" => "Error updating Student"], 400);
         }
     }
 
@@ -78,12 +79,12 @@ class TurnController extends Controller
     public function destroy($id)
     {
         try {
-            $deleted = TurnService::deleteTurn($id);
-            Log::debug(__METHOD__ . ' - TURN DELETED id: ' . $id);
+            $deleted = StudentService::deleteStudent($id);
+            Log::debug(__METHOD__ . ' - STUDENT DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
-            return response()->json(["message" => "Error deleting Turn"], 400);
+            return response()->json(["message" => "Error deleting student"], 400);
         }
     }
 }

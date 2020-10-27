@@ -12,12 +12,17 @@ use App\Http\Controllers\{
     PlansController,
     UsersController,
     TeacherController,
+    StudentController,
     InstitutionYearController,
-    TurnController,
-    CommissionController,
     SubjectController,
     CourseTypeController,
-    ClassroomController
+    ClassroomController,
+    ShiftController,
+    CommissionController,
+    CourseClassController,
+    AssignmentTypeController,
+    AssignmentController,
+    AssignmentGroupController
 };
 /*
 |--------------------------------------------------------------------------
@@ -56,12 +61,17 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('plans', PlansController::class);
         Route::resource('users', UsersController::class);
         Route::resource('teachers', TeacherController::class);
+        Route::resource('students', StudentController::class);
         Route::resource('institutions-years', InstitutionYearController::class);
-        Route::resource('turns', TurnController::class);
+        Route::resource('shifts', ShiftController::class);
         Route::resource('commissions', CommissionController::class);
         Route::resource('subjects', SubjectController::class);
         Route::resource('course-types', CourseTypeController::class);
         Route::resource('classrooms', ClassroomController::class);
+        Route::resource('classes', CourseClassController::class);
+        Route::resource('assignment-types', AssignmentTypeController::class);
+        Route::resource('assignments', AssignmentController::class);
+        Route::resource('assignment-groups', AssignmentGroupController::class);
     });
 
 

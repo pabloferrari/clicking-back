@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests\TurnRequests;
+namespace App\Http\Requests\ShiftRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-class CreateTurnRequest extends FormRequest
+
+class UpdateShiftRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,22 +25,21 @@ class CreateTurnRequest extends FormRequest
      */
     public function rules(Request $request)
     {
+
         return [
             'name' =>  [
                 'required',
                 'string',
-                Rule::unique('turns')->where(function ($query) use ($request) {
+                Rule::unique('shifts')->where(function ($query) use ($request) {
                     return $query
                         ->where([
-                            ['name','=',$request->name],
-                            ['institution_id','=', $request->institution_id],
+                            ['name', '=', $request->name],
+                            ['institution_id', '=', $request->institution_id],
+                            ['id', '<>', $request->get('id')]
                         ]);
                 }),
             ],
-
-
             'institution_id' => 'required|exists:institutions,id',
-
         ];
     }
 
@@ -52,10 +52,11 @@ class CreateTurnRequest extends FormRequest
     {
         return [
             'name.required' => 'Name is required!',
-            'name.string' => 'Name is string!',
             'name.unique' => 'Name will be unique',
-            'institution_id.required' => 'institution id is required!',
-            'institution_id.exists' => 'institution id must exist in intitutions',
+            'institution_id.required' => 'Institutions is required!',
+            'institution_id.exists' => 'Institutions will be unique',
+
+
         ];
     }
 }
