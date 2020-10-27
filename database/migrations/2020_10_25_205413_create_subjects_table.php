@@ -18,6 +18,7 @@ class CreateSubjectsTable extends Migration
             $table->string('name');
             $table->unsignedBigInteger('institution_id')->unsigned()->index();
             $table->foreign('institution_id')->references('id')->on('institutions');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

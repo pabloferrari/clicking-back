@@ -14,7 +14,10 @@ use App\Http\Controllers\{
     TeacherController,
     InstitutionYearController,
     TurnController,
-    CommissionController
+    CommissionController,
+    SubjectController,
+    CourseTypeController,
+    ClassroomController
 };
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +37,6 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
     });
-    
 });
 
 Route::group(['middleware' => 'auth:api'], function () {
@@ -57,6 +59,9 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('institutions-years', InstitutionYearController::class);
         Route::resource('turns', TurnController::class);
         Route::resource('commissions', CommissionController::class);
+        Route::resource('subjects', SubjectController::class);
+        Route::resource('course-types', CourseTypeController::class);
+        Route::resource('classrooms', ClassroomController::class);
     });
 
 
