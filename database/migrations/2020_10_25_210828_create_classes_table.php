@@ -19,10 +19,11 @@ class CreateClassesTable extends Migration
             $table->string('description')->nullable();
             $table->unsignedBigInteger('course_id')->unsigned()->index();
 
-            
-            
+
+
             $table->foreign('course_id')->references('id')->on('courses');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
