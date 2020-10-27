@@ -9,12 +9,12 @@ class SubjectService
 
     public static function getSubjects()
     {
-        return Subject::with(['institution'])->get();
+        return Subject::with(['institution.plan','institution.city.province.country'])->get();
     }
 
     public static function getSubject($id)
     {
-        return Subject::where('id', $id)->with(['institution'])->first();
+        return Subject::where('id', $id)->with(['institution.plan','institution.city.province.country'])->first();
     }
 
     public static function createSubject($data)
@@ -28,8 +28,8 @@ class SubjectService
 
     public static function updateSubject($id, $data)
     {
-        $Subject = Subject::where('id', $id)->with(['institution'])->first();
-        $Subject->name       = $data['name'];
+        $Subject = Subject::find($id);
+        $Subject->name           = $data['name'];
         $Subject->institution_id = $data['institution_id'];
         $Subject->save();
         return self::getSubject($Subject->id);

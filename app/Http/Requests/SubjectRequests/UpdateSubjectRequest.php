@@ -4,6 +4,7 @@ namespace App\Http\Requests\SubjectRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UpdateSubjectRequest extends FormRequest
 {
@@ -25,9 +26,22 @@ class UpdateSubjectRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            'name'           => 'required|unique:subjects,name,' . $request->get('id') . '|string',
+            'name' =>  [
+                'required',
+                'string',
+                Rule::unique('subjects')->where(function ($query) use ($request) {
+                    return $query
+                        ->where([
+                            ['name','=',$request->name],
+                            ['institution_id','=', $request->institution_id],
+                            ['id','<>', $request->get('id') ]
+                        ]);
+                }),
+            ],
             'institution_id' => 'required|exists:institutions,id',
         ];
+
+
     }
 
     /**
