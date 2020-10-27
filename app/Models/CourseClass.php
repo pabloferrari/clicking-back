@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AssignmentType extends Model
+class CourseClass extends Model
 {
     use HasFactory;
+    protected $table = 'classes';
+
     protected $fillable = [
-        'name',
-        'group_enabled'
+        'title',
+        'description',
+        'course_id'
     ];
 
     protected $hidden = [
@@ -18,7 +21,12 @@ class AssignmentType extends Model
         'updated_at',
     ];
 
-    public function assignments()
+    public function course()
+    {
+        return $this->belongsTo(\App\Models\Course::class);
+    }
+
+    public function class()
     {
         return $this->hasMany(\App\Models\Assignment::class);
     }
