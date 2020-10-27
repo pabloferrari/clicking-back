@@ -20,6 +20,7 @@ class CreateStudentAssignmentsTable extends Migration
             $table->foreign('assignment_id')->references('id')->on('assignments');
             $table->foreign('classroom_student_id')->references('id')->on('classroom_students');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

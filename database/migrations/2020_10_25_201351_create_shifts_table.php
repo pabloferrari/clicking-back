@@ -19,6 +19,7 @@ class CreateShiftsTable extends Migration
             $table->unsignedBigInteger('institution_id')->unsigned()->index();
             $table->timestamps();
             $table->foreign('institution_id')->references('id')->on('institutions');
+            $table->softDeletes();
         });
     }
 

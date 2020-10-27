@@ -18,6 +18,7 @@ class CreateAssignmentTypesTable extends Migration
             $table->string('name');
             $table->boolean('group_enabled')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
