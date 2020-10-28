@@ -21,6 +21,7 @@ class CreateStudentsTable extends Migration
             $table->boolean('active')->default(true);
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

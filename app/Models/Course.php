@@ -13,4 +13,18 @@ class Course extends Model
     {
         return $this->hasMany(\App\Models\CourseClass::class);
     }
+    public function subject()
+    {
+        return $this->belongsTo(\App\Models\Subject::class);
+    }
+
+    public function courseType()
+    {
+        return $this->belongsTo(\App\Models\CourseType::class);
+    }
+
+    public function classroom()
+    {
+        return $this->belongsTo(\App\Models\Classroom::class);
+    }
 }

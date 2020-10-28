@@ -20,14 +20,14 @@ class CreateCoursesTable extends Migration
             $table->unsignedBigInteger('classroom_id')->unsigned()->index();
             $table->unsignedBigInteger('course_type_id')->unsigned()->index();
 
-            
-            
+
+
             $table->foreign('subject_id')->references('id')->on('subjects');
             $table->foreign('teacher_id')->references('id')->on('teachers');
             $table->foreign('classroom_id')->references('id')->on('classrooms');
             $table->foreign('course_type_id')->references('id')->on('course_types');
 
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

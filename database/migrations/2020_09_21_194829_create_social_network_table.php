@@ -21,6 +21,7 @@ class CreateSocialNetworkTable extends Migration
             $table->string('icon');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

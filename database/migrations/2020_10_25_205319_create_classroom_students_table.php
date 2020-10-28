@@ -17,11 +17,12 @@ class CreateClassroomStudentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id')->unsigned()->index();
             $table->unsignedBigInteger('classroom_id')->unsigned()->index();
-            
-            
-            
+
+
+
             $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('classroom_id')->references('id')->on('classrooms');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
