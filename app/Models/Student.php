@@ -19,4 +19,9 @@ class Student extends Model
         'updated_at',
         'email'
     ];
+
+    public function classroomStudents()
+    {
+        return $this->hasMany(\App\Models\ClassroomStudent::class);
+    }
 }
