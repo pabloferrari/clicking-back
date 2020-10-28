@@ -16,11 +16,13 @@ class CreateStudentAssignmentsTable extends Migration
         Schema::create('student_assignments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('assignment_id')->unsigned()->index();
+            $table->unsignedBigInteger('assignment_status_id')->unsigned()->index();
             $table->unsignedBigInteger('classroom_student_id')->unsigned()->index();
             $table->integer('score')->default(0);
             $table->timestamp('limit_date', 0);
             $table->foreign('assignment_id')->references('id')->on('assignments');
             $table->foreign('classroom_student_id')->references('id')->on('classroom_students');
+            $table->foreign('assignment_status_id')->references('id')->on('assignment_status');
             $table->timestamps();
             $table->softDeletes();
         });
