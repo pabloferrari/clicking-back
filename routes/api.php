@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     });
 
     Route::group(['middleware' => 'student'], function () {
+        
     });
 });
 

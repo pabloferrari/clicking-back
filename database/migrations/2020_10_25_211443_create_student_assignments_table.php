@@ -17,6 +17,8 @@ class CreateStudentAssignmentsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('assignment_id')->unsigned()->index();
             $table->unsignedBigInteger('classroom_student_id')->unsigned()->index();
+            $table->integer('score')->default(0);
+            $table->timestamp('limit_date', 0);
             $table->foreign('assignment_id')->references('id')->on('assignments');
             $table->foreign('classroom_student_id')->references('id')->on('classroom_students');
             $table->timestamps();
