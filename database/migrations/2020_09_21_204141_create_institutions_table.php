@@ -25,8 +25,8 @@ class CreateInstitutionsTable extends Migration
             $table->boolean('active')->default(true);
             $table->foreign('plan_id')->references('id')->on('plans');
             $table->foreign('city_id')->references('id')->on('cities');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

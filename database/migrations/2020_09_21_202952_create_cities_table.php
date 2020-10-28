@@ -20,6 +20,7 @@ class CreateCitiesTable extends Migration
             $table->string('zip_code');
             $table->foreign('province_id')->references('id')->on('provinces');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

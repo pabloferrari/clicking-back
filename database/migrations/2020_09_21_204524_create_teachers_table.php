@@ -21,8 +21,8 @@ class CreateTeachersTable extends Migration
             $table->unsignedBigInteger('user_id')->unsigned()->index()->nullable();
             $table->boolean('active')->default(true);
             $table->foreign('user_id')->references('id')->on('users');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

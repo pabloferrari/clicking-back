@@ -22,6 +22,7 @@ class CreateAssignmentsTable extends Migration
             $table->foreign('class_id')->references('id')->on('classes');
             $table->foreign('assignment_type_id')->references('id')->on('assignment_types');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
