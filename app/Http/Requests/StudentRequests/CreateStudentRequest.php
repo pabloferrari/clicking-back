@@ -5,6 +5,7 @@ namespace App\Http\Requests\StudentRequests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class CreateStudentRequest extends FormRequest
 {
@@ -26,7 +27,9 @@ class CreateStudentRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'  =>  'required|unique:students|string',
+            'name'  =>  'required|string',
+            'email' =>  'required|unique:users|email',
+            'password' => 'required|string',
         ];
     }
 
@@ -40,7 +43,35 @@ class CreateStudentRequest extends FormRequest
         return [
             'name.required' => 'Name is required!',
             'name.string' => 'Name is string!',
-            'name.unique' => 'Name is unique!'
+            'email.required' => 'email is required!',
+            'email.unique' => 'email will be unique',
+            'email.email' => 'email must be valid',
+            'passowrd.required' => 'password is required!',
+            'password.string' => 'password is string!',
+
         ];
+    }
+    protected function getValidatorInstance()
+    {
+        return parent::getValidatorInstance()->after(function ($validator) {
+            $this->after($validator);
+        });
+    }
+
+    public function after($validator)
+    {
+        if (count($validator->errors()) === 0) {
+
+            if (!$this->input('institution_id')) {
+
+                if (Auth::user()->institution_id === null)
+                    $validator->errors()->add('institution_id', 'institution_id is required!');
+            } else {
+
+                // if (!Auth::user()->hasRole('admin') || Auth::user()->institution_id != $this->input('institution_id')) {
+                //     $validator->errors()->add('institution_id', 'institution_id is invalid!' . Auth::user()->institution_id);
+                // }
+            }
+        }
     }
 }

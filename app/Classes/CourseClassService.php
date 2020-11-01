@@ -9,12 +9,12 @@ class CourseClassService
 
     public static function getCourseClasses()
     {
-        return CourseClass::with(['course'])->get();
+        return CourseClass::with(['course.subject', 'course.teacher', 'course.classroom'])->get();
     }
 
     public static function getCourseClass($id)
     {
-        return CourseClass::with(['course'])->find($id);
+        return CourseClass::with(['course.subject', 'course.teacher', 'course.classroom'])->find($id);
     }
 
     public static function createCourseClass($data)

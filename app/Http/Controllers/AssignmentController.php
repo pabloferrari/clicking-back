@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Classes\AssignmentService;
+use App\Http\Requests\AssignmentRequests\{CreateAssignmentRequest, UpdateAssignmentRequest};
 use Log;
 
 class AssignmentController extends Controller
@@ -27,7 +28,7 @@ class AssignmentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateAssignmentRequest $request)
     {
         try {
             $newAssignment = AssignmentService::createAssignment($request->all());
@@ -59,7 +60,7 @@ class AssignmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateAssignmentRequest $request, $id)
     {
         try {
             $Assignment = AssignmentService::updateAssignment($id, $request->all());
