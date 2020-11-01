@@ -4,6 +4,7 @@ namespace App\Http\Requests\CourseTypeRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UpdateCourseTypeRequest extends FormRequest
 {
@@ -25,7 +26,18 @@ class UpdateCourseTypeRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            'name'           => 'required|unique:course_types,name,' . $request->get('id') . '|string',
+            'name' =>  [
+                'required',
+                'string',
+                Rule::unique('course_types')->where(function ($query) use ($request) {
+                    return $query
+                        ->where([
+                            ['name', '=', $request->name],
+                            ['institution_id', '=', $request->institution_id],
+                            ['id', '<>', $request->get('id')]
+                        ]);
+                }),
+            ],
             'institution_id' => 'required|exists:institutions,id',
         ];
     }

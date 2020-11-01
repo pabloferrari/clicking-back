@@ -28,4 +28,8 @@ class Student extends Model
     {
         return $this->belongsTo(\App\Models\User::class);
     }
+    public function classroomStudents()
+    {
+        return $this->hasMany(\App\Models\ClassroomStudent::class);
+    }
 }

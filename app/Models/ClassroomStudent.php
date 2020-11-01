@@ -4,10 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use \Illuminate\Database\Eloquent\SoftDeletes;
 
 class ClassroomStudent extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'id',
+    ];
 
     protected $hidden = [
         'created_at',
@@ -22,9 +27,8 @@ class ClassroomStudent extends Model
         return $this->belongsTo(\App\Models\Classroom::class);
     }
 
-    public function students()
+    public function student()
     {
-
-        return $this->belongsTo(\App\Models\Student::class, 'student_id');
+        return $this->belongsTo(\App\Models\Student::class);
     }
 }
