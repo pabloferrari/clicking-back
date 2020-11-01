@@ -13,35 +13,35 @@ class StudentService
 
     public static function getStudents()
     {
-        return Student::get();
+        return Student::with(['user'])->get();
     }
 
     public static function getStudent($id)
     {
-        return Student::find($id);
+        return Student::with(['user'])->find($id);
     }
 
     public static function createStudent($data)
     {
         DB::beginTransaction();
         try {
-            // $data['institution_id'] = $data['institution_id'] ?? Auth::user()->institution_id;
-            //$userService = new UserService();
-            //$newUser = $userService->createStudentUser($data);
-            //Log::debug(__METHOD__ . ' -> NEW USER ' . json_encode($newUser));
+            $data['institution_id'] = $data['institution_id'] ?? Auth::user()->institution_id;
+            $userService = new UserService();
+            $newUser = $userService->createStudentUser($data);
+            Log::debug(__METHOD__ . ' -> NEW USER STUDENT ' . json_encode($newUser));
             $newStudent = new Student();
             $newStudent->name    = $data['name'];
-            // $newStudent->phone   = $data['phone'];
-            // $newStudent->user_id = $newUser->id;
-            $newStudent->user_id = $data['user_id'];
+            $newStudent->email   = $data['email'];
+            $newStudent->user_id = $newUser->id;
+
             $newStudent->active  = $data['active'] ?? true;
             $newStudent->save();
             Log::debug(__METHOD__ . ' -> NEW Student ' . json_encode($newStudent));
             DB::commit();
-            return $newStudent;
+            return self::getStudent($newStudent->id);
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error(__METHOD__ . ' - ROLLBACK user -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
+            Log::error(__METHOD__ . ' - ROLLBACK user student -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
             return false;
         }
     }
@@ -51,14 +51,30 @@ class StudentService
         $updateStudent = Student::find($id);
         $updateStudent->name    = $data['name'];
         // $updateStudent->phone   = $data['phone'];
-        $updateStudent->user_id = $data['user_id'];
+        // $updateStudent->user_id = $data['user_id'];
         $updateStudent->active  = $data['active'];
         $updateStudent->save();
+
         return self::getStudent($id);
     }
 
     public static function deleteStudent($id)
     {
-        return Student::where('id', $id)->delete();
+        DB::beginTransaction();
+        try {
+            $deleteStudent = Student::find($id);
+            $userService = new UserService();
+
+            $userService->deleteUser($deleteStudent->user_id);
+
+            Student::where('id', $id)->delete();
+            Log::debug(__METHOD__ . ' -> DELETE  Student and User  ' . json_encode($id));
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error(__METHOD__ . ' - ROLLBACK user student -> ' . json_encode($id) . ' exception: ' . $e->getMessage());
+            return false;
+        }
     }
 }

@@ -27,7 +27,7 @@ class AssignmentGroupController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateAssignmentGroupRequest $request)
     {
         try {
             $newAssignmentGroup = AssignmentGroupService::createAssignmentGroup($request->all());
@@ -59,7 +59,7 @@ class AssignmentGroupController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateAssignmentGroupRequest $request, $id)
     {
         try {
             $AssignmentGroup = AssignmentGroupService::updateAssignmentGroup($id, $request->all());

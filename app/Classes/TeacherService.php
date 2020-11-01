@@ -1,13 +1,15 @@
 <?php
 
 namespace App\Classes;
+
 use App\Models\Teacher;
 use Illuminate\Support\Facades\Auth;
 use App\Classes\UserService;
 use Log;
 use DB;
 
-class TeacherService {
+class TeacherService
+{
 
     public static function getTeachers()
     {
@@ -18,11 +20,11 @@ class TeacherService {
 
     public static function getTeacher($id)
     {
-        return Teacher::with(['turns','commissions'])->find($id);
+        return Teacher::with(['turns', 'commissions'])->find($id);
     }
 
     public static function createTeacher($data)
-    {  
+    {
         DB::beginTransaction();
         try {
             $data['institution_id'] = $data['institution_id'] ?? Auth::user()->institution_id;
@@ -46,7 +48,7 @@ class TeacherService {
         }
     }
 
-    public static function updateTeacher($id,$data)
+    public static function updateTeacher($id, $data)
     {
         $updateTeacher = Teacher::find($id);
         $updateTeacher->name    = $data['name'];
@@ -55,9 +57,6 @@ class TeacherService {
         $updateTeacher->user_id = $data['user_id'];
         $updateTeacher->active  = $data['active'];
         $updateTeacher->save();
-
-        $updateTeacher->turns()->sync($data['turns']);
-        $updateTeacher->commissions()->sync($data['commissions']);
         return self::getTeacher($id);
     }
 

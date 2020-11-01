@@ -5,6 +5,7 @@ namespace App\Http\Requests\StudentRequests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateStudentRequest extends FormRequest
 {
@@ -29,15 +30,19 @@ class UpdateStudentRequest extends FormRequest
             'name' =>  [
                 'required',
                 'string',
+            ],
+            'email' => [
+                'required',
+                'email',
                 Rule::unique('students')->where(function ($query) use ($request) {
                     return $query
                         ->where([
-                            ['name', '=', $request->name],
-                            ['id', '<>', $request->get('id')]
+                            ['email', '=', $request->email],
+                            ['id', '<>', $request->get('id')],
+
                         ]);
                 }),
             ],
-
         ];
     }
 
@@ -52,7 +57,11 @@ class UpdateStudentRequest extends FormRequest
         return [
             'name.required' => 'Name is required!',
             'name.string' => 'Name is string!',
-            'name.unique' => 'Name is unique!',
+            'email.required' => 'email is required!',
+            'email.unique' => 'email will be unique',
+            'email.email' => 'email must be valid',
+
+
         ];
     }
 }

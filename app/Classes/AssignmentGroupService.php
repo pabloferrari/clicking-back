@@ -9,12 +9,12 @@ class AssignmentGroupService
 
     public static function getAssignmentGroups()
     {
-        return AssignmentGroup::get();
+        return AssignmentGroup::with(['assignment.class', 'assignment.assignmenttype', 'classroomstudents.classroom', 'classroomstudents.student'])->get();
     }
 
     public static function getAssignmentGroup($id)
     {
-        return AssignmentGroup::where('id', $id)->first();
+        return AssignmentGroup::where('id', $id)->with(['assignment.class', 'assignment.assignmenttype', 'classroomstudents.classroom', 'classroomstudents.student'])->first();
     }
 
     public static function createAssignmentGroup($data)

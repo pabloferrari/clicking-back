@@ -3,8 +3,7 @@
 namespace App\Http\Requests\ClassroomRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+
 
 class CreateClassroomRequest extends FormRequest
 {
@@ -23,22 +22,10 @@ class CreateClassroomRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(Request $request)
+    public function rules()
     {
         return [
-            'name' =>  [
-                'required',
-                'string',
-                Rule::unique('classrooms')->where(function ($query) use ($request) {
-                    return $query
-                        ->where([
-                            ['name', '=', $request->name],
-                            ['shift_id', '=', $request->shift_id],
-                            ['institution_id', '=', $request->institution_id]
-                        ]);
-                }),
-            ],
-
+            'name'           => 'required|unique:classrooms|string',
             'shift_id'       => 'required|exists:shifts,id',
             'institution_id' => 'required|exists:institutions,id'
         ];

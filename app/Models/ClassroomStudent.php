@@ -17,9 +17,11 @@ class ClassroomStudent extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-        'deleted_at'
-    ];
+        'deleted_at',
+        'student_id',
+        'classroom_id'
 
+    ];
     public function classroom()
     {
         return $this->belongsTo(\App\Models\Classroom::class);
