@@ -9,12 +9,12 @@ class ClassroomService
 
     public static function getClassrooms()
     {
-        return Classroom::with(['shift', 'institution'])->get();
+        return Classroom::with(['shift', 'institution.plan', 'institution.city.province.country'])->get();
     }
 
     public static function getClassroom($id)
     {
-        return Classroom::where('id', $id)->with(['shift', 'institution'])->first();
+        return Classroom::where('id', $id)->with(['shift', 'institution.plan', 'institution.city.province.country'])->first();
     }
 
     public static function createClassroom($data)
@@ -29,7 +29,7 @@ class ClassroomService
 
     public static function updateClassroom($id, $data)
     {
-        $Classroom = Classroom::where('id', $id)->with(['shift', 'institution'])->first();
+        $Classroom = Classroom::find($id);
         $Classroom->name     = $data['name'];
         $Classroom->shift_id = $data['shift_id'];
         $Classroom->institution_id = $data['institution_id'];

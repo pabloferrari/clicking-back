@@ -9,12 +9,12 @@ class CourseTypeService
 
     public static function getCourseTypes()
     {
-        return CourseType::with(['institution'])->get();
+        return CourseType::with(['institution.plan', 'institution.city.province.country'])->get();
     }
 
     public static function getCourseType($id)
     {
-        return CourseType::where('id', $id)->with(['institution'])->first();
+        return CourseType::where('id', $id)->with(['institution.plan', 'institution.city.province.country'])->first();
     }
 
     public static function createCourseType($data)
@@ -28,7 +28,7 @@ class CourseTypeService
 
     public static function updateCourseType($id, $data)
     {
-        $CourseType = CourseType::where('id', $id)->with(['institution'])->first();
+        $CourseType = CourseType::find($id);
         $CourseType->name       = $data['name'];
         $CourseType->institution_id = $data['institution_id'];
         $CourseType->save();
