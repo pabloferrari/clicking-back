@@ -37,10 +37,6 @@ use App\Http\Controllers\{
 |
 */
 
-Route::get('/', function () {
-	return response()->json(['name' => "Clicking Api", 'version' => 0.1]);
-});
-
 Route::group(['prefix' => 'auth'], function () {
 
     Route::post('login', [AuthController::class, 'login']);
@@ -97,3 +93,11 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 
 // Route::get('unauthorized', [AuthController::class, 'unauthorized'])->name('unauthorized');
+
+// Route::get('*', function () {
+// 	return response()->json(['name' => "Clicking Api", 'version' => 0.1]);
+// });
+
+Route::get('/{any}', function ($any) {
+    return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any"]);
+})->where('any', '.*');
