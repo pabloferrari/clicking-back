@@ -15,7 +15,7 @@ class AssignmentService
         return Assignment::with([
             'class',
             'assignmentType',
-            'studentsassignment.classroomstudents.students',
+            'studentsassignment.classroomstudents.student',
             'studentsassignment.classroomstudents.classroom',
             'studentsassignment.assignmentstatus',
         ])->get();
@@ -26,7 +26,7 @@ class AssignmentService
         return Assignment::where('id', $id)->with([
             'class',
             'assignmentType',
-            'studentsassignment.classroomstudents.students',
+            'studentsassignment.classroomstudents.student',
             'studentsassignment.classroomstudents.classroom',
             'studentsassignment.assignmentstatus',
         ])->first();

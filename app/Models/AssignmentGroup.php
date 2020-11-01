@@ -35,7 +35,7 @@ class AssignmentGroup extends Model
         return $this->belongsTo(\App\Models\Assignment::class);
     }
 
-    public function classroomtudents()
+    public function classroomstudents()
     {
         return $this->belongsTo(\App\Models\ClassroomStudent::class, 'classroom_student_id');
     }
