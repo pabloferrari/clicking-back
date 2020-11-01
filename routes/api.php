@@ -37,6 +37,10 @@ use App\Http\Controllers\{
 |
 */
 
+Route::get('/', function () {
+	return response()->json(['name' => "Clicking Api", 'version' => 0.1]);
+});
+
 Route::group(['prefix' => 'auth'], function () {
 
     Route::post('login', [AuthController::class, 'login']);
