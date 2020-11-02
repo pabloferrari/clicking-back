@@ -5,6 +5,7 @@ namespace App\Classes;
 use App\Models\{ User, Role, RoleUser};
 use Log;
 use Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
@@ -69,6 +70,12 @@ class UserService
     public function updateUser($id, $data)
     {
         User::where('id', $id)->update($data);
+        return User::where('id', $id)->first();
+    }
+
+    public function resetPassword($id, $newPassword)
+    {
+        User::where('id', $id)->update(['password' => Hash::make($newPassword)]);
         return User::where('id', $id)->first();
     }
     

@@ -17,35 +17,48 @@ class Institution extends Model
         'cuit',
         'image',
         'active',
+        'plan_id',
+        'city_id',
     ];
 
     protected $hidden = [
-        'plan_id',
-        'city_id',
         'created_at',
         'updated_at',
         'deleted_at'
     ];
 
     public function plan()
-	{
-		return $this->belongsTo(\App\Models\Plan::class);
+    {
+        return $this->belongsTo(\App\Models\Plan::class);
     }
 
     public function city()
-	{
-		return $this->belongsTo(\App\Models\City::class);
+    {
+        return $this->belongsTo(\App\Models\City::class);
     }
 
-    public function commissions() {
+    public function commissions()
+    {
         return $this->hasMany(\App\Models\Commission::class);
     }
 
-    public function turns() {
+    public function turns()
+    {
         return $this->hasMany(\App\Models\Turn::class);
     }
 
-    public function institutionsYear() {
+    public function institutionsYear()
+    {
         return $this->hasMany(\App\Models\InstitutionsYear::class);
+    }
+
+    public function subjects()
+    {
+        return $this->hasMany(\App\Models\Subject::class);
+    }
+
+    public function courseTypes()
+    {
+        return $this->hasMany(\App\Models\CourseType::class);
     }
 }

@@ -15,7 +15,7 @@ class Authenticate extends Middleware
      * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
-    protected function redirectTo($request, Closure $next, $guard = null)
+    protected function redirectTo($request)
     {
         // if (Auth::guard($guard)->guest()) {
         //     if ($guard === 'api') {

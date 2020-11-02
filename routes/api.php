@@ -12,9 +12,19 @@ use App\Http\Controllers\{
     PlansController,
     UsersController,
     TeacherController,
+    StudentController,
     InstitutionYearController,
-    TurnController,
-    CommissionController
+    SubjectController,
+    CourseTypeController,
+    ClassroomController,
+    ShiftController,
+    CommissionController,
+    CourseClassController,
+    AssignmentTypeController,
+    AssignmentController,
+    AssignmentGroupController,
+    CourseController,
+    ClassroomStudentController
 };
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +48,12 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['middleware' => 'auth:api'], function () {
 
+
+    Route::get('profile', [UsersController::class, 'getProfile']);
+    Route::put('profile', [UsersController::class, 'updateProfile']);
+    Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
+
+
     Route::group(['middleware' => 'admin'], function () {
         Route::get('/testAdmin', [AuthController::class, 'test']);
         Route::resource('countries', CountryController::class);
@@ -47,14 +63,25 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('plans', PlansController::class);
         Route::resource('users', UsersController::class);
         Route::resource('teachers', TeacherController::class);
+        Route::resource('students', StudentController::class);
         Route::resource('institutions-years', InstitutionYearController::class);
-        Route::resource('turns', TurnController::class);
+        Route::resource('shifts', ShiftController::class);
         Route::resource('commissions', CommissionController::class);
+        Route::resource('subjects', SubjectController::class);
+        Route::resource('course-types', CourseTypeController::class);
+        Route::resource('classrooms', ClassroomController::class);
+        Route::resource('classes', CourseClassController::class);
+        Route::resource('assignment-types', AssignmentTypeController::class);
+        Route::resource('assignments', AssignmentController::class);
+        Route::resource('assignment-groups', AssignmentGroupController::class);
+        Route::resource('courses', CourseController::class);
+        Route::resource('classroom-students', ClassroomStudentController::class);
     });
 
 
     Route::group(['middleware' => 'institution'], function () {
         Route::get('/testInstitution', [AuthController::class, 'test']);
+        Route::resource('teachers', TeacherController::class);
     });
 
 
@@ -66,3 +93,11 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 
 // Route::get('unauthorized', [AuthController::class, 'unauthorized'])->name('unauthorized');
+
+// Route::get('*', function () {
+// 	return response()->json(['name' => "Clicking Api", 'version' => 0.1]);
+// });
+
+Route::get('/{any}', function ($any) {
+    return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any"]);
+})->where('any', '.*');
