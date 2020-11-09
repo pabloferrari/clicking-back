@@ -11,12 +11,12 @@ class InstitutionService
 
     public static function getInstitutions()
     {
-        return Institution::with(['plan', 'city.province.country'])->get();
+        return Institution::with(['plan', 'city.province.country','users','users.teacher','users.student'])->get();
     }
 
     public static function getInstitution($id)
     {
-        return Institution::where('id', $id)->with(['plan', 'city.province.country'])->first();
+        return Institution::where('id', $id)->with(['plan', 'city.province.country','users','users.teacher','users.student'])->first();
     }
 
     public static function createInstitution($data)
