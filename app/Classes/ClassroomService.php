@@ -32,16 +32,20 @@ class ClassroomService
             $new->save();
 
             // Insert Course
-            foreach ($data['courses'] as $key) {
-                $key['classroom_id'] = $new->id;
-                $courseService = new CourseService();
-                $courseService->createCourse($key);
-                Log::debug(__METHOD__ . ' -> NEW COURSE ' . json_encode($key));
+            if(isset($data['courses'])) {
+                foreach ($data['courses'] as $key) {
+                    $key['classroom_id'] = $new->id;
+                    $courseService = new CourseService();
+                    $courseService->createCourse($key);
+                    Log::debug(__METHOD__ . ' -> NEW COURSE ' . json_encode($key));
+                }
             }
 
             // Insert Student
-            $new->classroomStudentsPivot()->attach($data['student_id']);
-            Log::debug(__METHOD__ . ' -> NEW CLASSROOM STUDENT ' . json_encode($new));
+            if(isset($data['student_id'])){
+                $new->classroomStudentsPivot()->attach($data['student_id']);
+                Log::debug(__METHOD__ . ' -> NEW CLASSROOM STUDENT ' . json_encode($new));
+            }
 
             DB::commit();
             Log::debug(__METHOD__ . ' -> NEW CLASSROOM ' . json_encode($new));
