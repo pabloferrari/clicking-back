@@ -68,12 +68,12 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('subjects', SubjectController::class);
         Route::resource('course-types', CourseTypeController::class);
         Route::resource('classrooms', ClassroomController::class);
+        Route::resource('courses', CourseController::class);
+        Route::resource('classroom-students', ClassroomStudentController::class);
         Route::resource('classes', CourseClassController::class);
         Route::resource('assignment-types', AssignmentTypeController::class);
         Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
-        Route::resource('courses', CourseController::class);
-        Route::resource('classroom-students', ClassroomStudentController::class);
     });
 
 
@@ -86,6 +86,14 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::resource('shifts', ShiftController::class);
         Route::resource('classrooms', ClassroomController::class);
+        Route::resource('subjects', SubjectController::class);
+        Route::resource('course-types', CourseTypeController::class);
+        Route::resource('classes', CourseClassController::class);
+        Route::resource('assignment-types', AssignmentTypeController::class);
+        Route::resource('assignments', AssignmentController::class);
+        Route::resource('assignment-groups', AssignmentGroupController::class);
+        Route::resource('courses', CourseController::class);
+        Route::resource('classroom-students', ClassroomStudentController::class);
     });
 
 
