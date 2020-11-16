@@ -7,6 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Log;
+
 class CreateTeacherRequest extends FormRequest
 {
     /**
@@ -72,7 +74,7 @@ class CreateTeacherRequest extends FormRequest
 
             } else {
 
-                if(!Auth::user()->hasRole('admin') || Auth::user()->institution_id != $this->input('institution_id')){
+                if(!Auth::user()->hasRole('admin') && Auth::user()->institution_id != $this->input('institution_id')){
                     $validator->errors()->add('institution_id', 'institution_id is invalid!' . Auth::user()->institution_id);
                 }
 
