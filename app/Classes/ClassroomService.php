@@ -33,22 +33,26 @@ class ClassroomService
             $new->save();
 
             // Insert Course
-            foreach ($data['courses'] as $key) {
-                $key['classroom_id'] = $new->id;
-                $courseService = new CourseService();
-                $courseService->createCourse($key);
-                Log::debug(__METHOD__ . ' -> NEW COURSE ' . json_encode($key));
+            if (isset($data['courses'])) {
+                foreach ($data['courses'] as $key) {
+                    $key['classroom_id'] = $new->id;
+                    $courseService = new CourseService();
+                    $courseService->createCourse($key);
+                    Log::debug(__METHOD__ . ' -> NEW COURSE ' . json_encode($key));
+                }
             }
 
             // Insert Student
             //$new->classroomStudentsPivot()->attach($data['student_id']);
             $ArrayStudents = [];
-            foreach ($data['student_id'] as $key => $value) {
-                $classroomStudentService = new ClassroomStudentService();
-                $ArrayStudents['student_id']   = $value;
-                $ArrayStudents['classroom_id'] = $new->id;
-                $classroomStudentService->createClassroomStudent($ArrayStudents);
-                Log::debug(__METHOD__ . ' -> NEW CLASSROOM STUDENT ' . json_encode($key));
+            if ($data['student_id']) {
+                foreach ($data['student_id'] as $key => $value) {
+                    $classroomStudentService = new ClassroomStudentService();
+                    $ArrayStudents['student_id']   = $value;
+                    $ArrayStudents['classroom_id'] = $new->id;
+                    $classroomStudentService->createClassroomStudent($ArrayStudents);
+                    Log::debug(__METHOD__ . ' -> NEW CLASSROOM STUDENT ' . json_encode($key));
+                }
             }
 
             DB::commit();
