@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
 
 class CourseService
@@ -9,12 +10,16 @@ class CourseService
 
     public static function getCourses()
     {
-        return Course::with(['subject', 'courseType', 'teacher', 'classroom'])->get();
+        return Course::with(['subject', 'courseType', 'teacher', 'classroom'])->whereHas('subject', function ($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })->get();
     }
 
     public static function getCourse($id)
     {
-        return Course::where('id', $id)->with(['subject', 'courseType', 'teacher', 'classroom'])->first();
+        return Course::where('id', $id)->with(['subject', 'courseType', 'teacher', 'classroom'])->whereHas('subject', function ($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })->first();
     }
 
     public static function createCourse($data)

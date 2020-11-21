@@ -42,4 +42,12 @@ class Classroom extends Model
     {
         return $this->hasMany(\App\Models\ClassroomStudent::class);
     }
+
+    public function classroomStudentsPivot()
+    {
+        return $this->belongsToMany(\App\Models\Classroom::class, 'classroom_students')->withPivot(
+            'classroom_id',
+            'student_id'
+        )->withTimestamps();
+    }
 }

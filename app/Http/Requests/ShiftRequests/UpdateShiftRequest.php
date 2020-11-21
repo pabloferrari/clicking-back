@@ -5,6 +5,7 @@ namespace App\Http\Requests\ShiftRequests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateShiftRequest extends FormRequest
 {
