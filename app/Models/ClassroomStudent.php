@@ -18,7 +18,6 @@ class ClassroomStudent extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'student_id',
         'classroom_id'
 
     ];

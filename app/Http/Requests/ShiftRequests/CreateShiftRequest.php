@@ -5,6 +5,7 @@ namespace App\Http\Requests\ShiftRequests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class CreateShiftRequest extends FormRequest
 {
@@ -58,5 +59,21 @@ class CreateShiftRequest extends FormRequest
             'institution_id.required' => 'institution id is required!',
             'institution_id.exists' => 'institution id must exist in intitutions',
         ];
+    }
+
+    protected function getValidatorInstance()
+    {
+        return parent::getValidatorInstance()->after(function ($validator) {
+            $this->after($validator);
+        });
+    }
+
+    public function after($validator)
+    {
+        if(count($validator->errors()) === 0){
+            if(Auth::user()->institution_id != $this->input('institution_id')){
+                $validator->errors()->add('institution_id', 'institution_id is invalid! (' . Auth::user()->institution_id . ')');
+            }
+        }
     }
 }

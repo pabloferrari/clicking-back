@@ -13,12 +13,17 @@ class ClassroomService
 
     public static function getClassrooms()
     {
-        return Classroom::with(['shift', 'institution.plan', 'institution.city.province.country'])->get();
+        return Classroom::with(['shift', 'institution', 'classroomStudents.student.user'])->withCount('courses')->get();
     }
 
     public static function getClassroom($id)
     {
         return Classroom::where('id', $id)->with(['shift', 'institution.plan', 'institution.city.province.country'])->first();
+    }
+
+    public static function getClassroomInstitution($id)
+    {
+        return Classroom::with(['shift', 'institution', 'classroomStudents.student.user'])->withCount('courses')->where('institution_id', $id)->get();
     }
 
     public static function createClassroom($data)
