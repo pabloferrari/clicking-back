@@ -43,6 +43,7 @@ class Assignment extends Model
             'assignment_id',
             'classroom_student_id',
             'score',
+            'limit_date',
             'assignment_status_id'
         )->withTimestamps();
     }

@@ -10,7 +10,7 @@ class CourseService
 
     public static function getCourses()
     {
-        return Course::with(['subject', 'courseType', 'teacher', 'classroom'])->whereHas('subject', function ($query) {
+        return Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
             return $query->where('institution_id', Auth::user()->institution_id);
         })->get();
     }
