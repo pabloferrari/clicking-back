@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use App\Models\Classroom;
 use App\Classes\CourseService;
+use Illuminate\Support\Facades\Auth;
 use App\Classes\createClassroomStudent;
 use Log;
 use DB;
@@ -13,12 +14,14 @@ class ClassroomService
 
     public static function getClassrooms()
     {
-        return Classroom::with(['shift', 'institution.plan', 'institution.city.province.country'])->get();
+        return Classroom::where('institution_id', Auth::user()->institution_id)->with(['shift', 'institution', 'courses.subject', 'courses.teacher','classroomStudents'])->get();
     }
 
     public static function getClassroom($id)
     {
-        return Classroom::where('id', $id)->with(['shift', 'institution.plan', 'institution.city.province.country'])->first();
+        return Classroom::where('id', $id)
+        ->where('institution_id', Auth::user()->institution_id)
+        ->with(['shift', 'institution', 'courses.subject', 'courses.teacher', 'classroomStudents'])->first();
     }
 
     public static function createClassroom($data)
@@ -45,7 +48,7 @@ class ClassroomService
             // Insert Student
             //$new->classroomStudentsPivot()->attach($data['student_id']);
             $ArrayStudents = [];
-            if ($data['student_id']) {
+            if (isset($data['student_id'])) {
                 foreach ($data['student_id'] as $key => $value) {
                     $classroomStudentService = new ClassroomStudentService();
                     $ArrayStudents['student_id']   = $value;
