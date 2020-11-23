@@ -26,7 +26,7 @@ class CreateCourseClassRequest extends FormRequest
     {
         return [
             'title' => 'required|unique:classes|string',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'course_id' => 'required|exists:courses,id',
 
         ];

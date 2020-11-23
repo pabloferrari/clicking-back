@@ -13,14 +13,14 @@ class Classroom extends Model
     protected $fillable = [
         'id',
         'name',
+        'institution_id'
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at',
         'deleted_at',
-        'shift_id',
-        'institution_id'
+        'shift_id'
     ];
 
     public function institution()
