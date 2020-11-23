@@ -9,7 +9,7 @@ class ClassroomStudentService
 
     public static function getClassroomStudents()
     {
-        return ClassroomStudent::with(['classroom', 'student'])->get();
+        return ClassroomStudent::with(['classroom.shift', 'classroomStudentsPivot'])->get()->unique('classroom.id');
     }
 
     public static function getClassroomStudent($id)

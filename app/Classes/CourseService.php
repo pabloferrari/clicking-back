@@ -4,22 +4,37 @@ namespace App\Classes;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
+use Illuminate\Http\Request;
 
 class CourseService
 {
 
     public static function getCourses()
     {
-        return Course::with(['subject', 'courseType', 'teacher', 'classroom'])->whereHas('subject', function ($query) {
+        return Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
             return $query->where('institution_id', Auth::user()->institution_id);
         })->get();
     }
 
     public static function getCourse($id)
     {
-        return Course::where('id', $id)->with(['subject', 'courseType', 'teacher', 'classroom'])->whereHas('subject', function ($query) {
-            return $query->where('institution_id', Auth::user()->institution_id);
-        })->first();
+        $subjectInstution = function ($query) {
+            $query->where('institution_id', '=', Auth::user()->institution_id);
+        };
+
+        $classroom = function ($query) use ($id) {
+            $query->where('id', '=', $id);
+        };
+        return  Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])
+            ->whereHas('classroom', $classroom)
+            ->whereHas('subject', $subjectInstution)
+            ->get();
+
+        // return  Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
+        //     return $query->where('institution_id', Auth::user()->institution_id);
+        // })->whereHas('classroom', function ($query) {
+        //     return $query->where('id', );
+        // })->get();
     }
 
     public static function createCourse($data)

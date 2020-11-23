@@ -14,7 +14,9 @@ class ClassroomService
 
     public static function getClassrooms()
     {
-        return Classroom::where('institution_id', Auth::user()->institution_id)->with(['shift', 'institution', 'courses.subject', 'courses.teacher','classroomStudents'])->get();
+        return Classroom::with(['shift', 'institution', 'courses.subject', 'courses.teacher', 'classroomStudents.student.user'])
+        ->where('institution_id', Auth::user()->institution_id)
+        ->get();
     }
 
     public static function getClassroom($id)
@@ -22,6 +24,11 @@ class ClassroomService
         return Classroom::where('id', $id)
         ->where('institution_id', Auth::user()->institution_id)
         ->with(['shift', 'institution', 'courses.subject', 'courses.teacher', 'classroomStudents'])->first();
+    }
+
+    public static function getClassroomInstitution($id)
+    {
+        return Classroom::with(['shift', 'institution', 'classroomStudents.student.user'])->withCount('courses')->where('institution_id', $id)->get();
     }
 
     public static function createClassroom($data)
