@@ -81,6 +81,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/testInstitution', [AuthController::class, 'test']);
 
         // Route::resource('users', UsersController::class);
+
         Route::resource('teachers', TeacherController::class);
         Route::resource('students', StudentController::class);
 
