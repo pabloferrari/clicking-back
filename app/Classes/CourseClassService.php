@@ -18,10 +18,18 @@ class CourseClassService
 
     public static function getCourseClass($id)
     {
+
+        $CourseSubjectInstution = function ($query) use ($id) {
+            $query->where('institution_id', '=', Auth::user()->institution_id);
+            $query->where('id', '=', $id);
+        };
+
+        // $classroom = function ($query) use ($id) {
+        //     $query->where('id', '=', $id);
+        // };
+
         return CourseClass::with(['course.subject', 'course.teacher', 'course.classroom', 'assignments'])
-            ->whereHas('course.subject', function ($query) {
-                return $query->where('institution_id', Auth::user()->institution_id);
-            })->find($id);
+            ->whereHas('course.subject', $CourseSubjectInstution)->get();
     }
 
     public static function createCourseClass($data)

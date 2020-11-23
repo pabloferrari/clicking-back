@@ -20,6 +20,7 @@ class ClassroomService
 
     public static function getClassroom($id)
     {
+
         return Classroom::where('id', $id)->with(['shift', 'institution.plan', 'institution.city.province.country'])->first();
     }
 
