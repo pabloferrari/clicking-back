@@ -7,13 +7,15 @@ use App\Classes\CourseService;
 use App\Classes\createClassroomStudent;
 use Log;
 use DB;
+use Illuminate\Support\Facades\Auth;
 
 class ClassroomService
 {
 
     public static function getClassrooms()
     {
-        return Classroom::with(['shift', 'institution', 'classroomStudents.student.user'])->withCount('courses')->get();
+        return Classroom::with(['shift', 'institution', 'classroomStudents.student.user'])->where('institution_id', Auth::user()->institution_id)
+            ->get();
     }
 
     public static function getClassroom($id)
