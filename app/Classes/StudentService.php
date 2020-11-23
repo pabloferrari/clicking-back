@@ -13,7 +13,9 @@ class StudentService
 
     public static function getStudents()
     {
-        return Student::with(['user'])->get();
+        return Student::whereHas('user', function ($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })->get();
     }
 
     public static function getStudent($id)
