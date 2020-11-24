@@ -104,8 +104,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('assignment-types', AssignmentTypeController::class);
         Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
-        Route::resource('courses', CourseController::class);
-        
+        //Route::resource('courses', CourseController::class);
+
         Route::resource('classroom-students', ClassroomStudentController::class);
     });
 
