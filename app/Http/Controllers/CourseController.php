@@ -18,8 +18,7 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $Course =
-            CourseService::getCourses();
+        $Course = CourseService::getCourses();
         return response()->json(['data' => $Course]);
     }
 

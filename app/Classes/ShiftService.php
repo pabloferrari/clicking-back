@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Shift;
 
 class ShiftService
@@ -9,12 +10,12 @@ class ShiftService
 
     public static function getShifts()
     {
-        return Shift::with(['institution'])->get();
+        return Shift::with(['institution'])->where('institution_id', Auth::user()->institution_id)->get();
     }
 
     public static function getShift($id)
     {
-        return  Shift::with(['institution'])->find($id);
+        return  Shift::with(['institution'])->where('institution_id', Auth::user()->institution_id)->find($id);
     }
 
     public static function createShift($data)

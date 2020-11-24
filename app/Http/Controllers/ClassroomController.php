@@ -46,8 +46,31 @@ class ClassroomController extends Controller
      */
     public function show($id)
     {
-        $Classroom = ClassroomService::getClassroom($id);
-        return response()->json(['data' => $Classroom]);
+        // $Classroom = ClassroomService::getClassroom($id);
+        // return response()->json(['data' => $Classroom]);
+
+        $ClassroomInstitution = ClassroomService::getClassroomInstitution($id);
+        return response()->json(['data' => $ClassroomInstitution]);
+    }
+
+
+    public function classroomCount($id)
+    {
+
+        $ClassroomCount = ClassroomService::getClassroomCount($id);
+        return response()->json(['data' => $ClassroomCount]);
+    }
+
+    /**
+     * Display the specified ClassRoom Institution resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function classroomInstitution($id)
+    {
+        $ClassroomInstitution = ClassroomService::getClassroomInstitution($id);
+        return response()->json(['data' => $ClassroomInstitution]);
     }
 
     /**

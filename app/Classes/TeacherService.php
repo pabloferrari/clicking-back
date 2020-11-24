@@ -20,7 +20,7 @@ class TeacherService
 
     public static function getTeacher($id)
     {
-        return Teacher::with(['turns', 'commissions'])->find($id);
+        return Teacher::with(['user'])->find($id);
     }
 
     public static function createTeacher($data)
@@ -54,7 +54,7 @@ class TeacherService
         $updateTeacher->name    = $data['name'];
         $updateTeacher->email   = $data['email'];
         $updateTeacher->phone   = $data['phone'];
-        $updateTeacher->user_id = $data['user_id'];
+        // $updateTeacher->user_id = $data['user_id'];
         $updateTeacher->active  = $data['active'];
         $updateTeacher->save();
         return self::getTeacher($id);

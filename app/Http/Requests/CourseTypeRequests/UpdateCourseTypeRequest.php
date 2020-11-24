@@ -5,6 +5,7 @@ namespace App\Http\Requests\CourseTypeRequests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateCourseTypeRequest extends FormRequest
 {

@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\CourseType;
 
 class CourseTypeService
@@ -9,12 +10,12 @@ class CourseTypeService
 
     public static function getCourseTypes()
     {
-        return CourseType::with(['institution.plan', 'institution.city.province.country'])->get();
+        return CourseType::with(['institution.plan', 'institution.city.province.country'])->where('institution_id', Auth::user()->institution_id)->get();
     }
 
     public static function getCourseType($id)
     {
-        return CourseType::where('id', $id)->with(['institution.plan', 'institution.city.province.country'])->first();
+        return CourseType::where('id', $id)->with(['institution.plan', 'institution.city.province.country'])->where('institution_id', Auth::user()->institution_id)->first();
     }
 
     public static function createCourseType($data)

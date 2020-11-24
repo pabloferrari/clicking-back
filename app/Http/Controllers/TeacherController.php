@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Classes\TeacherService;
-use App\Http\Requests\TeacherRequests\{CreateTeacherRequest,UpdateTeacherRequest};
+use App\Http\Requests\TeacherRequests\{CreateTeacherRequest, UpdateTeacherRequest};
 use Log;
 
 class TeacherController extends Controller
@@ -16,9 +16,9 @@ class TeacherController extends Controller
     public function index()
     {
         //
+
         $teachers = TeacherService::getTeachers();
         return response()->json(['data' => $teachers]);
-
     }
 
 
@@ -61,7 +61,7 @@ class TeacherController extends Controller
      * @param  \App\Models\Teacher  $teacher
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateTeacherRequest $request,$id)
+    public function update(UpdateTeacherRequest $request, $id)
     {
         try {
             $Teacher = TeacherService::updateTeacher($id, $request->all());

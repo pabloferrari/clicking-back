@@ -49,6 +49,11 @@ class InstitutionController extends Controller
         return response()->json(['data' => $institution]);
     }
 
+    public function institutionCount($id)
+    {
+        $institutionCount = InstitutionService::getInstitutionCount($id);
+        return response()->json(['data' => $institutionCount]);
+    }
 
     /**
      * Update the specified resource in storage.

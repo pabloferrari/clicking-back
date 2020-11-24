@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Subject;
 
 class SubjectService
@@ -9,12 +10,12 @@ class SubjectService
 
     public static function getSubjects()
     {
-        return Subject::with(['institution.plan','institution.city.province.country'])->get();
+        return Subject::with(['institution.plan','institution.city.province.country'])->where('institution_id', Auth::user()->institution_id)->get();
     }
 
     public static function getSubject($id)
     {
-        return Subject::where('id', $id)->with(['institution.plan','institution.city.province.country'])->first();
+        return Subject::where('id', $id)->with(['institution.plan','institution.city.province.country'])->where('institution_id', Auth::user()->institution_id)->first();
     }
 
     public static function createSubject($data)
