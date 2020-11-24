@@ -95,4 +95,10 @@ class CourseService
     {
         return Course::where('id', $id)->delete();
     }
+
+    public static function coursesByClassroom($id) {
+        return Course::where('classroom_id', $id)->with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })->get();
+    }
 }
