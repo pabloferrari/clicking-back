@@ -48,6 +48,9 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['middleware' => 'auth:api'], function () {
 
+    Route::group(['middleware' => 'role:institution,teacher,admin'], function () {
+        Route::get('/testAdmin', [AuthController::class, 'test']);
+    });
 
     Route::get('profile', [UsersController::class, 'getProfile']);
     Route::put('profile', [UsersController::class, 'updateProfile']);
@@ -55,7 +58,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
     Route::group(['middleware' => 'admin'], function () {
-        Route::get('/testAdmin', [AuthController::class, 'test']);
+        // Route::get('/testAdmin', [AuthController::class, 'test']);
         Route::resource('countries', CountryController::class);
         Route::resource('provinces', ProvinceController::class);
         Route::resource('cities', CityController::class);
