@@ -59,6 +59,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::put('profile', [UsersController::class, 'updateProfile']);
     Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
 
+    Route::get('courses/byClassroom/{id}', [CourseController::class, 'coursesByClassroom']);
 
     Route::group(['middleware' => 'admin'], function () {
         // Route::get('/testAdmin', [AuthController::class, 'test']);
@@ -103,7 +104,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('assignment-types', AssignmentTypeController::class);
         Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
-        // Route::resource('courses', CourseController::class);
+        Route::resource('courses', CourseController::class);
+        
         Route::resource('classroom-students', ClassroomStudentController::class);
     });
 

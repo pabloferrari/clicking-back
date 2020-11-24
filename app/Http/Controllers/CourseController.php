@@ -88,4 +88,14 @@ class CourseController extends Controller
             return response()->json(["message" => "Error deleting course"], 400);
         }
     }
+
+    public function coursesByClassroom($id) {
+        try {
+            $courses = CourseService::coursesByClassroom($id);
+            return response()->json(['deleted' => $courses]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "error"], 400);
+        }
+    }
 }
