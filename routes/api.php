@@ -50,6 +50,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::group(['middleware' => 'role:institution,teacher,admin'], function () {
         Route::get('/testAdmin', [AuthController::class, 'test']);
+        Route::resource('classrooms', ClassroomController::class);
+        Route::resource('courses', CourseController::class);
+        Route::resource('classes', CourseClassController::class);
     });
 
     Route::get('profile', [UsersController::class, 'getProfile']);
@@ -70,10 +73,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('shifts', ShiftController::class);
         Route::resource('subjects', SubjectController::class);
         Route::resource('course-types', CourseTypeController::class);
-        Route::resource('classrooms', ClassroomController::class);
-        Route::resource('courses', CourseController::class);
+        // Route::resource('classrooms', ClassroomController::class);
+        // Route::resource('courses', CourseController::class);
         Route::resource('classroom-students', ClassroomStudentController::class);
-        Route::resource('classes', CourseClassController::class);
+        // Route::resource('classes', CourseClassController::class);
         Route::resource('assignment-types', AssignmentTypeController::class);
         Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
@@ -93,20 +96,20 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('students', StudentController::class);
 
         Route::resource('shifts', ShiftController::class);
-        Route::resource('classrooms', ClassroomController::class);
+        // Route::resource('classrooms', ClassroomController::class);
         Route::resource('subjects', SubjectController::class);
         Route::resource('course-types', CourseTypeController::class);
-        Route::resource('classes', CourseClassController::class);
+        // Route::resource('classes', CourseClassController::class);
         Route::resource('assignment-types', AssignmentTypeController::class);
         Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
-        Route::resource('courses', CourseController::class);
+        // Route::resource('courses', CourseController::class);
         Route::resource('classroom-students', ClassroomStudentController::class);
     });
 
 
     Route::group(['middleware' => 'teacher'], function () {
-        Route::resource('courses', CourseController::class);
+        // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
     });
 
