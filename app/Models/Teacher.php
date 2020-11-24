@@ -32,6 +32,7 @@ class Teacher extends Model
 
     public function courses()
     {
-        return $this->belongsToMany(\App\Models\Commission::class, 'courses', 'teacher_id', 'id');
+        // return $this->belongsTo(\App\Models\Course::class, 'teacher_id');
+        return $this->hasMany(\App\Models\Course::class);
     }
 }

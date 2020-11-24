@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Course;
+use App\Models\Assignment;
 use Illuminate\Http\Request;
 
 class CourseService
@@ -36,6 +37,37 @@ class CourseService
         //     return $query->where('id', );
         // })->get();
     }
+
+
+    // public static function getCourseCount($id)
+    // {
+    //     $courses = Course::with('classrooms')->where('classroom_id', $id)->count();
+
+    //     $tasks    = Assignment::with('class.course.classroom')->whereHas('class.course.classroom', function ($query) use ($id) {
+    //         return $query->where('classroom_id', $id);
+    //     })->whereHas('assignmenttype', function ($query) {
+    //         return $query->where('assignment_type_id', 1);
+    //     })->count();
+
+    //     $worksPracticals   = Assignment::with('class.course.classroom')->whereHas('class.course.classroom', function ($query) use ($id) {
+    //         return $query->where('classroom_id', $id);
+    //     })->whereHas('assignmenttype', function ($query) {
+    //         return $query->where('assignment_type_id', 2);
+    //     })->count();
+
+    //     $exams   = Assignment::with('class.course.classroom')->whereHas('class.course.classroom', function ($query) use ($id) {
+    //         return $query->where('classroom_id', $id);
+    //     })->whereHas('assignmenttype', function ($query) {
+    //         return $query->where('assignment_type_id', 3);
+    //     })->count();
+
+    //     return [
+    //         'courses'         => $courses,
+    //         'tasks'           => $tasks,
+    //         'workspracticals' => $worksPracticals,
+    //         'exams'           => $exams
+    //     ];
+    // }
 
     public static function createCourse($data)
     {
