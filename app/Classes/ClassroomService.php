@@ -3,7 +3,9 @@
 namespace App\Classes;
 
 use App\Models\Classroom;
-use App\Classes\CourseService;
+use App\Models\Student;
+use App\Models\Teacher;
+use App\Models\Course;
 use App\Classes\createClassroomStudent;
 use Log;
 use DB;
@@ -28,6 +30,26 @@ class ClassroomService
     {
         return Classroom::with(['shift', 'institution', 'classroomStudents.student.user'])->withCount('courses')->where('institution_id', $id)->get();
     }
+
+    public static function getClassroomCount($id)
+    {
+        $courses = Course::with('classrooms')->where('classroom_id', $id)->count();
+
+        $students = Student::with('classroomStudents.classroom')->whereHas('classroomStudents.classroom', function ($query) use ($id) {
+            return $query->where('classroom_id', $id);
+        })->count();
+
+        $teachers   = Teacher::with('courses.classroom')->whereHas('courses.classroom', function ($query) use ($id) {
+            return $query->where('classroom_id', $id);
+        })->count();
+
+        return [
+            'courses'  => $courses,
+            'students' => $students,
+            'teachers' => $teachers
+        ];
+    }
+
 
     public static function createClassroom($data)
     {
