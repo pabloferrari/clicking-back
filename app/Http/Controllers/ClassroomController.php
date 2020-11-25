@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\ClassroomRequests\{CreateClassroomRequest, UpdateClassroomRequest};
 use App\Classes\ClassroomService;
+use Illuminate\Support\Facades\Auth;
 use Log;
 
 class ClassroomController extends Controller
