@@ -6,6 +6,7 @@ use App\Models\Institution;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Classroom;
+use App\Models\Course;
 
 use App\Classes\Helpers;
 
@@ -14,7 +15,21 @@ class InstitutionService
 
     public static function getInstitutions()
     {
-        return Institution::with(['plan', 'city.province.country', 'users', 'users.teacher', 'users.student'])->get();
+        $institutions = Institution::with(['plan', 'city.province.country'])->get();
+        $institutions->each(function($inst) {
+            $inst->teachers = Teacher::whereHas('user', function ($query) use ($inst) {
+                return $query->where('institution_id', $inst->id);
+            })->count();
+
+            $inst->students = Student::whereHas('user', function ($query) use ($inst) {
+                return $query->where('institution_id', $inst->id);
+            })->count();
+
+            $inst->courses = Course::with(['subject'])->whereHas('subject', function ($query) use ($inst) {
+                return $query->where('institution_id', $inst->id);
+            })->count();
+        });
+        return $institutions;
     }
 
     public static function getInstitution($id)
