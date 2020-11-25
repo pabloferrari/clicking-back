@@ -3,7 +3,7 @@
 namespace App\Classes;
 
 use Illuminate\Support\Facades\Auth;
-use App\Models\Course;
+use App\Models\{Course, CourseType};
 use App\Models\Assignment;
 use Illuminate\Http\Request;
 
@@ -129,5 +129,29 @@ class CourseService
         return Course::where('classroom_id', $id)->with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
             return $query->where('institution_id', Auth::user()->institution_id);
         })->get();
+    }
+
+    public static function getCoursesTeacher() {
+        $courses = Course::where('teacher_id', Auth::user()->teacher->id)->with(['subject', 'courseType','classroom.classroomStudents.student.user', 'classroom.shift'])->get();
+        $coursesByType = [];
+        foreach($courses as $course) { 
+            $coursesByType[$course->courseType->name][] = $course;
+        }
+        return $coursesByType;
+    }
+
+
+    public static function getCoursesStudent() {
+
+        $classroomIds = [];
+        foreach(Auth::user()->student->classroomStudents as $cst) {
+            $classroomIds[] = $cst->classroom_id;
+        }
+        $courses = Course::whereIn('classroom_id', $classroomIds)->with(['subject', 'courseType','classroom', 'classroom.shift'])->get();
+        $coursesByType = [];
+        foreach($courses as $course) { 
+            $coursesByType[$course->courseType->name][] = $course;
+        }
+        return $coursesByType;
     }
 }
