@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests\CourseRequests\{CreateCourseRequest, UpdateCourseRequest};
 use App\Classes\CourseService;
+use Illuminate\Support\Facades\Auth;
+
 use Log;
 
 
@@ -89,12 +91,40 @@ class CourseController extends Controller
         }
     }
 
-    public function coursesByClassroom($id) {
+    public function coursesByClassroom($id)
+    {
         try {
             $courses = CourseService::coursesByClassroom($id);
-            return response()->json(['deleted' => $courses]);
+            return response()->json(['data' => $courses]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "error"], 400);
+        }
+    }
+
+    public function courseClassesCount($id)
+    {
+
+        $courses = CourseService::getCourseClassesCount($id);
+        return response()->json(['data' => $courses]);
+    }
+    public function myCourses(Request $request)
+    {
+
+        $user = Auth::user();
+        try {
+
+            if ($user->hasRole('teacher')) {
+                $courses = CourseService::getCoursesTeacher();
+            } elseif ($user->hasRole('student')) {
+                $courses = CourseService::getCoursesStudent();
+            } else {
+                $courses = [];
+            }
+
+            return response()->json(['data' => $courses]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $user->id);
             return response()->json(["message" => "error"], 400);
         }
     }
