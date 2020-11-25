@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\CourseClass;
+use App\Models\Assignment;
 
 class CourseClassService
 {
@@ -21,15 +22,13 @@ class CourseClassService
 
         $CourseSubjectInstution = function ($query) use ($id) {
             $query->where('institution_id', '=', Auth::user()->institution_id);
-            $query->where('id', '=', $id);
         };
-
-        // $classroom = function ($query) use ($id) {
-        //     $query->where('id', '=', $id);
-        // };
-
-        return CourseClass::with(['course.subject', 'course.teacher', 'course.classroom', 'assignments'])
+        return CourseClass::where('course_id', $id)->with(['course.subject', 'course.teacher', 'course.classroom', 'assignments.assignmenttype'])
             ->whereHas('course.subject', $CourseSubjectInstution)->get();
+    }
+
+    public static function getCourseClassCount($id)
+    {
     }
 
     public static function createCourseClass($data)

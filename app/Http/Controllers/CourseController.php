@@ -89,13 +89,21 @@ class CourseController extends Controller
         }
     }
 
-    public function coursesByClassroom($id) {
+    public function coursesByClassroom($id)
+    {
         try {
             $courses = CourseService::coursesByClassroom($id);
-            return response()->json(['deleted' => $courses]);
+            return response()->json(['data' => $courses]);
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
             return response()->json(["message" => "error"], 400);
         }
+    }
+
+    public function courseClassesCount($id)
+    {
+
+        $courses = CourseService::getCourseClassesCount($id);
+        return response()->json(['data' => $courses]);
     }
 }
