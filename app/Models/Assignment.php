@@ -14,7 +14,8 @@ class Assignment extends Model
         'title',
         'description',
         'class_id',
-        'assignment_type_id'
+        'assignment_type_id',
+        'limit_date'
     ];
 
     protected $hidden = [

@@ -40,6 +40,7 @@ class AssignmentService
             $newAssignment = new Assignment();
             $newAssignment->title              = $data['title'];
             $newAssignment->description        = $data['description'];
+            $newAssignment->limit_date        = $data['limit_date'];
             $newAssignment->class_id           = $data['class_id'];
 
             $newAssignment->assignment_type_id = $data['assignment_type_id'];
@@ -74,6 +75,7 @@ class AssignmentService
             $updateAssignment =  Assignment::find($id);
             $updateAssignment->title              = $data['title'];
             $updateAssignment->description        = $data['description'];
+            $updateAssignment->limit_date        = $data['limit_date'];
             $updateAssignment->class_id           = $data['class_id'];
 
             $updateAssignment->assignment_type_id = $data['assignment_type_id'];
