@@ -20,15 +20,11 @@ class CourseClassService
     public static function getCourseClass($id)
     {
 
-        $CourseSubjectInstution = function ($query) use ($id) {
+        $CourseSubjectInstution = function ($query) {
             $query->where('institution_id', '=', Auth::user()->institution_id);
         };
         return CourseClass::where('course_id', $id)->with(['course.subject', 'course.teacher', 'course.classroom', 'assignments.assignmenttype'])
             ->whereHas('course.subject', $CourseSubjectInstution)->get();
-    }
-
-    public static function getCourseClassCount($id)
-    {
     }
 
     public static function createCourseClass($data)
@@ -50,5 +46,35 @@ class CourseClassService
     public static function deleteCourseClass($id)
     {
         return CourseClass::where('id', $id)->delete();
+    }
+
+    public static function getCourseClassInstitutionCount($id)
+    {
+        $Institution = function ($query) {
+            $query->where('institution_id', '=', Auth::user()->institution_id);
+        };
+
+        $assistance = CourseClass::where('course_id', $id)->with('assignments.studentsassignment.classroomstudents')
+            ->whereHas('course.subject', $Institution)->count();
+
+
+        // assignment type task 1
+        $tasks =  CourseClass::where('course_id', $id)->with('assignments')
+            ->whereHas('course.subject', $Institution)
+            ->withCount(['assignments' => function ($query) {
+                $query->where('assignment_type_id', 1);
+            }])->first()->assignments_count;
+
+        // assignment type evaluations 3 
+        $evaluations = CourseClass::where('course_id', $id)->with('assignments')
+            ->whereHas('course.subject', $Institution)
+            ->withCount(['assignments' => function ($query) {
+                $query->where('assignment_type_id', 3);
+            }])->first()->assignments_count;
+        return [
+            'assistance' => $assistance,
+            'tasks' => $tasks,
+            'evaluations' => $evaluations
+        ];
     }
 }

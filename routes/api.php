@@ -99,6 +99,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::get('classrooms/{id}/dashboard', [ClassroomController::class, 'classroomCount']);
         Route::get('courses/classes/{id}/dashboard', [CourseController::class, 'courseClassesCount']);
+        Route::get('classes/assignments/{id}/dashboard', [CourseClassController::class, 'classAssignmentCount']);
 
 
         // Route::resource('users', UsersController::class);
@@ -122,6 +123,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
     Route::group(['middleware' => 'teacher'], function () {
+
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
     });

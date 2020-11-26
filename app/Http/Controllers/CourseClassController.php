@@ -89,4 +89,10 @@ class CourseClassController extends Controller
             return response()->json(["message" => "Error deleting class"], 400);
         }
     }
+
+    public function classAssignmentCount($id)
+    {
+        $CourseClasses = CourseClassService::getCourseClassInstitutionCount($id);
+        return response()->json(['data' => $CourseClasses]);
+    }
 }
