@@ -87,7 +87,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('classroom-students', ClassroomStudentController::class);
         // Route::resource('classes', CourseClassController::class);
         Route::resource('assignment-types', AssignmentTypeController::class);
-        Route::resource('assignments', AssignmentController::class);
+        // Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
     });
 
@@ -112,7 +112,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('course-types', CourseTypeController::class);
         // Route::resource('classes', CourseClassController::class);
         Route::resource('assignment-types', AssignmentTypeController::class);
-        Route::resource('assignments', AssignmentController::class);
+        // Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
         // Route::resource('courses', CourseController::class);
 
@@ -122,7 +122,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
     Route::group(['middleware' => 'teacher'], function () {
-
+        Route::resource('assignments', AssignmentController::class);
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
     });
