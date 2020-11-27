@@ -63,14 +63,14 @@ class CourseClassService
             ->whereHas('course.subject', $Institution)
             ->withCount(['assignments' => function ($query) {
                 $query->where('assignment_type_id', 1);
-            }])->first()->assignments_count;
+            }])->count();
 
         // assignment type evaluations 3 
         $evaluations = CourseClass::where('course_id', $id)->with('assignments')
             ->whereHas('course.subject', $Institution)
             ->withCount(['assignments' => function ($query) {
                 $query->where('assignment_type_id', 3);
-            }])->first()->assignments_count;
+            }])->count();
         return [
             'assistance' => $assistance,
             'tasks' => $tasks,

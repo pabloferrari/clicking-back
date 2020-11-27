@@ -53,6 +53,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('classrooms', ClassroomController::class);
         Route::resource('courses', CourseController::class);
         Route::resource('classes', CourseClassController::class);
+
+        Route::get('classes/assignments/{id}/dashboard', [CourseClassController::class, 'classAssignmentCount']);
     });
 
 
@@ -99,7 +101,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::get('classrooms/{id}/dashboard', [ClassroomController::class, 'classroomCount']);
         Route::get('courses/classes/{id}/dashboard', [CourseController::class, 'courseClassesCount']);
-        Route::get('classes/assignments/{id}/dashboard', [CourseClassController::class, 'classAssignmentCount']);
+
 
 
         // Route::resource('users', UsersController::class);
