@@ -26,6 +26,8 @@ use App\Http\Controllers\{
     CourseController,
     ClassroomStudentController
 };
+use App\Models\Assignment;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -55,6 +57,9 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('classes', CourseClassController::class);
 
         Route::get('classes/assignments/{id}/dashboard', [CourseClassController::class, 'classAssignmentCount']);
+
+        Route::get('classes/course/{id}/students', [CourseClassController::class, 'courseClassByStudents']);
+        Route::get('assignments/course/{id}', [AssignmentController::class, 'assignmentByCourse']);
     });
 
 

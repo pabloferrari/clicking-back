@@ -48,6 +48,12 @@ class CourseClassService
         return CourseClass::where('id', $id)->delete();
     }
 
+    public static function getCourseClassByStudents($id)
+    {
+        return CourseClass::where('course_id', $id)->with('course.classroom.classroomstudents')->get();
+    }
+
+
     public static function getCourseClassInstitutionCount($id)
     {
         $Institution = function ($query) {

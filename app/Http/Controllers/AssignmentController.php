@@ -89,4 +89,10 @@ class AssignmentController extends Controller
             return response()->json(["message" => "Error deleting Assignment"], 400);
         }
     }
+
+    public function assignmentByCourse($id)
+    {
+        $Assignment = AssignmentService::getAssignmentByCourse($id);
+        return response()->json(['data' => $Assignment]);
+    }
 }

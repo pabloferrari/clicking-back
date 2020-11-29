@@ -20,8 +20,8 @@ class CourseClass extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-        'deleted_at',
-        'course_id'
+        'deleted_at'
+
     ];
 
     public function course()

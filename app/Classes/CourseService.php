@@ -19,24 +19,13 @@ class CourseService
 
     public static function getCourse($id)
     {
-        $subjectInstution = function ($query) {
+        $InstitutionCourse = function ($query) {
             $query->where('institution_id', '=', Auth::user()->institution_id);
         };
 
-        // $classroom = function ($query) use ($id) {
-        //     $query->where('id', '=', $id);
-        // };
-        return Course::where('id', $id)->with('subject', 'teacher', 'coursetype', 'classroom')->first();
-        // return  Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])
-        //     ->whereHas('classroom', $classroom)
-        //     ->whereHas('subject', $subjectInstution)
-        //     ->get();
-
-        // return  Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
-        //     return $query->where('institution_id', Auth::user()->institution_id);
-        // })->whereHas('classroom', function ($query) {
-        //     return $query->where('id', );
-        // })->get();
+        return Course::where('id', $id)->with('subject', 'teacher', 'coursetype', 'classroom.classroomStudents.student.user')
+            ->wherehas('subject', $InstitutionCourse)
+            ->get();
     }
 
     public static function getCourseClassesCount($id)
