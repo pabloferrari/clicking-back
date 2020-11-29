@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\Models\{Assignment, StudentAssignment};
+use App\Models\{Assignment, StudentAssignment, CourseClass};
 use DB;
 use Log;
 use Illuminate\Support\Carbon;
@@ -40,7 +40,7 @@ class AssignmentService
             $newAssignment = new Assignment();
             $newAssignment->title              = $data['title'];
             $newAssignment->description        = $data['description'];
-            $newAssignment->limit_date        = $data['limit_date'];
+            $newAssignment->limit_date        =  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
             $newAssignment->class_id           = $data['class_id'];
 
             $newAssignment->assignment_type_id = $data['assignment_type_id'];
@@ -52,7 +52,7 @@ class AssignmentService
                     $newData = [
                         'classroom_student_id' => $key,
                         'score'                => $data['score'],
-                        'limit_date'           => $data['limit_date'],
+                        'limit_date'           =>  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s'),
                         'assignment_status_id' => $data['assignment_status_id']
                     ];
                     $newAssignment->studentAssignments()->attach($newAssignment->id, $newData);
@@ -60,7 +60,9 @@ class AssignmentService
             }
             Log::debug(__METHOD__ . ' -> NEW ASSIGNMENT ' . json_encode($newAssignment));
             DB::commit();
-            return self::getAssignment($newAssignment->id);
+
+            $course =  CourseClass::where('id', $newAssignment->class_id)->first();
+            return self::getAssignmentByCourse($course->course_id);
         } catch (\Exception $e) {
             DB::rollback();
             Log::error(__METHOD__ . ' - ROLLBACK Assignment -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
@@ -119,5 +121,12 @@ class AssignmentService
             Log::error(__METHOD__ . ' - ROLLBACK Assignment and Students Assignment  -> ' . json_encode($id) . ' exception: ' . $e->getMessage());
             return false;
         }
+    }
+
+    public static function getAssignmentByCourse($id)
+    {
+        return CourseClass::where('course_id', $id)->with([
+            'assignments.assignmenttype',
+        ])->get();
     }
 }

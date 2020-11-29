@@ -48,4 +48,9 @@ class Course extends Model
     {
         return $this->belongsTo(\App\Models\Classroom::class);
     }
+
+    public function classroomStudents()
+    {
+        return $this->belongsTo(\App\Models\ClassroomStudent::class);
+    }
 }

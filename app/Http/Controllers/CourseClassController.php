@@ -95,4 +95,10 @@ class CourseClassController extends Controller
         $CourseClasses = CourseClassService::getCourseClassInstitutionCount($id);
         return response()->json(['data' => $CourseClasses]);
     }
+
+    public function courseClassByStudents($id)
+    {
+        $CourseClasses = CourseClassService::getCourseClassByStudents($id);
+        return response()->json(['data' => $CourseClasses]);
+    }
 }

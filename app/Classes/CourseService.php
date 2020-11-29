@@ -19,23 +19,13 @@ class CourseService
 
     public static function getCourse($id)
     {
-        $subjectInstution = function ($query) {
+        $InstitutionCourse = function ($query) {
             $query->where('institution_id', '=', Auth::user()->institution_id);
         };
 
-        $classroom = function ($query) use ($id) {
-            $query->where('id', '=', $id);
-        };
-        return  Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])
-            ->whereHas('classroom', $classroom)
-            ->whereHas('subject', $subjectInstution)
+        return Course::where('id', $id)->with('subject', 'teacher', 'coursetype', 'classroom.classroomStudents.student.user')
+            ->wherehas('subject', $InstitutionCourse)
             ->get();
-
-        // return  Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
-        //     return $query->where('institution_id', Auth::user()->institution_id);
-        // })->whereHas('classroom', function ($query) {
-        //     return $query->where('id', );
-        // })->get();
     }
 
     public static function getCourseClassesCount($id)
@@ -131,25 +121,27 @@ class CourseService
         })->get();
     }
 
-    public static function getCoursesTeacher() {
-        $courses = Course::where('teacher_id', Auth::user()->teacher->id)->with(['subject', 'courseType','classroom.classroomStudents.student.user', 'classroom.shift'])->get();
+    public static function getCoursesTeacher()
+    {
+        $courses = Course::where('teacher_id', Auth::user()->teacher->id)->with(['subject', 'courseType', 'classroom.classroomStudents.student.user', 'classroom.shift'])->get();
         $coursesByType = [];
-        foreach($courses as $course) { 
+        foreach ($courses as $course) {
             $coursesByType[$course->courseType->name][] = $course;
         }
         return $coursesByType;
     }
 
 
-    public static function getCoursesStudent() {
+    public static function getCoursesStudent()
+    {
 
         $classroomIds = [];
-        foreach(Auth::user()->student->classroomStudents as $cst) {
+        foreach (Auth::user()->student->classroomStudents as $cst) {
             $classroomIds[] = $cst->classroom_id;
         }
-        $courses = Course::whereIn('classroom_id', $classroomIds)->with(['subject', 'courseType','classroom', 'classroom.shift'])->get();
+        $courses = Course::whereIn('classroom_id', $classroomIds)->with(['subject', 'courseType', 'classroom', 'classroom.shift'])->get();
         $coursesByType = [];
-        foreach($courses as $course) { 
+        foreach ($courses as $course) {
             $coursesByType[$course->courseType->name][] = $course;
         }
         return $coursesByType;
