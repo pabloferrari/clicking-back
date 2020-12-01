@@ -34,7 +34,7 @@ class CourseClassService
         $newCourseClass->description = $data['description'];
         $newCourseClass->course_id = $data['course_id'];
         $newCourseClass->save();
-        return self::getCourseClass($newCourseClass->id);
+        return self::getCourseClass($newCourseClass->course_id);
     }
 
     public static function updateCourseClass($id, $data)
