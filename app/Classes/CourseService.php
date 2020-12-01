@@ -12,7 +12,7 @@ class CourseService
 
     public static function getCourses()
     {
-        return Course::with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
+        return Course::with(['subject', 'courseType', 'teacher.user', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
             return $query->where('institution_id', Auth::user()->institution_id);
         })->get();
     }
@@ -23,7 +23,7 @@ class CourseService
             $query->where('institution_id', '=', Auth::user()->institution_id);
         };
 
-        return Course::where('id', $id)->with('subject', 'teacher', 'coursetype', 'classroom.classroomStudents.student.user')
+        return Course::where('id', $id)->with('subject', 'teacher.user', 'coursetype', 'classroom.classroomStudents.student.user')
             ->wherehas('subject', $InstitutionCourse)
             ->get();
     }
@@ -116,7 +116,7 @@ class CourseService
 
     public static function coursesByClassroom($id)
     {
-        return Course::where('classroom_id', $id)->with(['subject', 'courseType', 'teacher', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
+        return Course::where('classroom_id', $id)->with(['subject', 'courseType', 'teacher.user', 'classroom.classroomStudents.student.user', 'classroom.shift'])->whereHas('subject', function ($query) {
             return $query->where('institution_id', Auth::user()->institution_id);
         })->get();
     }
