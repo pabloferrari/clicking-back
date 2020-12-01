@@ -51,7 +51,7 @@ class AssignmentService
                 foreach ($data['student_assignments'] as $key) {
                     $newData = [
                         'classroom_student_id' => $key,
-                        'score'                => $data['score'],
+                        'score'                =>  $data['score'] ?? 0,
                         'limit_date'           =>  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s'),
                         'assignment_status_id' => $data['assignment_status_id']
                     ];
@@ -79,6 +79,7 @@ class AssignmentService
             $updateAssignment->description        = $data['description'];
             $updateAssignment->limit_date        = $data['limit_date'];
             $updateAssignment->class_id           = $data['class_id'];
+            // $updateAssignment->groupqty           = $data['groupqty'] ?? 0;
 
             $updateAssignment->assignment_type_id = $data['assignment_type_id'];
 
@@ -89,7 +90,7 @@ class AssignmentService
                     $update[$key] = [
                         'assignment_id'        => $id,
                         'classroom_student_id' => $key,
-                        'score'                => $data['score'],
+                        'score'                => $data['score'] ?? 0,
                         'limit_date'           => $data['limit_date'],
                         'assignment_status_id' => $data['assignment_status_id']
                     ];

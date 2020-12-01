@@ -63,6 +63,8 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\Student');
     }
 
-
-
+    public function socialnetworks()
+    {
+        return $this->hasMany(\App\Models\SocialNetworks::class);
+    }
 }
