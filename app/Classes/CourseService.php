@@ -23,7 +23,7 @@ class CourseService
             $query->where('institution_id', '=', Auth::user()->institution_id);
         };
 
-        return Course::where('id', $id)->with('socialnetwork', 'subject', 'teacher.user.', 'coursetype', 'classroom.classroomStudents.student.user')
+        return Course::where('id', $id)->with('subject', 'teacher.user.socialnetworks', 'coursetype', 'classroom.classroomStudents.student.user.socialnetworks')
             ->wherehas('subject', $InstitutionCourse)
             ->get();
     }
