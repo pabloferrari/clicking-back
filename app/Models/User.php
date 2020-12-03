@@ -65,6 +65,6 @@ class User extends Authenticatable
 
     public function socialnetworks()
     {
-        return $this->hasMany(\App\Models\SocialNetworks::class);
+        return $this->hasMany(\App\Models\SocialNetwork::class);
     }
 }
