@@ -61,8 +61,8 @@ class AssignmentService
             Log::debug(__METHOD__ . ' -> NEW ASSIGNMENT ' . json_encode($newAssignment));
             DB::commit();
 
-            $course =  CourseClass::where('id', $newAssignment->class_id)->first();
-            return self::getAssignmentByCourse($course->course_id);
+            // $course =  CourseClass::where('id', $newAssignment->class_id)->first();
+            return self::getAssignment($newAssignment->id);
         } catch (\Exception $e) {
             DB::rollback();
             Log::error(__METHOD__ . ' - ROLLBACK Assignment -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
