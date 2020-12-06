@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use DB;
 
 class AssignmentTypeSeeder extends Seeder
 {
