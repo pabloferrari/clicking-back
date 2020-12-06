@@ -42,6 +42,7 @@ class AssignmentService
             $newAssignment->description        = $data['description'];
             $newAssignment->limit_date        =  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
             $newAssignment->class_id           = $data['class_id'];
+            $newAssignment->groupqty           = $data['groupqty'] ?? 0;
 
             $newAssignment->assignment_type_id = $data['assignment_type_id'];
 
@@ -60,8 +61,6 @@ class AssignmentService
             }
             Log::debug(__METHOD__ . ' -> NEW ASSIGNMENT ' . json_encode($newAssignment));
             DB::commit();
-
-            // $course =  CourseClass::where('id', $newAssignment->class_id)->first();
             return self::getAssignment($newAssignment->id);
         } catch (\Exception $e) {
             DB::rollback();
@@ -77,9 +76,9 @@ class AssignmentService
             $updateAssignment =  Assignment::find($id);
             $updateAssignment->title              = $data['title'];
             $updateAssignment->description        = $data['description'];
-            $updateAssignment->limit_date        = $data['limit_date'];
+            $updateAssignment->limit_date         = Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
             $updateAssignment->class_id           = $data['class_id'];
-            // $updateAssignment->groupqty           = $data['groupqty'] ?? 0;
+            $updateAssignment->groupqty           = $data['groupqty'] ?? 0;
 
             $updateAssignment->assignment_type_id = $data['assignment_type_id'];
 

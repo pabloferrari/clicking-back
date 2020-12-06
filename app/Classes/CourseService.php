@@ -70,13 +70,13 @@ class CourseService
         $worksPracticals   = Assignment::with('class.course.classroom')->whereHas('class.course.classroom', function ($query) use ($id) {
             return $query->where('classroom_id', $id);
         })->whereHas('assignmenttype', function ($query) {
-            return $query->where('assignment_type_id', 2);
+            return $query->where('assignment_type_id', 3);
         })->count();
 
         $exams   = Assignment::with('class.course.classroom')->whereHas('class.course.classroom', function ($query) use ($id) {
             return $query->where('classroom_id', $id);
         })->whereHas('assignmenttype', function ($query) {
-            return $query->where('assignment_type_id', 3);
+            return $query->where('assignment_type_id', 2);
         })->count();
 
         return [
