@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AssignmentType;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -25,7 +26,8 @@ class DatabaseSeeder extends Seeder
             RoleUserSeeder::class,
             CountrySeeder::class,
             ProvinceSeeder::class,
-            CitySeeder::class
+            CitySeeder::class,
+            AssignmentTypeSeeder::class
         ]);
     }
 }

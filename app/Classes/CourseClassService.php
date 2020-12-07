@@ -5,6 +5,8 @@ namespace App\Classes;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CourseClass;
 use App\Models\Assignment;
+use App\Models\Course;
+use DB;
 
 class CourseClassService
 {
@@ -57,28 +59,43 @@ class CourseClassService
     public static function getCourseClassInstitutionCount($id)
     {
         $Institution = function ($query) {
-            $query->where('institution_id', '=', Auth::user()->institution_id);
+            return $query->where('institution_id', '=', Auth::user()->institution_id);
         };
 
-        $assistance = CourseClass::where('course_id', $id)->with('assignments.studentsassignment.classroomstudents')
-            ->whereHas('course.subject', $Institution)->count();
+        $courseStudentTotal = Course::where('id', $id)->with('classroom.classroomstudents')->get();
+        $countStudent = 0;
+        foreach ($courseStudentTotal as $key => $value) {
+            $countStudent = count($value->classroom->classroomstudents);
+        }
 
+        $assistance = DB::table('student_assignments')
+            ->select(DB::raw('count(*) as count_students'))
+            ->leftJoin('assignments', 'assignments.id', '=', 'student_assignments.assignment_id')
+            ->leftJoin('classes', 'classes.id', '=', 'assignments.class_id')
+            ->where('classes.course_id', $id)
+            ->get();
+
+
+        $totalAssitance = ($assistance[0]->count_students / $countStudent) * 100;
 
         // assignment type task 1
         $tasks =  CourseClass::where('course_id', $id)->with('assignments')
             ->whereHas('course.subject', $Institution)
-            ->withCount(['assignments' => function ($query) {
-                $query->where('assignment_type_id', 1);
-            }])->count();
+            ->whereHas('assignments', function ($query) {
+                return $query->where('assignment_type_id', '=', 1);
+            })
+            ->count();
 
-        // assignment type evaluations 3 
+        // assignment type evaluations 2
         $evaluations = CourseClass::where('course_id', $id)->with('assignments')
             ->whereHas('course.subject', $Institution)
-            ->withCount(['assignments' => function ($query) {
-                $query->where('assignment_type_id', 3);
-            }])->count();
+            ->whereHas('assignments', function ($query) {
+                return $query->where('assignment_type_id', '=', 2);
+            })
+            ->count();
+
         return [
-            'assistance' => $assistance,
+            'assistance' => $totalAssitance,
             'tasks' => $tasks,
             'evaluations' => $evaluations
         ];
