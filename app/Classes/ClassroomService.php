@@ -81,7 +81,7 @@ class ClassroomService
             if (isset($data['student_id'])) {
                 foreach ($data['student_id'] as $key => $value) {
                     $classroomStudentService = new ClassroomStudentService();
-                    $ArrayStudents['student_id']   = $value;
+                    $ArrayStudents['student_id']   = $value['id'];
                     $ArrayStudents['classroom_id'] = $new->id;
                     $classroomStudentService->createClassroomStudent($ArrayStudents);
                     Log::debug(__METHOD__ . ' -> NEW CLASSROOM STUDENT ' . json_encode($key));

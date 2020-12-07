@@ -4,6 +4,8 @@ namespace App\Http\Requests\CourseClassRequests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Traits\FormValidatorTrait;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CreateCourseClassRequest extends FormRequest
 {
@@ -22,10 +24,21 @@ class CreateCourseClassRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
         return [
-            'title' => 'required|unique:classes|string',
+            #'title' => 'required|unique:classes|string',
+            'title' =>  [
+                'required',
+                'string',
+                Rule::unique('classes')->where(function ($query) use ($request) {
+                    return $query
+                        ->where([
+                            ['title', '=', $request->title],
+                            ['course_id', '=', $request->course_id]
+                        ]);
+                }),
+            ],
             'description' => 'required|string',
             'course_id' => 'required|exists:courses,id',
 
