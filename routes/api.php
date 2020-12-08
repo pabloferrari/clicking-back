@@ -66,6 +66,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['middleware' => 'role:teacher,student'], function () {
 
         Route::get('my-courses', [CourseController::class, 'myCourses']);
+        Route::get('my-assignments/{id}', [AssignmentController::class, 'myAssignments']);
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
     });

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Classes\AssignmentService;
 use App\Http\Requests\AssignmentRequests\{CreateAssignmentRequest, UpdateAssignmentRequest};
 use Log;
-
+use Illuminate\Support\Facades\Auth;
 class AssignmentController extends Controller
 {
     /**
@@ -93,6 +93,18 @@ class AssignmentController extends Controller
     public function assignmentByCourse($id)
     {
         $Assignment = AssignmentService::getAssignmentByCourse($id);
+        return response()->json(['data' => $Assignment]);
+    }
+    public function myAssignments($id)
+    {
+        $user = Auth::user();
+        if($user->hasRole('teacher')){
+            $Assignment = AssignmentService::getAssignmentByTeacher($id);
+        }else if($user->hasRole('student')) {
+            $Assignment = AssignmentService::getAssignmentByStudent($id);
+        }else{
+            $Assignment = [];
+        }
         return response()->json(['data' => $Assignment]);
     }
 }

@@ -6,7 +6,7 @@ use App\Models\{Assignment, StudentAssignment, CourseClass};
 use DB;
 use Log;
 use Illuminate\Support\Carbon;
-
+use Illuminate\Support\Facades\Auth;
 class AssignmentService
 {
 
@@ -128,5 +128,34 @@ class AssignmentService
         return CourseClass::where('course_id', $id)->with([
             'assignments.assignmenttype',
         ])->get();
+    }
+
+    public static function getAssignmentByTeacher($id) {
+        return Assignment::where('assignment_type_id',$id)->with([
+            'class.course.classroom'
+            ,'studentsassignment.classroomstudents.student.user'
+            ,'studentsassignment.assignmentstatus'
+        ])
+        ->whereHas('class.course.classroom',function($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })
+        ->whereHas('class.course', function ($query)  {
+            return $query->where('teacher_id', Auth::user()->teacher->id);
+        })->get();
+    }
+    public static function getAssignmentByStudent($id) {
+        // echo Auth::user()->student;
+        return Assignment::where('assignment_type_id',$id)->with([
+            'assignmenttype'
+            ,'class'
+           // ,'studentsassignment.classroomstudents.student'
+            ,'studentsassignment.assignmentstatus'
+        ])
+        ->whereHas('class.course.classroom',function($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })
+        ->whereHas('class.course.classroom.classroomStudents', function ($query)  {
+            return $query->where('student_id', Auth::user()->student->id);
+        })->get();
     }
 }

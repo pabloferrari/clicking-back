@@ -20,4 +20,10 @@ class AssignmentStatus extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    // public function studentAssignments()
+    // {
+    //     return $this->belongsTo(\App\Models\StudentAssignment::class, 'assignment_status_id');
+    // }
+
 }
