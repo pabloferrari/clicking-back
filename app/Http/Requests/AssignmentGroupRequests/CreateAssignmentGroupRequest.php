@@ -27,29 +27,29 @@ class CreateAssignmentGroupRequest extends FormRequest
     {
 
         return [
-            'classroom_student_id' =>  [
-                'required',
-                'exists:classroom_students,id',
-                Rule::unique('assignment_groups')->where(function ($query) use ($request) {
-                    return $query
-                        ->where([
-                            ['classroom_student_id', '=', $request->classroom_student_id],
-                            ['assignment_id', '=', $request->assignment_id]
-                        ]);
-                }),
-            ],
+            // 'classroom_student_id' =>  [
+            //     'required',
+            //     'exists:classroom_students,id',
+            //     Rule::unique('assignment_groups')->where(function ($query) use ($request) {
+            //         return $query
+            //             ->where([
+            //                 ['classroom_student_id', '=', $request->classroom_student_id],
+            //                 ['assignment_id', '=', $request->assignment_id]
+            //             ]);
+            //     }),
+            // ],
 
-            'assignment_id' => [
-                'required',
-                'exists:assignments,id',
-                Rule::unique('assignment_groups')->where(function ($query) use ($request) {
-                    return $query
-                        ->where([
-                            ['classroom_student_id', '=', $request->classroom_student_id],
-                            ['assignment_id', '=', $request->assignment_id]
-                        ]);
-                }),
-            ],
+            // 'assignment_id' => [
+            //     'required',
+            //     'exists:assignments,id',
+            //     Rule::unique('assignment_groups')->where(function ($query) use ($request) {
+            //         return $query
+            //             ->where([
+            //                 ['classroom_student_id', '=', $request->classroom_student_id],
+            //                 ['assignment_id', '=', $request->assignment_id]
+            //             ]);
+            //     }),
+            // ],
 
         ];
     }

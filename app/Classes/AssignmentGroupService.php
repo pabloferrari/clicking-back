@@ -3,6 +3,7 @@
 namespace App\Classes;
 
 use App\Models\AssignmentGroup;
+use Log;
 
 class AssignmentGroupService
 {
@@ -19,12 +20,24 @@ class AssignmentGroupService
 
     public static function createAssignmentGroup($data)
     {
-        $newAssignmentGroup = new AssignmentGroup();
-        $newAssignmentGroup->assignment_id   = $data['assignment_id'];
-        $newAssignmentGroup->classroom_student_id = $data['classroom_student_id'];
-        $newAssignmentGroup->num             = $data['num'];
+        if (isset($data['student_id'])) {
+            $i = 1;
+            foreach ($data['student_id'] as $key) {
+                if ($key) {
+                    foreach ($key as $value) {
+                        $newAssignmentGroup = new AssignmentGroup();
+                        $newAssignmentGroup->assignment_id   = $data['assignmentId'];
+                        $newAssignmentGroup->classroom_student_id = $value['id'];
+                        $newAssignmentGroup->num                  = $i;
+                        $newAssignmentGroup->save();
+                        Log::debug(__METHOD__ . ' -> NEW ASSIGNMENTGROUP ' . json_encode($newAssignmentGroup));
+                    }
+                    $i++;
+                }
+            }
+        }
 
-        $newAssignmentGroup->save();
+        //$newAssignmentGroup->save();
         return self::getAssignmentGroup($newAssignmentGroup->id);
     }
 
