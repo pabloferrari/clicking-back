@@ -128,4 +128,24 @@ class CourseController extends Controller
             return response()->json(["message" => "error"], 400);
         }
     }
+
+    public function myCoursesAssignmentsCount()
+    {
+        $user = Auth::user();
+        try {
+
+            if ($user->hasRole('teacher')) {
+                $courses = CourseService::getMyCoursesAssignmentsCountTeacher();
+            } elseif ($user->hasRole('student')) {
+                $courses = CourseService::getMyCoursesAssignmentsCountStudent();
+            } else {
+                $courses = [];
+            }
+
+            return response()->json(['data' => $courses]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $user->id);
+            return response()->json(["message" => "error"], 400);
+        }
+    }
 }

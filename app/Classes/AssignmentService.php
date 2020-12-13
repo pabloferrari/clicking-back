@@ -131,11 +131,14 @@ class AssignmentService
         ])->get();
     }
 
-    public static function getAssignmentByTeacher($id)
+    public static function getAssignmentByTeacher($id, $status)
     {
         return Assignment::where('assignment_type_id', $id)->with([
             'assignmenttype', 'class.course.classroom.shift', 'studentsassignment.classroomstudents.student.user', 'studentsassignment.assignmentstatus'
         ])
+            ->whereHas('studentsassignment', function ($query) use ($status) {
+                return $query->where('assignment_status_id', $status);
+            })
             ->whereHas('class.course.classroom', function ($query) {
                 return $query->where('institution_id', Auth::user()->institution_id);
             })
@@ -143,14 +146,17 @@ class AssignmentService
                 return $query->where('teacher_id', Auth::user()->teacher->id);
             })->get();
     }
-    public static function getAssignmentByStudent($id)
+    public static function getAssignmentByStudent($id, $status)
     {
-        // echo Auth::user()->student;
+
         return Assignment::where('assignment_type_id', $id)->with([
-            'assignmenttype', 'class'
+            'assignmenttype', 'class.course.subject'
             // ,'studentsassignment.classroomstudents.student'
             , 'studentsassignment.assignmentstatus'
         ])
+            ->whereHas('studentsassignment', function ($query) use ($status) {
+                return $query->where('assignment_status_id', $status);
+            })
             ->whereHas('class.course.classroom', function ($query) {
                 return $query->where('institution_id', Auth::user()->institution_id);
             })

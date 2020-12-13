@@ -66,8 +66,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['middleware' => 'role:teacher,student'], function () {
 
         Route::get('my-courses', [CourseController::class, 'myCourses']);
-        Route::get('my-assignments/{id}', [AssignmentController::class, 'myAssignments']);
-        // Route::resource('courses', CourseController::class);
+        Route::get('my-assignments/{id}/{status}', [AssignmentController::class, 'myAssignments']);
+        Route::get('my-courses-assignments-count', [CourseController::class, 'myCoursesAssignmentsCount']);
         // Route::resource('classes', CourseClassController::class);
     });
 
