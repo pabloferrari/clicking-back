@@ -133,6 +133,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['middleware' => 'teacher'], function () {
         Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
+        Route::get('assignment-groups/byAssignment/{id}', [AssignmentGroupController::class, 'assignmentGroupByAssignment']);
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
     });

@@ -51,6 +51,17 @@ class AssignmentGroupController extends Controller
         return response()->json(['data' => $AssignmentGroup]);
     }
 
+    public function assignmentGroupByAssignment($id)
+    {
+        try {
+            $AssignmentGroup = AssignmentGroupService::getAssignmentGroupByAssignment($id);
+            return response()->json(['data' => $AssignmentGroup]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "error"], 400);
+        }
+    }
+
 
     /**
      * Update the specified resource in storage.

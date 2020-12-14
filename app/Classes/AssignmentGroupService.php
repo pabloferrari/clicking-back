@@ -18,6 +18,20 @@ class AssignmentGroupService
         return AssignmentGroup::where('id', $id)->with(['assignment.class', 'assignment.assignmenttype', 'classroomstudents.classroom', 'classroomstudents.student'])->first();
     }
 
+    public static function getAssignmentGroupByAssignment($id)
+    {
+        $AssignmentGroup = AssignmentGroup::where('assignment_id', $id)->with(['assignment.class', 'assignment.assignmenttype', 'classroomstudents.student'])->get();
+
+        $AssignmentGroupCustom  = [];
+        foreach ($AssignmentGroup as $key) {
+            $AssignmentGroupCustom[$key->num][] = [
+                "id" => $key->classroomstudents->id,
+                "name" => $key->classroomstudents->student->name
+            ];
+        }
+        return $AssignmentGroupCustom;
+    }
+
     public static function createAssignmentGroup($data)
     {
         if (isset($data['student_id'])) {
