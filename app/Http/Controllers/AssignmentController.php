@@ -96,6 +96,7 @@ class AssignmentController extends Controller
         $Assignment = AssignmentService::getAssignmentByCourse($id);
         return response()->json(['data' => $Assignment]);
     }
+
     public function myAssignments($id, $status)
     {
         $user = Auth::user();
@@ -106,6 +107,12 @@ class AssignmentController extends Controller
         } else {
             $Assignment = [];
         }
+        return response()->json(['data' => $Assignment]);
+    }
+
+    public function assignmentDetail($id)
+    {
+        $Assignment = AssignmentService::getAssignmentDetailById($id);
         return response()->json(['data' => $Assignment]);
     }
 }

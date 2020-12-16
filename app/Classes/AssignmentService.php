@@ -146,6 +146,7 @@ class AssignmentService
                 return $query->where('teacher_id', Auth::user()->teacher->id);
             })->get();
     }
+
     public static function getAssignmentByStudent($id, $status)
     {
 
@@ -163,5 +164,11 @@ class AssignmentService
             ->whereHas('class.course.classroom.classroomStudents', function ($query) {
                 return $query->where('student_id', Auth::user()->student->id);
             })->get();
+    }
+
+    public static function getAssignmentDetailById($id)
+    {
+        return Assignment::where('id',$id)->with(['class.course.teacher.user','studentsassignment.assignmentstatus','studentsassignment.classroomstudents.student'])->get();
+
     }
 }
