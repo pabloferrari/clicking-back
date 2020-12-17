@@ -168,7 +168,7 @@ class AssignmentService
 
     public static function getAssignmentDetailById($id)
     {
-        return Assignment::where('id',$id)->with(['class.course.teacher.user','studentsassignment.assignmentstatus','studentsassignment.classroomstudents.student'])->get();
+        return Assignment::where('id',$id)->with(['class.course.teacher.user','assignmenttype','studentsassignment.assignmentstatus','studentsassignment.classroomstudents.student.user'])->first();
 
     }
 }
