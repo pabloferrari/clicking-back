@@ -37,8 +37,12 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
-        }
+            "Database\\Seeders\\": "database/seeders/",
+            "BigBlueButton\\": "./app/Libraries/BigBlueButton/src"
+        },
+        "classmap": [
+            "app/Libraries"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

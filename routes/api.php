@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\{
     AuthController,
+    BigBlueButtonController,
     CityController,
     ProvinceController,
     CountryController,
@@ -148,6 +149,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 // Route::get('*', function () {
 // 	return response()->json(['name' => "Clicking Api", 'version' => 0.1]);
 // });
+
+Route::get('bbb', [BigBlueButtonController::class, 'index']);
 
 Route::get('/{any}', function ($any) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any"]);
