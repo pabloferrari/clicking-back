@@ -25,10 +25,10 @@ class BigBlueButtonController extends Controller
 
         $res = $this->bbb->createMeeting($meetingParams);
 
-        $data = $this->bbb->getMeetingInfoUrl($meetingParams);
+        // $data = $this->bbb->getMeetingInfoUrl($meetingParams);
         dd([
             'res' => $res,
-            'data' => $data
+            // 'data' => $data
 
         ]);
 
