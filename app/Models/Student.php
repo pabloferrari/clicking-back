@@ -19,7 +19,6 @@ class Student extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'email',
         'user_id'
     ];
 

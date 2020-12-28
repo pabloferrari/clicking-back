@@ -17,6 +17,12 @@ class TeacherService
             return $query->where('institution_id', Auth::user()->institution_id);
         })->get();
     }
+    public static function getTeachersByInstitution($id)
+    {
+        return Teacher::whereHas('user', function ($query) use ($id) {
+            return $query->where('institution_id', $id);
+        })->get();
+    }
 
     public static function getTeacher($id)
     {

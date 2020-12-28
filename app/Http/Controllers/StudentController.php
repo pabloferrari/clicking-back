@@ -87,4 +87,16 @@ class StudentController extends Controller
             return response()->json(["message" => "Error deleting student"], 400);
         }
     }
+
+    /**
+     * Display Listing Students By Institution ID
+     * @param int $id
+     * @return \Iluminate\Http\Response
+     */
+
+    public function studentsByInstitution($id)
+    {
+        $students = StudentService::getStudentsByInstitution($id);
+        return response()->json(['data' => $students]);
+    }
 }

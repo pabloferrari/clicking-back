@@ -90,4 +90,15 @@ class TeacherController extends Controller
             return response()->json(["message" => "Error deleting teacher"], 400);
         }
     }
+
+    /**
+     * Display a listing of the teacher by Institution ID.
+     * @param  number  $Id
+     * @return \Illuminate\Http\Response
+     */
+    public function teacherByInstitution($id)
+    {
+        $teachers = TeacherService::getTeachersByInstitution($id);
+        return response()->json(['data' => $teachers]);
+    }
 }
