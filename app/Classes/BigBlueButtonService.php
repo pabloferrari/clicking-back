@@ -252,7 +252,7 @@ class BigBlueButtonService
      */
     public function endMeeting($meetingId) {
         
-        $meeting = Meeting::where('meetingId', $meetingId)->where()->first();
+        $meeting = Meeting::where('meetingId', $meetingId)->first();
         $endParams = new EndMeetingParameters($meetingId, $meeting->moderatorPW);
         $ress = $this->bbb->endMeeting($endParams);
         if($ress->getReturnCode() == 'SUCCESS') {
