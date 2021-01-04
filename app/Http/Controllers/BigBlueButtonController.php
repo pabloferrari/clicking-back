@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\{MeetingType,Classroom,IntitutionClass,Teacher,Student,User};
-use App\Http\Requests\BigBlueButtonRequests\CreateMeetingRequest;
+use App\Http\Requests\BigBlueButtonRequests\{
+    CreateMeetingRequest,
+    EndMeetingRequest
+};
 use App\Classes\BigBlueButtonService;
 use Log;
+use Redirect;
 
 class BigBlueButtonController extends Controller
 {
@@ -76,6 +80,14 @@ class BigBlueButtonController extends Controller
         return response()->json($res);
     }
 
+    public function endMeeting(EndMeetingRequest $request) {
+
+        $data = $request->all();
+        $res = $this->bbbService->endMeeting($data['meetingId']);
+        return response()->json($res);
+
+    }
+
     public function testCreateMeetingUsers($id){
         $ress = $this->bbbService->testCreateMeetingUsers($id);
         return response()->json($ress);
@@ -83,7 +95,8 @@ class BigBlueButtonController extends Controller
 
     public function joinToMeeting(Request $request) {
         $data = $request->query();
-        $res = $this->bbbService->joinToMeeting($data);
-        return response()->json($res);
+        $url = $this->bbbService->joinToMeeting($data);
+        // return response()->json($res);
+        return Redirect::to($url);
     }   
 }

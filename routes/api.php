@@ -67,6 +67,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::prefix('bigbluebutton')->group(function () {
 
             Route::post('create-meeting', [BigBlueButtonController::class, 'createMeeting']);
+            Route::post('end-meeting', [BigBlueButtonController::class, 'endMeeting']);
             Route::post('join-as-moderator', [BigBlueButtonController::class, 'joinAsModerator']);
 
         });

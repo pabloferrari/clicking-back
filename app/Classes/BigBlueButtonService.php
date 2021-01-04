@@ -7,7 +7,12 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 use BigBlueButton;
-use BigBlueButton\Parameters\{CreateMeetingParameters,JoinMeetingParameters,HooksCreateParameters};
+use BigBlueButton\Parameters\{
+    CreateMeetingParameters,
+    EndMeetingParameters,
+    JoinMeetingParameters,
+    HooksCreateParameters
+};
 use BigBlueButton\Responses\GetMeetingInfoResponse;
 
 
@@ -200,6 +205,8 @@ class BigBlueButtonService
         return $users;
     }
 
+
+
     /**
      * CONECTAR CON BBB PARA ARMAR LA MEETING
      *
@@ -212,13 +219,12 @@ class BigBlueButtonService
         $meetingParams->setRecord($newMeeting['record']);
         $meetingParams->welcome = $newMeeting['welcome'];
         
-        
-
         $hook = new HooksCreateParameters('https://clicking.app/api/bigbluebutton/callback/'.$newMeeting['hash']);
         $hook->setMeetingId($newMeeting['meetingId']);
         $resposeBigBlueButton = $this->bbb->createMeeting($meetingParams);
         $hh = $this->bbb->hooksCreate($hook);
-        dd($hh);
+        
+        Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' hook -> ' . $hh->getHookId() . ' ' . $hh->getMessage());
         
         $newMeeting['internalMeetingId'] = $resposeBigBlueButton->getInternalMeetingId();
         $newMeeting['parentMeetingId'] = $resposeBigBlueButton->getParentMeetingId();
@@ -229,17 +235,39 @@ class BigBlueButtonService
         $newMeeting['dialNumber'] = $resposeBigBlueButton->getDialNumber();
         $newMeeting['createDate'] = $resposeBigBlueButton->getCreationDate();
         $newMeeting['duration'] = $resposeBigBlueButton->getDuration();
+        $newMeeting['returncode'] = $resposeBigBlueButton->getReturnCode();
 
-        
         $meetings = $this->bbb->getMeetings();
         Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' $meetings -> ' . gettype($meetings) . ' ' . json_encode($meetings));
-        
         $newMeeting->save();
-        
         $users = $this->createMeetingUsers($newMeeting);
         
         return ['meeting_url' => $this->bbb->getMeetingsUrl(),'meeting' => $newMeeting, 'users' => $users];
 
+    }
+
+    /**
+     * CONECTAR CON BBB PARA FINALIZAR MEETING
+     *
+     */
+    public function endMeeting($meetingId) {
+        
+        $meeting = Meeting::where('meetingId', $meetingId)->where()->first();
+        $endParams = new EndMeetingParameters($meetingId, $meeting->moderatorPW);
+        $ress = $this->bbb->endMeeting($endParams);
+        if($ress->getReturnCode() == 'SUCCESS') {
+            Log::channel('bbb')->info(__METHOD__ . ' ' . Helpers::lsi() . ' MeetingId ' . $meetingId . ' Ended: ' . $ress->getReturnCode() . ' ' . $ress->getMessage());
+            $meeting->returncode = 'ENDED';
+        } else {
+            $meeting->returncode = 'Error -> ' . $ress->getMessage();
+            Log::channel('bbb')->error(__METHOD__ . ' ' . Helpers::lsi() . ' MeetingId ' . $meetingId . ' Ended: ' . $ress->getReturnCode() . ' ' . $ress->getMessage());
+        }
+        $meeting->save();
+        return [
+            'returnCode' => $ress->getReturnCode(),
+            'messageKey' => $ress->getMessageKey(),
+            'message' => $ress->getMessage()
+        ];
     }
 
     /**
@@ -251,16 +279,12 @@ class BigBlueButtonService
         $meetingUser = MeetingUser::where('clicking_token', $dataUser['clicking_token'])->first();
         $user = $this->userService->getUser($meetingUser->user_id);
         $newUser = new JoinMeetingParameters($meetingUser->internalMeetingID, $user->name, $meetingUser->password);
-        // $newUser->setJoinViaHtml5(true);
-        // $newUser->setRedirect(true);
-        // $newUser->
-        // $meetingId, $username, $password
+        // JoinMeetingParameters: $meetingId, $username, $password
+        $newUser->setRedirect(true);
+        
         Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' NU -> ' . json_encode($newUser));
-        $res = $this->bbb->getJoinMeetingURL($newUser);
-        // dd($newUser, $res1);
-        // Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' $res1 -> ' . print_r($res1));
-        // $res = $this->bbb->joinMeeting($newUser);
-        dd($newUser, $res);
+        return $this->bbb->getJoinMeetingURL($newUser);
+        
     }
 
 
