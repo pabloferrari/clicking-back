@@ -11,6 +11,7 @@ use BigBlueButton\Parameters\{
     CreateMeetingParameters,
     EndMeetingParameters,
     JoinMeetingParameters,
+    GetMeetingInfoParameters,
     HooksCreateParameters
 };
 use BigBlueButton\Responses\GetMeetingInfoResponse;
@@ -77,10 +78,10 @@ class BigBlueButtonService
             $params['allowStartStopRecording'] = false;
             $params['attendeePW'] = Str::random(12);
             $params['autoStartRecording'] = false;
-            $params['welcome'] = 'Bienvenido a Clase 1';
+            $params['welcome'] = 'Bienvenido ' . $meetingRequest->title;
             $params['moderatorPW'] = Str::random(24);
             $params['name'] = $meetingRequest->title;
-            $params['record'] = false;
+            $params['record'] = true;
             $params['hash'] = Str::random(36);
 
             $newMeeting = Meeting::create($params);
@@ -241,8 +242,11 @@ class BigBlueButtonService
         Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' $meetings -> ' . gettype($meetings) . ' ' . json_encode($meetings));
         $newMeeting->save();
         $users = $this->createMeetingUsers($newMeeting);
+
+        $meetingInfoRequest = new GetMeetingInfoParameters($newMeeting['meetingId'], $newMeeting['moderatorPW']);
+        $meetingInfo = $this->bbb->getMeetingInfoUrl($meetingInfoRequest);
         
-        return ['meeting_url' => $this->bbb->getMeetingsUrl(),'meeting' => $newMeeting, 'users' => $users];
+        return ['meetingUrl' => $this->bbb->getMeetingsUrl(), 'meetingInfo' => $meetingInfo, 'meeting' => $newMeeting, 'users' => $users];
 
     }
 
