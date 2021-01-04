@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\CourseClass;
 use App\Models\Assignment;
 use App\Models\Course;
+use App\Models\IntitutionClass;
+use App\Models\Classroom;
 use DB;
 
 class CourseClassService
@@ -99,5 +101,15 @@ class CourseClassService
             'tasks' => $tasks,
             'evaluations' => $evaluations
         ];
+    }
+
+    public function getUsersByClass($classId) {
+        $users = [];
+        $couseClass = IntitutionClass::where('id', $classId)->first();
+        $classroom = Classroom::where('id', $couseClass->course->classroom_id)->first();
+        foreach($classroom->classroomStudents as $st){
+            $users[] = $st->student->user_id;
+        }
+        return $users;
     }
 }

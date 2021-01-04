@@ -19,7 +19,7 @@ use BigBlueButton\Responses\GetMeetingInfoResponse;
 
 
 use App\Models\{MeetingType,MeetingRequest,Meeting,MeetingUser,Classroom,IntitutionClass,Teacher,Student,User};
-use App\Classes\{Helpers,UserService,TeacherService,StudentService,ClassroomService};
+use App\Classes\{Helpers,UserService,TeacherService,StudentService,ClassroomService,CourseClassService};
 use DB;
 use Log;
 
@@ -38,6 +38,7 @@ class BigBlueButtonService
         $this->teacherService = new TeacherService();
         $this->studentService = new StudentService();
         $this->classroomService = new ClassroomService();
+        $this->courseClassService = new CourseClassService();
 
     }
 
@@ -171,7 +172,6 @@ class BigBlueButtonService
      *
      */
     public function getUsersByMeetingType($meeting) {
-
         $users = [];
         try {
             $meetingType = MeetingType::where('id', $meeting->meetingRequest->meeting_type)->first();
@@ -182,7 +182,7 @@ class BigBlueButtonService
                     break;
                 case 'class':
                     // FIND MODEL ID
-                    $users = $this->classService->getUsersByClass($meeting->meetingRequest->model_id);
+                    $users = $this->courseClassService->getUsersByClass($meeting->meetingRequest->model_id);
                     break;    
                 case 'user':
                     // FIND BY ids
@@ -237,7 +237,8 @@ class BigBlueButtonService
         $newMeeting['createDate'] = $resposeBigBlueButton->getCreationDate();
         $newMeeting['duration'] = $resposeBigBlueButton->getDuration();
         $newMeeting['returncode'] = $resposeBigBlueButton->getReturnCode();
-
+        $newMeeting['download_url'] = "https://bigbluebutton.clicking.app/download/presentation/" . $resposeBigBlueButton->getInternalMeetingId() . "/" . $resposeBigBlueButton->getInternalMeetingId() . ".mp4";
+        
         $meetings = $this->bbb->getMeetings();
         Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' $meetings -> ' . gettype($meetings) . ' ' . json_encode($meetings));
         $newMeeting->save();
