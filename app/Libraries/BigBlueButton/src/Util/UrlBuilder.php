@@ -56,6 +56,7 @@ class UrlBuilder
      */
     public function buildUrl($method = '', $params = '', $append = true)
     {
+        // echo "\n********** URL= " . $this->bbbServerBaseUrl . 'api/' . $method . ($append ? '?' . $this->buildQs($method, $params) : '') . " **********\n";
         return $this->bbbServerBaseUrl . 'api/' . $method . ($append ? '?' . $this->buildQs($method, $params) : '');
     }
 

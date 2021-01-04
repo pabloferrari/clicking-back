@@ -93,7 +93,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('courses/byClassroom/{id}', [CourseController::class, 'coursesByClassroom']);
     Route::get('bigbluebutton/get-meeting-types', [BigBlueButtonController::class, 'getMeetingTypes']);
-    Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'joinToMeeting']);
+    
 
     Route::group(['middleware' => 'admin'], function () {
         // Route::get('/testAdmin', [AuthController::class, 'test']);
@@ -191,7 +191,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 // });
 
 Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCreateMeetingUsers']);
+Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'joinToMeeting']);
+Route::any('bigbluebutton/callback/{hash}', [BigBlueButtonController::class, 'callback']);
 
 Route::get('/{any}', function ($any) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any"]);
 })->where('any', '.*');
+

@@ -7,10 +7,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 use BigBlueButton;
-use BigBlueButton\Parameters\{CreateMeetingParameters,JoinMeetingParameters};
-
-
+use BigBlueButton\Parameters\{CreateMeetingParameters,JoinMeetingParameters,HooksCreateParameters};
 use BigBlueButton\Responses\GetMeetingInfoResponse;
+
+
 
 use App\Models\{MeetingType,MeetingRequest,Meeting,MeetingUser,Classroom,IntitutionClass,Teacher,Student,User};
 use App\Classes\{Helpers,UserService,TeacherService,StudentService,ClassroomService};
@@ -35,7 +35,10 @@ class BigBlueButtonService
 
     }
 
-
+    /**
+     * CREAR REGISTRO EN TABLA bbb_meeting_requests
+     *
+     */
     public function createMeetingRequest($meetingRequestData) {
 
         try {
@@ -54,6 +57,10 @@ class BigBlueButtonService
 
     }
 
+    /**
+     * CREAR REGISTRO EN TABLA bbb_meetings
+     *
+     */
     public function createMeeting($meetingRequestData) {
         
         DB::beginTransaction();
@@ -63,15 +70,14 @@ class BigBlueButtonService
             $params['meeting_request_id'] = $meetingRequest->id;
             $params['meetingId'] = "clicking-{$meetingRequest->model}-{$meetingRequest->model_id}-" . Str::random(16);
             $params['allowStartStopRecording'] = false;
-            $params['attendeePW'] = Str::random(12);;
+            $params['attendeePW'] = Str::random(12);
             $params['autoStartRecording'] = false;
             $params['welcome'] = 'Bienvenido a Clase 1';
-            $params['moderatorPW'] = Str::random(24);;
+            $params['moderatorPW'] = Str::random(24);
             $params['name'] = $meetingRequest->title;
             $params['record'] = false;
+            $params['hash'] = Str::random(36);
 
-            Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' New Meeting Data -> ' . json_encode($params));
-            
             $newMeeting = Meeting::create($params);
 
             $meetingRequest->created = 1;
@@ -91,13 +97,18 @@ class BigBlueButtonService
 
     }
 
+    /**
+     * CREAR REGISTRO EN TABLA bbb_meeting_users COMO PARTICIPANTE
+     *
+     */
     public function createMeetingUsers($meeting) {
         
         $users = $this->getUsersByMeetingType($meeting);
-        
+        $response = [];
         DB::beginTransaction();
         try {
 
+            $response[] = $this->createModeratorMeeting($meeting);
             foreach ($users as $user) {
 
                 $newMeetingUserData = [
@@ -112,19 +123,47 @@ class BigBlueButtonService
                 ];
 
                 $newMeetingUser = MeetingUser::create($newMeetingUserData);
+                $newMeetingUser['public_url'] = env('APP_URL').'/api/bigbluebutton/join-to-meeting?clicking_token=' . $newMeetingUserData['clicking_token'];
+                $response[] = $newMeetingUser;
                 Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' New Meeting User -> ' . json_encode($newMeetingUser));
             }
             DB::commit();
-            return $users;
-
+            
         } catch (\Exception $th) {
             DB::rollback();
             Log::channel('bbb')->error(__METHOD__ . ' ' . Helpers::lsi() . ' Error Meeting User -> ' . json_encode($users) . ' -> ' . $th->getMessage());
-            return false;
         }
-
+        return $response;
+        
     }
 
+    /**
+     * CREAR REGISTRO EN TABLA bbb_meeting_users COMO MODERADOR
+     *
+     */
+    public function createModeratorMeeting($meeting) {
+
+        $newMeetingModeratorData = [
+            'user_id' => $meeting->meetingRequest->user_id,
+            'meeting_id' => $meeting->id,
+            'clicking_token' => Str::random(64),
+            'meetingId' => $meeting->meetingId,
+            'password' => $meeting->moderatorPW,
+            'type' => 'moderator',
+            'status' => 0,
+            'internalMeetingID' => $meeting->meetingId
+        ];
+
+        $newMeetingModerator = MeetingUser::create($newMeetingModeratorData);
+        Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' New Meeting Moderator -> ' . json_encode($newMeetingModerator));
+        $newMeetingModerator['public_url'] = env('APP_URL').'/api/bigbluebutton/join-to-meeting?clicking_token=' . $newMeetingModeratorData['clicking_token'];
+        return $newMeetingModerator;
+    }
+
+    /**
+     * OBTENER LOS USUARIOS SEGUN TIPO DE MEETING
+     *
+     */
     public function getUsersByMeetingType($meeting) {
 
         $users = [];
@@ -161,20 +200,25 @@ class BigBlueButtonService
         return $users;
     }
 
+    /**
+     * CONECTAR CON BBB PARA ARMAR LA MEETING
+     *
+     */
     public function buildMeeting($newMeeting) {
 
-        Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' -> ' . json_encode($newMeeting));
         $meetingParams = new CreateMeetingParameters($newMeeting['meetingId'], $newMeeting['name']);
-        
         $meetingParams->setAllowStartStopRecording($newMeeting['allowStartStopRecording']);
         $meetingParams->setAutoStartRecording($newMeeting['autoStartRecording']);
         $meetingParams->setRecord($newMeeting['record']);
         $meetingParams->welcome = $newMeeting['welcome'];
-        Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' -> ' . json_encode($meetingParams));
-        $resposeBigBlueButton = $this->bbb->createMeeting($meetingParams);
         
-        // $meetingParams->attendeePW = $newMeeting['attendeePW'];
-        // $meetingParams->moderatorPW = $newMeeting['moderatorPW'];
+        
+
+        $hook = new HooksCreateParameters('https://clicking.app/api/bigbluebutton/callback/'.$newMeeting['hash']);
+        $hook->setMeetingId($newMeeting['meetingId']);
+        $resposeBigBlueButton = $this->bbb->createMeeting($meetingParams);
+        $hh = $this->bbb->hooksCreate($hook);
+        dd($hh);
         
         $newMeeting['internalMeetingId'] = $resposeBigBlueButton->getInternalMeetingId();
         $newMeeting['parentMeetingId'] = $resposeBigBlueButton->getParentMeetingId();
@@ -186,23 +230,43 @@ class BigBlueButtonService
         $newMeeting['createDate'] = $resposeBigBlueButton->getCreationDate();
         $newMeeting['duration'] = $resposeBigBlueButton->getDuration();
 
+        
+        $meetings = $this->bbb->getMeetings();
+        Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' $meetings -> ' . gettype($meetings) . ' ' . json_encode($meetings));
+        
         $newMeeting->save();
         
-        $this->createMeetingUsers($newMeeting);
+        $users = $this->createMeetingUsers($newMeeting);
         
+        return ['meeting_url' => $this->bbb->getMeetingsUrl(),'meeting' => $newMeeting, 'users' => $users];
+
     }
+
+    /**
+     * CONECTAR CON BBB PARA UNIRSE A UNA MEETING
+     *
+     */
+    public function joinToMeeting($dataUser) {
+        
+        $meetingUser = MeetingUser::where('clicking_token', $dataUser['clicking_token'])->first();
+        $user = $this->userService->getUser($meetingUser->user_id);
+        $newUser = new JoinMeetingParameters($meetingUser->internalMeetingID, $user->name, $meetingUser->password);
+        // $newUser->setJoinViaHtml5(true);
+        // $newUser->setRedirect(true);
+        // $newUser->
+        // $meetingId, $username, $password
+        Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' NU -> ' . json_encode($newUser));
+        $res = $this->bbb->getJoinMeetingURL($newUser);
+        // dd($newUser, $res1);
+        // Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' $res1 -> ' . print_r($res1));
+        // $res = $this->bbb->joinMeeting($newUser);
+        dd($newUser, $res);
+    }
+
 
     public function testCreateMeetingUsers($id){
         $meetingUser = Meeting::where('id', $id)->first();
         return $this->createMeetingUsers($meetingUser);
-    }
-
-    public function joinToMeeting($dataUser) {
-
-        $meetingUser = MeetingUser::where('clicking_token', $dataUser['clicking_token'])->first();
-        $newUser = new JoinMeetingParameters($meetingUser['meetingId'], $meetingUser['username'], $meetingUser['password']);
-        // $meetingId, $username, $password
-
     }
 
 }

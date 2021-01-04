@@ -15,7 +15,7 @@ class Meeting extends Model
      *
      * @var array
      */
-    protected $fillable = ['meeting_request_id','meetingId','internalMeetingID','parentMeetingID','name','attendeePW','moderatorPW','createTime','voiceBridge','dialNumber','createDate','record_id','welcome','returncode','record','autoStartRecording','allowStartStopRecording','webcamsOnlyForModerator','muteOnStart','allowModsToUnmuteUsers','lockSettingsDisableCam','lockSettingsDisableMic','lockSettingsDisablePrivateChat','lockSettingsDisablePublicChat','lockSettingsDisableNote','lockSettingsLockedLayout','lockSettingsLockOnJoin','lockSettingsLockOnJoinConfigurable','logo','bannerText','bannerColor','webVoice','logoutUrl','maxParticipants','duration','meta','webVoiceConf','publish','redirect','clientUrl','configToken','avatarUrl','checksum'];
+    protected $fillable = ['meeting_request_id','meetingId','internalMeetingID','parentMeetingID','name','hash','attendeePW','moderatorPW','createTime','voiceBridge','dialNumber','createDate','record_id','welcome','returncode','record','autoStartRecording','allowStartStopRecording','webcamsOnlyForModerator','muteOnStart','allowModsToUnmuteUsers','lockSettingsDisableCam','lockSettingsDisableMic','lockSettingsDisablePrivateChat','lockSettingsDisablePublicChat','lockSettingsDisableNote','lockSettingsLockedLayout','lockSettingsLockOnJoin','lockSettingsLockOnJoinConfigurable','logo','bannerText','bannerColor','webVoice','logoutUrl','maxParticipants','duration','meta','webVoiceConf','publish','redirect','clientUrl','configToken','avatarUrl','checksum'];
 
     /**
      * The attributes that should be hidden for arrays.

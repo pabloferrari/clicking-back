@@ -34,6 +34,12 @@ class BigBlueButtonController extends Controller
 
     }
 
+    public function callback(Request $request, $hash) {
+        Log::channel('bbb')->info(__METHOD__ . ' ' . $hash . ' ' . json_encode($request->all()));
+        return true;
+    }
+
+
     public function getMeetingTypes() {
         try {
             $roles = Auth::user()->roles;
@@ -77,8 +83,7 @@ class BigBlueButtonController extends Controller
 
     public function joinToMeeting(Request $request) {
         $data = $request->query();
-
-        // $data['meetingId']
-        // dd($all);
+        $res = $this->bbbService->joinToMeeting($data);
+        return response()->json($res);
     }   
 }

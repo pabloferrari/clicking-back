@@ -340,7 +340,7 @@ class JoinMeetingParameters extends UserDataParameters
             'configToken'  => $this->configToken,
             'avatarURL'    => $this->avatarURL,
             'redirect'     => $this->redirect ? 'true' : 'false',
-            'joinViaHtml5' => $this->joinViaHtml5 ? 'true' : 'false',
+            // 'joinViaHtml5' => $this->joinViaHtml5 ? 'true' : 'false',
             'clientURL'    => $this->clientURL
         ];
 
