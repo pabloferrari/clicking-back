@@ -77,7 +77,7 @@ class BigBlueButtonService
             $params['meetingId'] = "clicking-{$meetingRequest->model}-{$meetingRequest->model_id}-" . Str::random(16);
             $params['allowStartStopRecording'] = false;
             $params['attendeePW'] = Str::random(12);
-            $params['autoStartRecording'] = false;
+            $params['autoStartRecording'] = true;
             $params['welcome'] = 'Bienvenido ' . $meetingRequest->title;
             $params['moderatorPW'] = Str::random(24);
             $params['name'] = $meetingRequest->title;
