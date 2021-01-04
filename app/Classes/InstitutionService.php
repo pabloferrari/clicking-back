@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Classroom;
 use App\Models\Course;
+use App\Models\User;
 
 use App\Classes\Helpers;
 
@@ -72,5 +73,10 @@ class InstitutionService
     public static function deleteInstitution($id)
     {
         return Institution::where('id', $id)->delete();
+    }
+
+    public static function getAdminsByInstitution($id)
+    {
+        return User::where('institution_id', $id)->doesntHave('teacher')->doesntHave('student')->get();
     }
 }

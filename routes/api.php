@@ -109,7 +109,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::resource('students', StudentController::class);
         Route::get('students/byInstitution/{id}', [StudentController::class, 'studentsByInstitution']);
-
+        
+        Route::get('admins/byInstitution/{id}', [InstitutionController::class, 'adminsByInstitution']);
+        
         Route::resource('shifts', ShiftController::class);
         Route::resource('subjects', SubjectController::class);
         Route::resource('course-types', CourseTypeController::class);
