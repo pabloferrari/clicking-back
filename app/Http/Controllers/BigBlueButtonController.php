@@ -3,36 +3,48 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use BigBlueButton;
-use BigBlueButton\Parameters\CreateMeetingParameters;
-use BigBlueButton\Responses\GetMeetingInfoResponse;
 
+use Illuminate\Support\Facades\Auth;
+use App\Models\{MeetingType,Classroom,IntitutionClass,Teacher,Student,User};
+use App\Http\Requests\BigBlueButtonRequests\CreateMeetingRequest;
+use App\Classes\BigBlueButtonService;
+use Log;
 
 class BigBlueButtonController extends Controller
 {
 
     private $bbb;
+    public $bbbService;
     public $params;
 
-    public function __construct() {
+    public function __construct(BigBlueButtonService $bigBlueButtonService) {
 
-        $this->bbb = new BigBlueButton();
-        $meetingParams = new CreateMeetingParameters('clicking-1234', 'Test Meeting');
-        // dd($meetingParams);
-        // $meetingParams = new CreateMeetingParameters($meetingID, $meetingName);
-        $meetingParams->setModeratorPassword('moderatorPassword');
-        $meetingParams->setAttendeePassword('attendeePassword');
+        $this->bbbService = $bigBlueButtonService;
+        // $meetingParams = new CreateMeetingParameters('clicking-1234', 'Test Meeting');
+        
 
-        $res = $this->bbb->createMeeting($meetingParams);
+        // $res = $this->bbb->createMeeting($meetingParams);
 
-        // $data = $this->bbb->getMeetingInfoUrl($meetingParams);
-        dd([
-            'res' => $res,
-            // 'data' => $data
+        // // $data = $this->bbb->getMeetingInfoUrl($meetingParams);
+        // dd([
+        //     'res' => $res,
+        //     // 'data' => $data
 
-        ]);
+        // ]);
 
     }
+
+    public function getMeetingTypes() {
+        try {
+            $roles = Auth::user()->roles;
+            $meetingTypes = MeetingType::where('role', $roles[0]->slug)->get();
+            Log::channel('bbb')->debug(__METHOD__ . ' ' . $this->lsi() . ' ' . $roles[0]->slug . ' -> ' . json_encode($meetingTypes));
+        } catch (\Throwable $th) {
+            Log::channel('bbb')->error(__METHOD__ . ' ' . $this->lsi() . ' ' . $th->getMessage());
+            $meetingTypes = [];
+        }
+        return response()->json($meetingTypes);
+    } 
 
     public function index() {
 
@@ -44,18 +56,29 @@ class BigBlueButtonController extends Controller
 
     }
 
-    public function createMeeting(){
+    public function createMeeting(CreateMeetingRequest $request){
 
-        $params = [];
-        $params['allowStartStopRecording'] = false;
-        $params['attendeePW'] = 'password';
-        $params['autoStartRecording'] = false;
-        $params['meetingID'] = 'clicking1234';
-        $params['moderatorPW'] = 'moderatorPW';
-        $params['name'] = 'clicking1234';
-        $params['record'] = false;
+        $data = $request->all();
+        
+        $newMeetingRequest = $this->bbbService->createMeetingRequest($data);
+        
+        if(!$newMeetingRequest)
+        return response()->json(['status' => 'error'], 500);
 
-        dd($this->params);
-        $res = $this->bbb->createMeeting($params);
+        $res = $this->bbbService->createMeeting($newMeetingRequest);
+        
+        return response()->json($res);
     }
+
+    public function testCreateMeetingUsers($id){
+        $ress = $this->bbbService->testCreateMeetingUsers($id);
+        return response()->json($ress);
+    }
+
+    public function joinToMeeting(Request $request) {
+        $data = $request->query();
+
+        // $data['meetingId']
+        // dd($all);
+    }   
 }

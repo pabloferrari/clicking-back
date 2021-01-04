@@ -51,7 +51,8 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['middleware' => 'auth:api'], function () {
 
-    Route::group(['middleware' => 'role:institution,teacher,admin'], function () {
+
+    Route::group(['middleware' => 'role:institution,teacher,admin,root'], function () {
         Route::get('/testAdmin', [AuthController::class, 'test']);
         Route::resource('classrooms', ClassroomController::class);
         Route::resource('courses', CourseController::class);
@@ -61,6 +62,16 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::get('classes/course/{id}/students', [CourseClassController::class, 'courseClassByStudents']);
         Route::get('assignments/course/{id}', [AssignmentController::class, 'assignmentByCourse']);
+
+        // ------------ BigBlueButton Routes ------------ //
+        Route::prefix('bigbluebutton')->group(function () {
+
+            Route::post('create-meeting', [BigBlueButtonController::class, 'createMeeting']);
+            Route::post('join-as-moderator', [BigBlueButtonController::class, 'joinAsModerator']);
+
+        });
+
+
     });
 
 
@@ -71,6 +82,9 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('my-courses-assignments-count', [CourseController::class, 'myCoursesAssignmentsCount']);
         Route::get('assignments/detail/{id}', [AssignmentController::class, 'assignmentDetail']);
         // Route::resource('classes', CourseClassController::class);
+
+        
+
     });
 
     Route::get('profile', [UsersController::class, 'getProfile']);
@@ -78,6 +92,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
 
     Route::get('courses/byClassroom/{id}', [CourseController::class, 'coursesByClassroom']);
+    Route::get('bigbluebutton/get-meeting-types', [BigBlueButtonController::class, 'getMeetingTypes']);
+    Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'joinToMeeting']);
 
     Route::group(['middleware' => 'admin'], function () {
         // Route::get('/testAdmin', [AuthController::class, 'test']);
@@ -142,9 +158,29 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('assignment-groups/byAssignment/{id}', [AssignmentGroupController::class, 'assignmentGroupByAssignment']);
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
+
+
+        // ------------ BigBlueButton Routes ------------ //
+        // Route::prefix('bigbluebutton')->group(function () {
+
+        //     // Route::post('create-meeting', [BigBlueButtonController::class, 'createMeeting']);
+        //     Route::post('join-as-moderator', [BigBlueButtonController::class, 'joinAsModerator']);
+        //     Route::post('join-as-attendee', [BigBlueButtonController::class, 'joinAsAttendee']);
+
+        // });
+
+
     });
 
     Route::group(['middleware' => 'student'], function () {
+
+
+        Route::prefix('bigbluebutton')->group(function () {
+
+            Route::post('join-as-attendee', [BigBlueButtonController::class, 'joinAsAttendee']);
+            
+        });
+
     });
 });
 
@@ -154,7 +190,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 // 	return response()->json(['name' => "Clicking Api", 'version' => 0.1]);
 // });
 
-Route::get('bbb', [BigBlueButtonController::class, 'index']);
+Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCreateMeetingUsers']);
 
 Route::get('/{any}', function ($any) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any"]);

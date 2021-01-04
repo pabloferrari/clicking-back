@@ -122,4 +122,13 @@ class ClassroomService
     {
         return Classroom::where('id', $id)->delete();
     }
+
+    public function getUsersByClassroom($id) {
+        $users = [];
+        $ss = Classroom::where('id', $id)->first();
+        foreach($ss->classroomStudents as $st){
+            $users[] = $st->student->user_id;
+        }
+        return $users;
+    }
 }
