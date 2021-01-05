@@ -66,4 +66,8 @@ class Institution extends Model
     {
         return $this->hasMany(\App\Models\User::class);
     }
+    public function news()
+    {
+        return $this->hasMany(\App\Models\News::class);
+    }
 }

@@ -25,7 +25,8 @@ use App\Http\Controllers\{
     AssignmentController,
     AssignmentGroupController,
     CourseController,
-    ClassroomStudentController
+    ClassroomStudentController,
+    NewsController
 };
 use App\Models\Assignment;
 
@@ -61,6 +62,10 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::get('classes/course/{id}/students', [CourseClassController::class, 'courseClassByStudents']);
         Route::get('assignments/course/{id}', [AssignmentController::class, 'assignmentByCourse']);
+
+        Route::resource('news', NewsController::class);
+        Route::resource('teachers', TeacherController::class);
+        Route::resource('students', StudentController::class);
     });
 
 
@@ -87,10 +92,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('institutions', InstitutionController::class);
         Route::resource('plans', PlansController::class);
         Route::resource('users', UsersController::class);
-        Route::resource('teachers', TeacherController::class);
+        // Route::resource('teachers', TeacherController::class);
         Route::get('teachers/byInstitution/{id}', [TeacherController::class, 'teacherByInstitution']);
 
-        Route::resource('students', StudentController::class);
+        // Route::resource('students', StudentController::class);
         Route::get('students/byInstitution/{id}', [StudentController::class, 'studentsByInstitution']);
 
         Route::resource('shifts', ShiftController::class);
@@ -114,13 +119,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('classrooms/{id}/dashboard', [ClassroomController::class, 'classroomCount']);
         Route::get('courses/classes/{id}/dashboard', [CourseController::class, 'courseClassesCount']);
 
-
-
         // Route::resource('users', UsersController::class);
-
-        Route::resource('teachers', TeacherController::class);
-        Route::resource('students', StudentController::class);
-
         Route::resource('shifts', ShiftController::class);
         // Route::resource('classrooms', ClassroomController::class);
         Route::resource('subjects', SubjectController::class);
