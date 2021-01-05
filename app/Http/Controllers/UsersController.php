@@ -45,9 +45,28 @@ class UsersController extends Controller
         }
     }
 
-    public function getProfile()
+    public function destroy($id)
     {
+        try {
+            Log::debug(__METHOD__ . ' - DELETE USER ' . $id);
+            return response()->json($this->userService->deleteUser($id));
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - DESTROY USER' . $th->getMessage() . ' - id: ' . $id);
+            return response()->json(["message" => "Error deleting user"], 400);
+        }
+    }
 
+    public function update($id, Request $request)
+    {
+        try {
+            $data = $request->all();
+            $params = Helpers::paramBuilder('User', $data);
+            $response = $this->userService->updateUser($id, $params);
+            return response()->json($response);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - UPDATE USER' . $th->getMessage() . ' - id: ' . $id);
+            return response()->json(["message" => "Error updating user"], 400);
+        }
     }
 
     public function updateProfile(UpdateProfileRequest $request)

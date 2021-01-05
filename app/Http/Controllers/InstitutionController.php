@@ -91,4 +91,9 @@ class InstitutionController extends Controller
             return response()->json(["message" => "Error deleting institution"], 400);
         }
     }
+
+    public function adminsByInstitution($id) {
+        $admins = InstitutionService::getAdminsByInstitution($id);
+        return response()->json(['data' => $admins]);
+    }
 }

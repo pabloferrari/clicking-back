@@ -158,6 +158,7 @@ class BigBlueButton
      */
     public function getJoinMeetingURL($joinMeetingParams)
     {
+        // print_r($joinMeetingParams->getHTTPQuery());
         return $this->urlBuilder->buildUrl(ApiMethod::JOIN, $joinMeetingParams->getHTTPQuery());
     }
 
@@ -456,7 +457,8 @@ class BigBlueButton
             // Needed to store the JSESSIONID
             $cookiefile     = tmpfile();
             $cookiefilepath = stream_get_meta_data($cookiefile)['uri'];
-
+            // echo "\nURL:$url\n\n";
+            // echo "\nPAYLOAD:$payload\n\n";
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
             curl_setopt($ch, CURLOPT_ENCODING, 'UTF-8');
             curl_setopt($ch, CURLOPT_URL, $url);
@@ -486,7 +488,7 @@ class BigBlueButton
                 preg_match('/(?:JSESSIONID\s*)(?<JSESSIONID>.*)/', $cookies, $output_array);
                 $this->setJSessionId($output_array['JSESSIONID']);
             }
-
+            // print_r($data);
             return new SimpleXMLElement($data);
         } else {
             throw new \RuntimeException('Post XML data set but curl PHP module is not installed or not enabled.');
