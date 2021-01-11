@@ -12,13 +12,13 @@ class NewsService
 
     public static function getNewsAll()
     {
-        return News::where('institution_id', Auth::user()->institution_id)->with(['institution'])->get();
+        return News::where('institution_id', Auth::user()->institution_id)->with(['institution', 'user'])->get();
     }
 
     public static function getNews($id)
     {
 
-        return News::where('id', $id)->with('institution')->first();
+        return News::where('id', $id)->with('institution', 'user')->first();
     }
 
     public static function createNews($data)
@@ -28,6 +28,7 @@ class NewsService
         $newNews->description    = $data['description'];
         $newNews->date           = Carbon::parse($data['date'])->format('Y-m-d H:i:s');
         $newNews->institution_id = Auth::user()->institution_id;
+        $newNews->user_id = Auth::user()->id;
         $newNews->public         = $data['public'];
         $newNews->save();
         return self::getNews($newNews->id);

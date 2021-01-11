@@ -6,30 +6,35 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\SoftDeletes;
 
-class News extends Model
+class Comment extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'title',
-        'description',
-        'public',
-        'date',
-        'user_id'
+        'id',
+        'user_id',
+        'comment',
+        'model_id',
+        'model_name'
     ];
 
     protected $hidden = [
         'created_at',
         'updated_at',
-        'deleted_at',
-        'institution_id'
+        'deleted_at'
     ];
 
-    public function institution()
-    {
-        return $this->belongsTo(\App\Models\Institution::class, 'institution_id');
-    }
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(\App\Models\Course::class, 'model_id');
+    }
+
+    public function assignment()
+    {
+        return $this->belongsTo(\App\Models\Assignment::class, 'model_id');
     }
 }

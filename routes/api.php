@@ -26,7 +26,8 @@ use App\Http\Controllers\{
     AssignmentGroupController,
     CourseController,
     ClassroomStudentController,
-    NewsController
+    NewsController,
+    CommentController
 };
 use App\Models\Assignment;
 
@@ -65,6 +66,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('assignments/course/{id}', [AssignmentController::class, 'assignmentByCourse']);
 
         Route::resource('news', NewsController::class);
+        Route::resource('comments', CommentController::class);
         Route::resource('teachers', TeacherController::class);
         Route::resource('students', StudentController::class);
         // ------------ BigBlueButton Routes ------------ //
