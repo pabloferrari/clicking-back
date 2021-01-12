@@ -10,7 +10,9 @@ class CommentService
 
     public static function getComments()
     {
-        return Comment::with(['user', 'course.subject', 'assignment.assignmenttype'])->get();
+        return Comment::with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild'])
+            ->whereNull('children_id')
+            ->get();
     }
 
     public static function getComment($id)

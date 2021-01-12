@@ -20,8 +20,19 @@ class Comment extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
+        'children_id'
     ];
+
+    public function comment()
+    {
+        return $this->belongsTo(\App\Models\Comment::class,  'id');
+    }
+
+    public function commentChild()
+    {
+        return $this->hasMany(\App\Models\Comment::class, 'children_id', 'id');
+    }
 
     public function user()
     {
