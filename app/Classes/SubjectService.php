@@ -22,7 +22,7 @@ class SubjectService
     {
         $new = new Subject();
         $new->name = $data['name'];
-        $new->institution_id = $data['institution_id'];
+        $new->institution_id = isset($data['institution_id']) ? $data['institution_id'] : Auth::user()->institution_id;
         $new->save();
         return self::getSubject($new->id);
     }
@@ -31,7 +31,7 @@ class SubjectService
     {
         $Subject = Subject::find($id);
         $Subject->name           = $data['name'];
-        $Subject->institution_id = $data['institution_id'];
+        $Subject->institution_id = isset($data['institution_id']) ? $data['institution_id'] : Auth::user()->institution_id;
         $Subject->save();
         return self::getSubject($Subject->id);
     }

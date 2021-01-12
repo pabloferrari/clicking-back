@@ -39,7 +39,7 @@ class CreateSubjectRequest extends FormRequest
                 }),
             ],
 
-            'institution_id' => 'required|exists:institutions,id'
+            'institution_id' => 'nullable|exists:institutions,id'
         ];
     }
 
@@ -53,7 +53,7 @@ class CreateSubjectRequest extends FormRequest
         return [
             'name.required'       => 'Name is required!',
             'name.unique'         => 'Name will be unique',
-            'institution_id.required' => 'institution id is required!',
+            // 'institution_id.required' => 'institution id is required!',
             'institution_id.exists'   => 'institution id must exist in institutions',
         ];
     }
@@ -68,7 +68,9 @@ class CreateSubjectRequest extends FormRequest
     public function after($validator)
     {
         if(count($validator->errors()) === 0){
-            if(Auth::user()->institution_id != $this->input('institution_id')){
+            if(!$this->input('institution_id') && Auth::user()->institution_id == null) {
+                $validator->errors()->add('institution_id', 'institution_id is invalid! (' . Auth::user()->institution_id . ')');
+            } else if($this->input('institution_id') && Auth::user()->institution_id != $this->input('institution_id')){
                 $validator->errors()->add('institution_id', 'institution_id is invalid! (' . Auth::user()->institution_id . ')');
             }
         }

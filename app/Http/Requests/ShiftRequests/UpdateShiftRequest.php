@@ -35,12 +35,13 @@ class UpdateShiftRequest extends FormRequest
                     return $query
                         ->where([
                             ['name', '=', $request->name],
-                            ['institution_id', '=', $request->institution_id],
-                            ['id', '<>', $request->get('id')]
+                            ['institution_id', '=', Auth::user()->institution_id],
+                            ['id', '<>', $request->get('id')],
+                            ['deleted_at', 'is not null']
                         ]);
                 }),
             ],
-            'institution_id' => 'required|exists:institutions,id',
+            'institution_id' => 'nullable|exists:institutions,id',
         ];
     }
 

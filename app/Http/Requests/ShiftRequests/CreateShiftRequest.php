@@ -40,7 +40,7 @@ class CreateShiftRequest extends FormRequest
             ],
 
 
-            'institution_id' => 'required|exists:institutions,id',
+            'institution_id' => 'nullable|exists:institutions,id',
 
         ];
     }
@@ -71,9 +71,12 @@ class CreateShiftRequest extends FormRequest
     public function after($validator)
     {
         if(count($validator->errors()) === 0){
-            if(Auth::user()->institution_id != $this->input('institution_id')){
+            if(!$this->input('institution_id') && Auth::user()->institution_id == null) {
+                $validator->errors()->add('institution_id', 'institution_id is invalid! (' . Auth::user()->institution_id . ')');
+            } else if($this->input('institution_id') && Auth::user()->institution_id != $this->input('institution_id')){
                 $validator->errors()->add('institution_id', 'institution_id is invalid! (' . Auth::user()->institution_id . ')');
             }
         }
+
     }
 }

@@ -22,13 +22,15 @@ class ShiftService
     {
         $newShift = new Shift();
         $newShift->name = $data['name'];
-        $newShift->institution_id = $data['institution_id'];
+        $newShift->institution_id = isset($data['institution_id']) ? $data['institution_id'] : Auth::user()->institution_id;
         $newShift->save();
         return self::getShift($newShift->id);
     }
 
     public static function updateShift($id, $data)
     {
+        unset($data['institution']);
+        $data['institution_id'] = isset($data['institution_id']) ? $data['institution_id'] : Auth::user()->institution_id;
         Shift::where('id', $id)->update($data);
         return self::getShift($id);
     }
