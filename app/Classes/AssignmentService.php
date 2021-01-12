@@ -37,6 +37,7 @@ class AssignmentService
     {
 
         DB::beginTransaction();
+
         try {
             $newAssignment = new Assignment();
             $newAssignment->title              = $data['title'];
@@ -168,7 +169,6 @@ class AssignmentService
 
     public static function getAssignmentDetailById($id)
     {
-        return Assignment::where('id',$id)->with(['class.course.teacher.user','assignmenttype','studentsassignment.assignmentstatus','studentsassignment.classroomstudents.student.user'])->first();
-
+        return Assignment::where('id', $id)->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
     }
 }

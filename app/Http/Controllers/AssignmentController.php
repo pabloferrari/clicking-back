@@ -29,8 +29,9 @@ class AssignmentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateAssignmentRequest $request)
+    public function store(Request $request)
     {
+        # CreateAssignmentRequest
         try {
             $newAssignment = AssignmentService::createAssignment($request->all());
             Log::debug(__METHOD__ . ' - NEW Assignment CREATED ' . json_encode($newAssignment));
