@@ -13,7 +13,8 @@ class News extends Model
         'title',
         'description',
         'public',
-        'date'
+        'date',
+        'user_id'
     ];
 
     protected $hidden = [
@@ -26,5 +27,9 @@ class News extends Model
     public function institution()
     {
         return $this->belongsTo(\App\Models\Institution::class, 'institution_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 }
