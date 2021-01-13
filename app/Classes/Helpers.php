@@ -3,6 +3,7 @@
 namespace App\Classes;
 
 use Schema;
+use Log;
 
 class Helpers
 {
@@ -24,6 +25,18 @@ class Helpers
             }
         }
         return $body;
+    }
+
+    public static function parseString($string) {
+        $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
+            "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
+            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
+        $clean = trim(str_replace($strip, "", strip_tags($string)));
+        $clean = preg_replace('/\s+/', "-", $clean);
+        $clean = preg_replace("/[^a-zA-Z0-9]/", "-", $clean);
+        $newString = mb_strtolower($clean, 'UTF-8');
+        Log::debug(__METHOD__ . ' ' . self::lsi() . ' ' . $string . ' -> ' . $newString);
+        return $newString;
     }
 
 }

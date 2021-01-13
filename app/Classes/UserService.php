@@ -2,10 +2,12 @@
 
 namespace App\Classes;
 
-use App\Models\{ User, Role, RoleUser};
+use Illuminate\Support\Facades\Auth;
 use Log;
 use Hash;
-use Illuminate\Support\Facades\Auth;
+
+use App\Models\{ User, Role, RoleUser};
+use App\Classes\{Helpers, NotificationService};
 
 class UserService
 {
@@ -78,11 +80,27 @@ class UserService
         User::where('id', $id)->update(['password' => Hash::make($newPassword)]);
         return User::where('id', $id)->first();
     }
-    
+
     public function deleteUser($id)
     {
         return User::where('id', $id)->delete();
     }
 
+    // NOTIFICATIONS
+    // public function createNotification($userId, $data) {
+    //     $data['type'] = "meeting";
+    //     $data['id'] = '$meeting->id';
+    //     $data['url'] = "meeting->url";
+    //     $data['viewed'] = false;
+    //     $data['finished'] = false;
+    //     $notificationService = new NotificationService();
+    //     $notificationService->createNotification($data);
+
+    // }
+
+    // NOTIFICATIONS
+    public function closeNotification($userId, $type, $id) {
+        Log::debug(__METHOD__ . ' ' . Helpers::lsi() . " userId: $userId - type: $type - id: $id");
+    }
 
 }

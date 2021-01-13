@@ -25,7 +25,7 @@ class BigBlueButtonController extends Controller
 
         $this->bbbService = $bigBlueButtonService;
         // $meetingParams = new CreateMeetingParameters('clicking-1234', 'Test Meeting');
-        
+
 
         // $res = $this->bbb->createMeeting($meetingParams);
 
@@ -56,14 +56,18 @@ class BigBlueButtonController extends Controller
                 case 'user-left':
                     $this->userHasLeft($eventData);
                     break;
-                
+
                 case 'meeting-ended':
                     $this->meetingEnd($eventData);
                     break;
-                
+
                 case 'rap-archive-started':
                 case 'rap-archive-ended':
                     $this->recordChange();
+                    break;
+                case 'user-audio-voice-enabled':
+                case 'user-presenter-unassigned':
+                case 'user-presenter-assigned':
                     break;
                 default:
                     # code...
@@ -71,7 +75,7 @@ class BigBlueButtonController extends Controller
             }
 
             // Log::channel('bbb')->debug("BigBlueButtonController::callback $hash " . $eventData->type);
-            
+
         } catch (\Throwable $th) {
             Log::channel('bbb')->error("BigBlueButtonController::callback $hash " . $th->getMessage() . ' ' . json_encode($data));
         }
@@ -89,7 +93,7 @@ class BigBlueButtonController extends Controller
             $meetingTypes = [];
         }
         return response()->json($meetingTypes);
-    } 
+    }
 
     public function index() {
 
@@ -104,14 +108,14 @@ class BigBlueButtonController extends Controller
     public function createMeeting(CreateMeetingRequest $request){
 
         $data = $request->all();
-        
+
         $newMeetingRequest = $this->bbbService->createMeetingRequest($data);
-        
+
         if(!$newMeetingRequest)
         return response()->json(['status' => 'error'], 500);
 
         $res = $this->bbbService->createMeeting($newMeetingRequest);
-        
+
         return response()->json($res);
     }
 
@@ -133,8 +137,8 @@ class BigBlueButtonController extends Controller
         $url = $this->bbbService->joinToMeeting($data);
         // return response()->json($res);
         return Redirect::to($url);
-    } 
-    
+    }
+
     public function userHasJoined($data) {
         $meetingId = $data->attributes->meeting->{"external-meeting-id"};
         $user = $data->attributes->user;

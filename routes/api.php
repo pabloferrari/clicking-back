@@ -24,6 +24,7 @@ use App\Http\Controllers\{
     AssignmentTypeController,
     AssignmentController,
     AssignmentGroupController,
+    NotificationsController,
     CourseController,
     ClassroomStudentController,
     NewsController,
@@ -92,6 +93,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     });
 
     Route::get('profile', [UsersController::class, 'getProfile']);
+    Route::get('notifications', [NotificationsController::class, 'getNotifications']);
+
     Route::put('profile', [UsersController::class, 'updateProfile']);
     Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
 
