@@ -7,6 +7,7 @@ use App\Classes\AssignmentService;
 use App\Http\Requests\AssignmentRequests\{CreateAssignmentRequest, UpdateAssignmentRequest};
 use Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AssignmentController extends Controller
 {
@@ -31,8 +32,9 @@ class AssignmentController extends Controller
      */
     public function store(CreateAssignmentRequest $request)
     {
+        # CreateAssignmentRequest
         try {
-            $newAssignment = AssignmentService::createAssignment($request->all());
+            $newAssignment = AssignmentService::createAssignment($request->all(), $request);
             Log::debug(__METHOD__ . ' - NEW Assignment CREATED ' . json_encode($newAssignment));
             return response()->json(['data' => $newAssignment]);
         } catch (\Throwable $th) {

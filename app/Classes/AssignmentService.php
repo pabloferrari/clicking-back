@@ -33,10 +33,10 @@ class AssignmentService
         ])->first();
     }
 
-    public static function createAssignment($data)
+    public static function createAssignment($data, $request = null)
     {
-
         DB::beginTransaction();
+
         try {
             $newAssignment = new Assignment();
             $newAssignment->title              = $data['title'];
@@ -44,25 +44,40 @@ class AssignmentService
             $newAssignment->limit_date        =  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
             $newAssignment->class_id           = $data['class_id'];
             $newAssignment->groupqty           = $data['groupqty'] ?? 0;
-
             $newAssignment->assignment_type_id = $data['assignment_type_id'];
 
-
+            $resultFile = false;
             if ($newAssignment->save()) {
                 $newData = [];
                 foreach ($data['student_assignments'] as $key) {
                     $newData = [
                         'classroom_student_id' => $key,
-                        'score'                =>  $data['score'] ?? 0,
-                        'limit_date'           =>  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s'),
+                        'score'                => $data['score'] ?? 0,
+                        'limit_date'           => Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s'),
                         'assignment_status_id' => $data['assignment_status_id']
                     ];
                     $newAssignment->studentAssignments()->attach($newAssignment->id, $newData);
                 }
+
+                // Load File FileUpload
+                $handleFilesUploadService = new handleFilesUploadService();
+                $dataFile = array(
+                    'model_name' => 'Assignment',
+                    'model_id'   => $newAssignment->id,
+                    'request'    => $request
+                );
+                $resultFile = $handleFilesUploadService->createFile($dataFile);
             }
+
             Log::debug(__METHOD__ . ' -> NEW ASSIGNMENT ' . json_encode($newAssignment));
-            DB::commit();
-            return self::getAssignment($newAssignment->id);
+
+            if ($resultFile) {
+                DB::commit();
+                return self::getAssignment($newAssignment->id);
+            } else {
+                DB::rollback();
+                return false;
+            }
         } catch (\Exception $e) {
             DB::rollback();
             Log::error(__METHOD__ . ' - ROLLBACK Assignment -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
@@ -168,7 +183,6 @@ class AssignmentService
 
     public static function getAssignmentDetailById($id)
     {
-        return Assignment::where('id',$id)->with(['class.course.teacher.user','assignmenttype','studentsassignment.assignmentstatus','studentsassignment.classroomstudents.student.user'])->first();
-
+        return Assignment::where('id', $id)->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
     }
 }
