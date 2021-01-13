@@ -17,7 +17,8 @@ class CommentService
 
     public static function getComment($id)
     {
-        return Comment::where('id', $id)->with('user')->first();
+        return Comment::where('id', $id)->with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild'])
+            ->first();
     }
 
     public static function createComment($data)
@@ -26,6 +27,7 @@ class CommentService
         $newComment->user_id    = Auth::user()->id;
         $newComment->comment    = $data['comment'];
         $newComment->model_id   = $data['model_id'];
+        $newComment->children_id   = $data['children_id'] ?? NULL;
         $newComment->model_name = $data['model_name'];
         $newComment->save();
         return self::getComment($newComment->id);
