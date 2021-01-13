@@ -14,14 +14,14 @@ class Comment extends Model
         'user_id',
         'comment',
         'model_id',
-        'model_name'
+        'model_name',
+        'children_id',
+        'created_at'
     ];
 
     protected $hidden = [
-        'created_at',
         'updated_at',
-        'deleted_at',
-        'children_id'
+        'deleted_at'
     ];
 
     public function comment()

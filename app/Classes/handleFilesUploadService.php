@@ -22,6 +22,10 @@ class handleFilesUploadService
 
     public static function createFile($data)
     {
+
+        if (!$data['request']->file('file')) {
+            return true; // temporalmente
+        }
         // Load File FileUpload
         $handleFilesUploadService = new handleFilesUploadService();
         $resultFile = $handleFilesUploadService->uploadFile($data['request']);
