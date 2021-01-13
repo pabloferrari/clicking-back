@@ -284,6 +284,10 @@ class BigBlueButtonService
         $meetingUser = MeetingUser::where('clicking_token', $dataUser['clicking_token'])->first();
         $user = $this->userService->getUser($meetingUser->user_id);
         $newUser = new JoinMeetingParameters($meetingUser->internalMeetingID, $user->name, $meetingUser->password);
+
+        $meetingUser->name_user = $user->name;
+        $meetingUser->save();
+
         // JoinMeetingParameters: $meetingId, $username, $password
         $newUser->setRedirect(true);
         
@@ -291,6 +295,46 @@ class BigBlueButtonService
         return $this->bbb->getJoinMeetingURL($newUser);
         
     }
+
+    /**
+     * UN USUARIO SE HA CONECTADO
+     *
+     */
+    public function userHasJoined($meetingId, $user) {
+        try {
+            Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' ' . $meetingId . ' ' . $user->role . ' ' . $user->name);
+            $meetingUser = MeetingUser::where('meetingID', $meetingId)->where('name_user', $user->name)->first();
+            $meetingUser->userId = $user->{'internal-user-id'};
+            $meetingUser->status = 1; // 0 Pending; 1 Success; 2 Error; 3 Finished; 4 Disconnected;
+            $meetingUser->save();
+        } catch (\Throwable $th) {
+            Log::channel('bbb')->error(__METHOD__ . ' ' . Helpers::lsi() . ' ' . $meetingId . ' ' . json_encode($user) . ' ' . $th->getMessage());
+        }
+    }
+
+    /**
+     * UN USUARIO SE HA DESCONECTADO
+     *
+     */
+    public function userHasLeft($meetingId, $user) {
+        try {
+            Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' DISCONNECTED ' . $meetingId . ' ' . $user->{"internal-user-id"});
+            $meetingUser = MeetingUser::where('meetingID', $meetingId)->where('userId', $user->{"internal-user-id"})->first();
+            $meetingUser->status = 4; // 0 Pending; 1 Success; 2 Error; 3 Finished; 4 Disconnected;
+            $meetingUser->save();
+        } catch (\Throwable $th) {
+            Log::channel('bbb')->error(__METHOD__ . ' ' . Helpers::lsi() . ' ' . $meetingId . ' ' . json_encode($user) . ' ' . $th->getMessage());
+        }
+    }
+
+    /**
+     * FINALIZAR UNA MEETING
+     */
+    public function meetingEnd($meeting) {
+        dd(__METHOD__, $meeting);
+    }
+    // $data->attributes->meeting
+    
 
 
     public function testCreateMeetingUsers($id){

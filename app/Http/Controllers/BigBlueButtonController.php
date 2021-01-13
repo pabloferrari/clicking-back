@@ -39,7 +39,42 @@ class BigBlueButtonController extends Controller
     }
 
     public function callback(Request $request, $hash) {
-        Log::channel('bbb')->info(__METHOD__ . ' ' . $hash . ' ' . json_encode($request->all()));
+        $data = $request->all();
+        try {
+            $event = json_decode($data['event'])[0];
+            $timestamp = json_decode($data['timestamp']);
+            $domain = json_decode($data['domain']);
+            $eventData = $event->data;
+
+            if($eventData->type != 'event')
+            Log::channel('bbb')->error("BigBlueButtonController::callback $hash EVENT ${$eventData->type} " . ' ' . json_encode($eventData));
+
+            switch ($eventData->id) {
+                case 'user-joined':
+                    $this->userHasJoined($eventData);
+                    break;
+                case 'user-left':
+                    $this->userHasLeft($eventData);
+                    break;
+                
+                case 'meeting-ended':
+                    $this->meetingEnd($eventData);
+                    break;
+                
+                case 'rap-archive-started':
+                case 'rap-archive-ended':
+                    $this->recordChange();
+                    break;
+                default:
+                    # code...
+                    break;
+            }
+
+            // Log::channel('bbb')->debug("BigBlueButtonController::callback $hash " . $eventData->type);
+            
+        } catch (\Throwable $th) {
+            Log::channel('bbb')->error("BigBlueButtonController::callback $hash " . $th->getMessage() . ' ' . json_encode($data));
+        }
         return true;
     }
 
@@ -98,5 +133,21 @@ class BigBlueButtonController extends Controller
         $url = $this->bbbService->joinToMeeting($data);
         // return response()->json($res);
         return Redirect::to($url);
-    }   
+    } 
+    
+    public function userHasJoined($data) {
+        $meetingId = $data->attributes->meeting->{"external-meeting-id"};
+        $user = $data->attributes->user;
+        $this->bbbService->userHasJoined($meetingId, $user);
+    }
+
+    public function userHasLeft($data) {
+        $meetingId = $data->attributes->meeting->{"external-meeting-id"};
+        $user = $data->attributes->user;
+        $this->bbbService->userHasLeft($meetingId, $user);
+    }
+
+    public function meetingEnd($data) {
+        $this->bbbService->meetingEnd($data->attributes->meeting);
+    }
 }

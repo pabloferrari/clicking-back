@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 use App\Models\User;
 use App\Http\Requests\LoginRequest;
+use Log;
 
 class AuthController extends Controller
 {
@@ -18,6 +19,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (!Auth::attempt($credentials)) {
+            Log::channel('login')->error('AuthController@login ' . $this->lsi() . ' ' . json_encode($credentials));
             return response()->json(['message' => 'email or password incorrect'], 401);
         }
 
@@ -29,6 +31,8 @@ class AuthController extends Controller
             // $token->expires_at = Carbon::now()->addYear(1);
         }
         $token->save();
+
+        Log::channel('login')->debug('AuthController@login ' . $this->lsi() . ' User: ' . $user->id . ' ' . $user->email . ' Roles ' . json_encode($user->getRoles()));
 
         $user = User::with(['roles'])->find($user->id);
         return response()->json([
