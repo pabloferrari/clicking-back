@@ -29,5 +29,18 @@ class NotificationService
         return $newNotification;
     }
 
+    // NOTIFICATIONS
+    public function closeMeetingNotification($id) {
+        try {
+            $notif = Notification::where('model_id', $id)->where('type', 'meeting')->first();
+            Log::debug(__METHOD__ . ' ' . Helpers::lsi() . " id: $id " . json_encode($notif));
+            $notif->finished = true;
+            $notif->viewed = true;
+            $notif->save();
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' ' . Helpers::lsi() . " id: $id " . $th->getMessage());
+        }
+    }
+
 
 }

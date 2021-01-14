@@ -98,9 +98,4 @@ class UserService
 
     // }
 
-    // NOTIFICATIONS
-    public function closeNotification($userId, $type, $id) {
-        Log::debug(__METHOD__ . ' ' . Helpers::lsi() . " userId: $userId - type: $type - id: $id");
-    }
-
 }

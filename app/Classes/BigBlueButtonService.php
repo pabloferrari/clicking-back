@@ -138,6 +138,7 @@ class BigBlueButtonService
                 $dataNotification['title'] = 'Nueva Clase';
                 $dataNotification['text'] = $this->getTitle($meeting->meetingId);
                 $dataNotification['url'] = $newMeetingUser['public_url'];
+                $dataNotification['model_id'] = $newMeetingUser['id'];
                 $this->notificationService->createNotification($dataNotification);
 
                 $response[] = $newMeetingUser;
@@ -371,7 +372,7 @@ class BigBlueButtonService
                 foreach($meetingUsers as $mu) {
                     $mu->status = 3;
                     $mu->save();
-                    $this->userService->closeNotification($mu->user_id, 'meeting', $mu->id);
+                    $this->notificationService->closeMeetingNotification($mu->id);
                 }
             } else {
                 Log::channel('bbb')->error(__METHOD__ . ' ' . Helpers::lsi() . ' MEETING NOT FOUND ' . json_encode($meeting));
