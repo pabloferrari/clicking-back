@@ -182,6 +182,7 @@ class BigBlueButtonService
         $dataNotification['title'] = 'Nueva Clase';
         $dataNotification['text'] = $this->getTitle($meeting->meetingId);
         $dataNotification['url'] = $newMeetingModerator['public_url'];
+        $dataNotification['model_id'] = $newMeetingModerator['id'];
         $this->notificationService->createNotification($dataNotification);
 
         return $newMeetingModerator;
