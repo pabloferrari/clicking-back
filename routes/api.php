@@ -55,7 +55,7 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['middleware' => 'auth:api'], function () {
 
 
-    Route::group(['middleware' => 'role:institution,teacher,admin,root'], function () {
+    Route::group(['middleware' => 'role:institution,teacher,admin,root,student'], function () {
         Route::get('/testAdmin', [AuthController::class, 'test']);
         Route::resource('classrooms', ClassroomController::class);
         Route::resource('courses', CourseController::class);

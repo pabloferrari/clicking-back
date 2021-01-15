@@ -15,6 +15,13 @@ class CommentService
             ->get();
     }
 
+    public static function getCommentByCourse($id) {
+        return Comment::with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
+        // add whereHas Course ID
+        ->whereNull('children_id')
+        ->get();
+    }
+
     public static function getComment($id)
     {
         return Comment::where('id', $id)->with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
