@@ -195,6 +195,8 @@ Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCrea
 Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'joinToMeeting']);
 Route::any('bigbluebutton/callback/{hash}', [BigBlueButtonController::class, 'callback']);
 
+Route::get('socket', [NotificationsController::class, 'testSocket']);
+
 Route::get('/{any}', function ($any) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any"]);
 })->where('any', '.*');
