@@ -8,7 +8,7 @@ use App\Classes\Helpers;
 use Log;
 
 
-class Socket
+class SocketService
 {
 
     public static function send($channel, $data)
@@ -18,7 +18,7 @@ class Socket
         $ip = 'http://localhost:9201/';
         try {
             
-            $ipOpra = 'http://200.110.137.84:1113';
+            // $ipOpra = 'http://200.110.137.84:1113';
             // $dataOpra = [
             //     'log' => "<div class=\"log-line-container\"><span class=\"timestamp\">[".date('Y-m-d')."]</span> - <span class=\"debug\">debug</span> - aaaaaa - meaksjdhasjkdh</div>",
             //     'target' => 'eks1'
@@ -36,7 +36,7 @@ class Socket
             $elephant->emit($channel, $data);
             $elephant->close();
 
-            Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' SUCCESS ');
+            Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' SUCCESS ' . $channel . ' -> ' . json_encode($data));
 
         } catch (\Throwable $th) {
             
