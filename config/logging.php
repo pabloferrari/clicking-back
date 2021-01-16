@@ -102,6 +102,7 @@ return [
 
         'bbb' => ['driver' => 'single','path' => storage_path('logs/bbb_' . date('Ymd') . '.log')],
         'login' => ['driver' => 'single','path' => storage_path('logs/login_' . date('m') . '.log')],
+        'socket' => ['driver' => 'single','path' => storage_path('logs/socket_' . date('Ymd') . '.log')],
     ],
 
 ];
