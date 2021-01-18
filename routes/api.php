@@ -67,7 +67,11 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('assignments/course/{id}', [AssignmentController::class, 'assignmentByCourse']);
 
         Route::resource('news', NewsController::class);
+        // ----- comments Routes --- //
+        Route::get('comments/byCourse/{id}', [CommentController::class, 'commentByCourse']);
+        Route::get('comments/byAssignment/{id}', [CommentController::class, 'commentByAssignment']);
         Route::resource('comments', CommentController::class);
+
         Route::resource('teachers', TeacherController::class);
         Route::resource('students', StudentController::class);
         // ------------ BigBlueButton Routes ------------ //
