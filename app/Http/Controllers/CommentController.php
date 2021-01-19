@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\CommentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Log;
 
 class CommentController extends Controller
@@ -89,9 +90,20 @@ class CommentController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function commentByAssignment($id)
+    public function commentByAssignment($id, $user_id = NULL)
     {
-        $comments = CommentService::getCommentByAssignment($id);
+        $user = Auth::user();
+
+
+        $comments = [];
+        if ($user->hasRole('teacher')) {
+            $comments = CommentService::getCommentByAssignment($id, $user_id);
+        } else if ($user->hasRole('student')) {
+            $comments = CommentService::getCommentByAssignmentUser($id, $user->id);
+        } else {
+            $comments = [];
+        }
+
         return response()->json(['data' => $comments]);
     }
 }
