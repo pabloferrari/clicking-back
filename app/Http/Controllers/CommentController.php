@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\CommentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Log;
 
 class CommentController extends Controller
@@ -72,5 +73,37 @@ class CommentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Display Comments reference in  course by ID
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function commentByCourse($id)
+    {
+        $comments = CommentService::getCommentByCourse($id);
+        return response()->json(['data' => $comments]);
+    }
+    /**
+     * Display Comments reference in Assignment by ID
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function commentByAssignment($id, $user_id = NULL)
+    {
+        $user = Auth::user();
+
+
+        $comments = [];
+        if ($user->hasRole('teacher')) {
+            $comments = CommentService::getCommentByAssignment($id, $user_id);
+        } else if ($user->hasRole('student')) {
+            $comments = CommentService::getCommentByAssignmentUser($id, $user->id);
+        } else {
+            $comments = [];
+        }
+
+        return response()->json(['data' => $comments]);
     }
 }
