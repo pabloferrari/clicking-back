@@ -5,6 +5,7 @@ namespace App\Classes;
 use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Log;
 
 class handleFilesUploadService
@@ -23,7 +24,7 @@ class handleFilesUploadService
     public static function createFile($data)
     {
 
-        if (!$data['request']->file('file')) {
+        if (!$data['request']->file('files')) {
             return true; // temporalmente
         }
         // Load File FileUpload
@@ -73,7 +74,12 @@ class handleFilesUploadService
     {
         // storage file client
         if ($request) {
-            $result = $request->file('file')->store('public');
+            foreach ($request->file('files') as $file) {
+                //$request->file('files')->store('public');
+                $filename = Str::random(5) . '.' . $file->extension(); //Custom Filename
+                $result =  Storage::put('public/' . $filename, $file); //Store image
+            }
+            //$result = $request->file('files')->store('public');
             // Format result return $result = public\ICR5n2x03LTg5jttGbmpsPern4QdyPTH7OEKFgUD.jpeg
             Log::debug(__METHOD__ . ' -> Upload file storage Create ' . json_encode($result));
             return $result;
