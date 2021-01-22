@@ -93,9 +93,7 @@ class CommentController extends Controller
     public function commentByAssignment($id, $user_id = NULL)
     {
         $user = Auth::user();
-
-
-        $comments = [];
+        // $comments = [];
         if ($user->hasRole('teacher')) {
             $comments = CommentService::getCommentByAssignment($id, $user_id);
         } else if ($user->hasRole('student')) {
