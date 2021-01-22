@@ -16,6 +16,7 @@ class Comment extends Model
         'model_id',
         'model_name',
         'children_id',
+        'to_user_id',
         'created_at'
     ];
 
