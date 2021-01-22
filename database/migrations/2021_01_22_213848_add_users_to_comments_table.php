@@ -14,7 +14,7 @@ class AddUsersToCommentsTable extends Migration
     public function up()
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->integer('to_user_id')->default(0);
+            $table->integer('to_user_id')->default(0)->after('children_id');
         });
     }
 
