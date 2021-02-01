@@ -15,94 +15,130 @@ class CommentService
             ->whereHas('user', function ($query) {
                 return $query->where('institution_id', '=', Auth::user()->institution_id);
             })
+            // ->whereHas('course.subject', function ($query) {
+            //     return $query->where('id', '=', Auth::user()->institution_id);
+            // })
             ->whereNull('children_id')
             ->get();
 
         foreach ($comments as $comment) {
-            $commentParse[] = [
-                // 'comments' => [
-                'id' => $comment->id,
-                'children_id' => $comment->children_id,
-                'comment' => $comment->comment,
-                'username' => $comment->user->name,
-                'image' => $comment->user->image,
-                'course' => $comment->course,
-                'assignment' => $comment->assignment,
-                'child' => $comment->commentChild
-                // ]
-            ];
+            if ($comment->model_name === 'assignments') {
+                $commentParse['assignments'][] = [
+                    'id' => $comment->id,
+                    'children_id' => $comment->children_id,
+                    'comment' => $comment->comment,
+                    'username' => $comment->user->name,
+                    'image' => $comment->user->image,
+                    'assignment' => $comment->assignment,
+                    'child' => $comment->commentChild
+                ];
+            } else {
+                $commentParse['courses'][] = [
+                    'id' => $comment->id,
+                    'children_id' => $comment->children_id,
+                    'comment' => $comment->comment,
+                    'username' => $comment->user->name,
+                    'image' => $comment->user->image,
+                    'child' => $comment->commentChild
+                ];
+            }
         }
         return $commentParse;
     }
 
     public static function getCommentByCourse($id)
     {
-        return Comment::with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
-            // add whereHas Course
-            // ->whereHas('comment.user', function ($query) use ($id) {
-            //     return $query->where('id', '=',Auth::user()->id);
-            // })
+        $commentParse = [];
+        $comments = Comment::with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
+            ->whereHas('user', function ($query) {
+                return $query->where('institution_id', '=', Auth::user()->institution_id);
+            })
+            ->whereHas('course', function ($query) use ($id) {
+                return $query->where('id', '=', $id);
+            })
             ->whereNull('children_id')
             ->get();
+
+        foreach ($comments as $comment) {
+            $commentParse[] = [
+                'id' => $comment->id,
+                'children_id' => $comment->children_id,
+                'model_id' => $comment->children_id,
+                'model_name' => $comment->children_id,
+                'created_at' => $comment->created_at,
+                'comment' => $comment->comment,
+                'assignment' => $comment->assignment,
+                'user' => $comment->user,
+                'child' => $comment->commentChild
+            ];
+        }
+        return $commentParse;
     }
     public static function getCommentByAssignmentUser($id, $user_id)
     {
-        $comments =  Comment::with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
-            // add whereHas Assignments
-            // ->whereHas('assignment', function ($query) use ($id) {
-            //     return $query->where('id', '=', $id);
-            // })
-
-            // // add whereHas Users
-            // ->whereHas('commentChild.user', function ($query) use ($user_id) {
-            //     return $query->where('id', '=', $user_id);
-            // })
-            //->whereNull('children_id')
+        $commentParse = [];
+        $comments = Comment::where('to_user_id', $user_id)->with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
+            ->whereHas('user', function ($query) {
+                return $query->where('institution_id', '=', Auth::user()->institution_id);
+            })
+            ->whereHas('assignment', function ($query) use ($id) {
+                return $query->where('id', '=', $id);
+            })
+            ->whereNull('children_id')
             ->get();
-        $commentChild = [];
+
         foreach ($comments as $comment) {
-            $commentChild = [
-                'comments' => [
-                    'id' => $comment->id,
-                    'comment' => $comment->comment,
-                    'username' => $comment->user->name,
-                    'image' => $comment->user->image,
-                    'child' => $comment->commentChild
-                ]
+            $commentParse[] = [
+                'id' => $comment->id,
+                'children_id' => $comment->children_id,
+                'model_id' => $comment->children_id,
+                'model_name' => $comment->children_id,
+                'created_at' => $comment->created_at,
+                'comment' => $comment->comment,
+                'assignment' => $comment->assignment,
+                'user' => $comment->user,
+                'child' => $comment->commentChild
             ];
         }
-        return $commentChild;
+        return $commentParse;
     }
     public static function getCommentByAssignment($id, $user_id)
     {
         $comments =  Comment::with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
+            // add WhereHas Institution user
+            ->whereHas('user', function ($query) {
+                return $query->where('institution_id', '=', Auth::user()->institution_id);
+            })
             // add whereHas Assignments
             ->whereHas('assignment', function ($query) use ($id) {
                 return $query->where('id', '=', $id);
             })
-            // ->whereHas('comment', function ($query) use ($user_id) {
-            //     return $query->where('user_id', '=', $user_id);
-            // })
-            // //add whereHas Users
-            ->whereHas('commentChild.user', function ($query) use ($user_id) {
-                return $query->where('id', '=', $user_id);
+            ->whereHas('comment', function ($query) {
+                return $query->where('user_id', '=', Auth::user()->id);
+            })
+            // //add whereHas To Users
+            ->whereHas('comment', function ($query) use ($user_id) {
+                return $query->where('to_user_id', '=', $user_id);
+                return $query->where('model_name', '=', 'assignments');
             })
 
-            //->whereNull('children_id')
+            ->whereNull('children_id')
             ->get();
-        $commentChild = [];
+        $commentParse = [];
         foreach ($comments as $comment) {
-            $commentChild = [
-                'comments' => [
-                    'id' => $comment->id,
-                    'comment' => $comment->comment,
-                    'username' => $comment->user->name,
-                    'image' => $comment->user->image,
-                    'child' => $comment->commentChild
-                ]
+            $commentParse[] = [
+                'id' => $comment->id,
+                'children_id' => $comment->children_id,
+                'model_id' => $comment->children_id,
+                'model_name' => $comment->children_id,
+                'created_at' => $comment->created_at,
+                'comment' => $comment->comment,
+                'assignment' => $comment->assignment,
+                'user' => $comment->user,
+                'child' => $comment->commentChild
             ];
         }
-        return $commentChild;
+        return $commentParse;
     }
 
     public static function getComment($id)
@@ -112,19 +148,24 @@ class CommentService
             ->whereHas('user', function ($query) {
                 return $query->where('institution_id', '=', Auth::user()->institution_id);
             })
-            // ->whereNull('children_id')
-            ->first();
-        $commentParse = [
-            'id' => $comments->id,
-            'children_id' => $comments->children_id,
-            'comment' => $comments->comment,
-            'username' => $comments->user->name,
-            'image' => $comments->user->image,
-            'course' => $comments->course,
-            'assignment' => $comments->assignment,
-            'child' => $comments->commentChild
-        ];
 
+            //->whereNull('children_id')
+            ->get();
+
+        foreach ($comments as $comment) {
+
+            $commentParse = [
+                'id' => $comment->id,
+                'children_id' => $comment->children_id,
+                'model_id' => $comment->children_id,
+                'model_name' => $comment->children_id,
+                'created_at' => $comment->created_at,
+                'comment' => $comment->comment,
+                'assignment' => $comment->assignment,
+                'user' => $comment->user,
+                'child' => $comment->commentChild
+            ];
+        }
         return $commentParse;
     }
 
@@ -136,6 +177,7 @@ class CommentService
         $newComment->model_id   = $data['model_id'];
         $newComment->children_id   = $data['children_id'] ?? NULL;
         $newComment->model_name = $data['model_name'];
+        $newComment->to_user_id = $data['to_user_id'] ?? Auth::user()->id;
         $newComment->save();
         return self::getComment($newComment->id);
     }

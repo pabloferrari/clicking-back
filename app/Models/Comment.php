@@ -40,6 +40,11 @@ class Comment extends Model
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 
+    public function userChild()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'to_user_id');
+    }
+
     public function course()
     {
         return $this->belongsTo(\App\Models\Course::class, 'model_id');
