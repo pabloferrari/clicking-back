@@ -28,7 +28,8 @@ class UpdateInstitutionRequest extends FormRequest
         return [
             'name' => 'required|unique:institutions,id,' . $request->get('id') . '|string',
             'email' => 'required|unique:institutions,id,' . $request->get('id') . '|email',
-            'phone' => 'nullable|regex:/(54)[0-9]{9}/',
+            // 'phone' => 'nullable|regex:/(54)[0-9]{9}/',
+            'phone' => 'required|string',
             'cuit' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg',
             'active' => 'nullable|boolean',
