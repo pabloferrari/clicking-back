@@ -117,4 +117,16 @@ class AssignmentController extends Controller
         $Assignment = AssignmentService::getAssignmentDetailById($id);
         return response()->json(['data' => $Assignment]);
     }
+
+    public function storeAssignmentStudent(Request $request)
+    {
+        try {
+            $newAssignment = AssignmentService::createAssignmentStudent($request->all());
+            Log::debug(__METHOD__ . ' - NEW Assignment student CREATED ' . json_encode($newAssignment));
+            return response()->json(['data' => $newAssignment]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
+            return response()->json(["message" => "Error creating assignment"], 400);
+        }
+    }
 }
