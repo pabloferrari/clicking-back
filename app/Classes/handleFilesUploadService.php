@@ -29,24 +29,44 @@ class handleFilesUploadService
         }
         // Load File FileUpload
         $handleFilesUploadService = new handleFilesUploadService();
-        $resultFile = $handleFilesUploadService->uploadFile($data['request']);
+
+        $resultFile = [];
+
+        foreach ($data['request']->file('files') as $file) {
+            $resultFile[] = $handleFilesUploadService->uploadFile($file);
+        }
 
         if ($resultFile) {
-            $new = new File();
-            $new->name        =  trim(str_replace('public/', '', $resultFile)); //Generate
-            $new->model_name  = $data['model_name']; // Arg
-            $new->model_id    = $data['model_id']; // Arg
-            $new->path        = Storage::path($resultFile); //Generate
-            $new->remote_path = Storage::path($resultFile); //Generate
-            $new->url         = Storage::url($resultFile); //Generate
-            $new->migrated    = 0; //Generate
-            $new->user_id     = Auth::user()->id; //Generate
-            $new->status      = '1'; //Generate
-            $new->size        = Storage::size($resultFile); //Generate
-            #$new->extension   = $resultFile->extension();
+            $resp = true;
+            foreach ($resultFile as $value) {
+                if ($value) { // Nota TDD: Se debe trabajar como una transacción... (FALTA)
+                    $new = new File();
+                    $new->name        =  trim(str_replace('public/', '', $value)); //Generate
+                    $new->model_name  = $data['model_name']; // Arg
+                    $new->model_id    = $data['model_id']; // Arg
+                    $new->path        = Storage::path($value); //Generate
+                    $new->remote_path = Storage::path($value); //Generate
+                    $new->url         = Storage::url($value); //Generate
+                    $new->migrated    = 0; //Generate
+                    $new->user_id     = Auth::user()->id; //Generate
+                    $new->status      = '1'; //Generate
+                    $new->size        = Storage::size($value); //Generate
+                    #$new->extension   = $resultFile->extension();
 
-            $new->save();
-            return self::getFile($new->id);
+                    $new->save();
+
+                    if (!$new->id) {
+                        $resp = false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+            if ($resp) {
+                return self::getFile($new->id);
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -70,21 +90,17 @@ class handleFilesUploadService
         return $file;
     }
 
-    public static function uploadFile($request)
+    public static function uploadFile($file)
     {
         // storage file client
-        if ($request) {
-            foreach ($request->file('files') as $file) {
-                //$request->file('files')->store('public');
-                $filename = Str::random(5) . '.' . $file->extension(); //Custom Filename
-                $result =  Storage::put('public/' . $filename, $file); //Store image
-            }
-            //$result = $request->file('files')->store('public');
+        if ($file) {
+            $result = Storage::disk('local')->put('public', $file);
+
             // Format result return $result = public\ICR5n2x03LTg5jttGbmpsPern4QdyPTH7OEKFgUD.jpeg
             Log::debug(__METHOD__ . ' -> Upload file storage Create ' . json_encode($result));
             return $result;
         } else {
-            Log::debug(__METHOD__ . ' -> Upload file storage $request empty ' . json_encode($request));
+            Log::debug(__METHOD__ . ' -> Upload file storage $request empty ' . json_encode($file));
             return false;
         }
     }
