@@ -163,6 +163,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('assignments', AssignmentController::class);
         Route::resource('assignment-groups', AssignmentGroupController::class);
         Route::get('assignment-groups/byAssignment/{id}', [AssignmentGroupController::class, 'assignmentGroupByAssignment']);
+        Route::post('assignment-students', [AssignmentController::class, 'storeAssignmentStudent']);
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
 

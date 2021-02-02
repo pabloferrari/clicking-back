@@ -85,6 +85,30 @@ class AssignmentService
         }
     }
 
+    public static function createAssignmentStudent($data)
+    {
+        DB::beginTransaction();
+        try {
+            $newAssignment = new Assignment();
+            $newData = [
+                'assignment_id'        =>  $data['assignment_id'],
+                'classroom_student_id' => $data['classroom_student_id'],
+                'score'                => $data['score'] ?? 0,
+                'limit_date'           => Carbon::parse(Carbon::now()->format('Y-m-d H:i:s')),
+                'assignment_status_id' => $data['assignment_status_id']
+            ];
+            $newAssignment->studentAssignments()->attach($data['assignment_id'], $newData);
+            DB::commit();
+            Log::debug(__METHOD__ . ' -> NEW Assignment Student ' . json_encode($newAssignment));
+
+            return Assignment::where('id', $data['assignment_id'])->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error(__METHOD__ . ' - ROLLBACK Assignment Student -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
+            return false;
+        }
+    }
+
     public static function updateAssignment($id, $data)
     {
         DB::beginTransaction();
