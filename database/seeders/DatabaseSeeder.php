@@ -27,7 +27,11 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             ProvinceSeeder::class,
             CitySeeder::class,
-            AssignmentTypeSeeder::class
+            AssignmentTypeSeeder::class,
+            TeacherSeeder::class,
+            MeetingTypeSeeder::class,
+            CourseTypeSeeder::class,
+            AssignmentStatusSeeder::class
         ]);
     }
 }
