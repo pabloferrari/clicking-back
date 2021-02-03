@@ -34,4 +34,5 @@ class DatabaseSeeder extends Seeder
             AssignmentStatusSeeder::class
         ]);
     }
+    
 }
