@@ -29,7 +29,8 @@ use App\Http\Controllers\{
     ClassroomStudentController,
     NewsController,
     CommentController,
-    LibrariesController
+    LibrariesController,
+    Ticketcontroller
 };
 use App\Models\Assignment;
 
@@ -99,6 +100,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('profile', [UsersController::class, 'getProfile']);
     Route::get('notifications', [NotificationsController::class, 'getNotifications']);
+    Route::post('tickets', [Ticketcontroller::class, 'store']);
 
     Route::put('profile', [UsersController::class, 'updateProfile']);
     Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
@@ -108,13 +110,17 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
     Route::group(['middleware' => 'admin'], function () {
-        // Route::get('/testAdmin', [AuthController::class, 'test']);
+        
+        Route::get('tickets', [Ticketcontroller::class, 'index']);
+        Route::get('tickets/{id}', [Ticketcontroller::class, 'getTicket']);
+
         Route::resource('countries', CountryController::class);
         Route::resource('provinces', ProvinceController::class);
         Route::resource('cities', CityController::class);
         Route::resource('institutions', InstitutionController::class);
         Route::resource('plans', PlansController::class);
         Route::resource('users', UsersController::class);
+
         // Route::resource('teachers', TeacherController::class);
         Route::get('teachers/byInstitution/{id}', [TeacherController::class, 'teacherByInstitution']);
 
@@ -191,12 +197,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         });
     });
 });
-
-// Route::get('unauthorized', [AuthController::class, 'unauthorized'])->name('unauthorized');
-
-// Route::get('*', function () {
-// 	return response()->json(['name' => "Clicking Api", 'version' => 0.1]);
-// });
 
 Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCreateMeetingUsers']);
 Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'joinToMeeting']);

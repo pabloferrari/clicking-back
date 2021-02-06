@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,
             MeetingTypeSeeder::class,
             CourseTypeSeeder::class,
-            AssignmentStatusSeeder::class
+            AssignmentStatusSeeder::class,
+            TicketStatusSeeder::class
         ]);
     }   
 }

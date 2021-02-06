@@ -77,4 +77,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\SocialNetwork::class);
     }
+
+    public function tickets()
+    {
+        return $this->hasMany('App\Models\Ticket');
+    }
 }

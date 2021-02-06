@@ -66,6 +66,19 @@ class Handler extends ExceptionHandler
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
 
+        if ($exception instanceof \Exception) {
+            return response()->json(['error' => 'Whoops, looks like something went wrong.'], 500);
+        }
+
+        if ($exception instanceof NotFoundHttpException) { // for 404
+            return response()->json(['error' => 'NotFoundHttp not found.'], 404);
+        }
+        
+        if ($exception instanceof MethodNotAllowedHttpException) { // for checking  api method
+            // do stuff
+            return response()->json(['error' => 'Route not found.'], 404);
+        }
+
         return response()->json($exception);
     }
 
