@@ -86,6 +86,10 @@ class UserService
         return User::where('id', $id)->delete();
     }
 
+    public function getUsersByIds($ids) {
+        return User::whereIn('id', $ids)->get();
+    }
+
     // NOTIFICATIONS
     // public function createNotification($userId, $data) {
     //     $data['type'] = "meeting";

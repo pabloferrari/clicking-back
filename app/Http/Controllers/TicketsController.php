@@ -8,12 +8,12 @@ use App\Http\Requests\TicketRequests\CreateTicketRequest;
 use Log;
 
 
-class Ticketcontroller extends Controller
+class TicketsController extends Controller
 {
 
     public $ticketService;
     public function __construct(TicketService $ticketService){
-        
+
         $this->ticketService = $ticketService;
 
     }
@@ -34,9 +34,9 @@ class Ticketcontroller extends Controller
         return response()->json(['data' => $this->ticketService->getTicket($id)]);
     }
 
-    
 
-    public function store(CreateTicketRequest $request)
+
+    public function create(CreateTicketRequest $request)
     {
         try {
             $newTicket = $this->ticketService->createTicket($request->all());

@@ -30,7 +30,8 @@ use App\Http\Controllers\{
     NewsController,
     CommentController,
     LibrariesController,
-    Ticketcontroller
+    TicketsController,
+    EventsController
 };
 use App\Models\Assignment;
 
@@ -100,7 +101,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::get('profile', [UsersController::class, 'getProfile']);
     Route::get('notifications', [NotificationsController::class, 'getNotifications']);
-    Route::post('tickets', [Ticketcontroller::class, 'store']);
+    Route::post('tickets', [TicketsController::class, 'create']);
+    Route::get('events', [EventsController::class, 'index']);
+    Route::post('events', [EventsController::class, 'create']);
 
     Route::put('profile', [UsersController::class, 'updateProfile']);
     Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
@@ -110,9 +113,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
     Route::group(['middleware' => 'admin'], function () {
-        
-        Route::get('tickets', [Ticketcontroller::class, 'index']);
-        Route::get('tickets/{id}', [Ticketcontroller::class, 'getTicket']);
+
+        Route::get('tickets', [TicketsController::class, 'index']);
+        Route::get('tickets/{id}', [TicketsController::class, 'getTicket']);
 
         Route::resource('countries', CountryController::class);
         Route::resource('provinces', ProvinceController::class);
