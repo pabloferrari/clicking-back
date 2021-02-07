@@ -27,6 +27,11 @@ class EventsController extends Controller
         return response()->json(['data' => $this->eventService->getEvents()]);
     }
 
+    public function getEventTypes() 
+    {
+        return $this->eventService->getEventTypes();
+    }
+
     public function create(CreateEventRequest $request)
     {
         try {

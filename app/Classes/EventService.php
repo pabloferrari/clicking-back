@@ -13,11 +13,16 @@ use DB;
 class EventService {
 
 
-    public function getEvents() {
+    public function getEvents() 
+    {
         $eventsId = UserEvent::where('user_id', Auth::user()->id)->get()->pluck('event_id')->toArray();
         $events = Event::whereIn('id', $eventsId)->with(['status', 'type', 'users', 'users.user'])->get();
-        // dd($eventsId, $events);
         return $events;
+    }
+
+    public function getEventTypes() 
+    {
+        return EventType::get();
     }
 
     public function createEvent($data)
@@ -42,7 +47,8 @@ class EventService {
         }
     }
 
-    public function createUserEvent($event, $users = []) {
+    public function createUserEvent($event, $users = []) 
+    {
         $participants = [];
         $users = array_filter($users, function (int $i) { return $i != Auth::user()->id; });
         $participants[] = UserEvent::create(['event_id' => $event->id, 'user_id' => Auth::user()->id]);
