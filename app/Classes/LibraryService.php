@@ -22,16 +22,18 @@ class LibraryService
     {
         $newLibrary = new Library();
         $newLibrary->name = $data['name'];
-        $newLibrary->active = 1; // true
+        $newLibrary->description = $data['description'];
+        // $newLibrary->active = 1; // true
         $newLibrary->save();
-        return $newLibrary;
+        return self::getLibrary($newLibrary->id);
     }
 
     public static function updateLibrary($id, $data)
     {
         $Library = Library::where('id', $id)->first();
         $Library->name   = $data['name'];
-        $Library->active = $data['active'];
+        $Library->description = $data['description'];
+        // $Library->active = $data['active'];
         $Library->save();
         return $Library;
     }

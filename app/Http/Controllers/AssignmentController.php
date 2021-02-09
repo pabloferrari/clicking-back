@@ -121,7 +121,15 @@ class AssignmentController extends Controller
     public function storeAssignmentStudent(Request $request)
     {
         try {
-            $newAssignment = AssignmentService::createAssignmentStudent($request->all());
+            $user = Auth::user();
+            if ($user->hasRole('teacher')) {
+                $newAssignment = AssignmentService::createAssignmentStudent($request->all());
+            } else if ($user->hasRole('student')) {
+                $newAssignment = AssignmentService::deliverAssignmentStudent($request->all());
+            } else {
+                $newAssignment = [];
+            }
+
             Log::debug(__METHOD__ . ' - NEW Assignment student CREATED ' . json_encode($newAssignment));
             return response()->json(['data' => $newAssignment]);
         } catch (\Throwable $th) {
