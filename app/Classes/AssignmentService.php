@@ -230,6 +230,58 @@ class AssignmentService
 
     public static function getAssignmentDetailById($id)
     {
-        return Assignment::where('id', $id)->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
+
+
+
+        $AssignmentDetail = DB::table('student_assignments')
+            ->select(
+                DB::raw('max(student_assignments.assignment_status_id) AS assignment_status_id'),
+                'assignments.title',
+                'assignments.description',
+                'assignments.limit_date',
+                'assignments.id as assignment_type_id',
+                'students.name as student',
+                'assignment_status.name AS status_name',
+                'student_assignments.classroom_student_id',
+                'user_students.id AS user_student_id'
+            )
+            ->leftJoin('assignments', 'assignments.id', '=', 'student_assignments.assignment_id')
+            ->leftJoin('assignment_status', 'assignment_status.id', '=', 'student_assignments.assignment_status_id')
+            ->leftJoin('classroom_students', 'classroom_students.id', '=', 'student_assignments.classroom_student_id')
+            ->leftJoin('students', 'students.id', '=', 'classroom_students.student_id')
+            ->leftJoin('users AS user_students', 'students.user_id', '=', 'user_students.id')
+            ->leftJoin('classes', 'classes.id', '=', 'assignments.class_id')
+            ->leftJoin('courses', 'courses.id', '=', 'classes.course_id')
+            ->leftJoin('teachers', 'teachers.id', '=', 'courses.teacher_id')
+            ->leftJoin('users AS user_teachers', 'teachers.user_id', '=', 'user_teachers.id')
+            ->leftJoin('assignment_types', 'assignment_types.id', '=', 'assignments.assignment_type_id')
+            ->where('assignments.id', $id)
+            ->groupBy(
+                'assignments.title',
+                'students.name',
+                'assignments.description',
+                'assignments.limit_date',
+                'assignments.id',
+                'assignment_status.name',
+                'student_assignments.classroom_student_id'
+            )
+            ->get();
+        // $dataParser = [];
+        // foreach ($AssignmentDetail as $assigments) {
+        //     $dataParser[] = [
+        //         'title' => $assigments->title
+        //     ];
+        // }
+        // return $AssignmentDetail;
+        return Assignment::where('id', $id)->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])
+            // ->whereIn('assignment.studentsassignment.id', function ($query) {
+            //     return $query->select(DB::raw('id'))
+            //         ->from('student_assignments')
+            //         ->whereRaw('student_assignments.classroom_student_id = studentsassignment.classroomstudents.id');
+            // })
+            // ->whereHas('studentsassignment', function ($query) {
+            //     return $query->where('assignment_status_id', '=', '1');
+            // })
+            ->first();
     }
 }
