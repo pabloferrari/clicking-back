@@ -61,7 +61,7 @@ class Handler extends ExceptionHandler
     {
         $hash = Str::random(15);
         Log::channel('exceptions')->error($hash . ' ' . $exception->getMessage());
-        $error = getenv('APP_ENV') == 'production' ? $hash : $exception->getMessage();
+        $error = env('APP_ENV') == 'production' ? $hash : $exception->getMessage();
         
         if ($exception instanceof ValidationException) {
             $errors = self::getCustomMessagesByValidator($exception->errors());
