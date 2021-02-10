@@ -4,6 +4,7 @@ namespace App\Classes;
 
 use App\Models\Library;
 use Log;
+use Illuminate\Support\Facades\Auth;
 
 class LibraryService
 {
@@ -21,8 +22,9 @@ class LibraryService
     public static function createLibrary($data)
     {
         $newLibrary = new Library();
-        $newLibrary->name = $data['name'];
+        $newLibrary->article = $data['article'];
         $newLibrary->description = $data['description'];
+        $newLibrary->user_id = Auth::user()->id;
         // $newLibrary->active = 1; // true
         $newLibrary->save();
         return self::getLibrary($newLibrary->id);
