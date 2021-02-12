@@ -51,6 +51,6 @@ class Assignment extends Model
 
     public function studentsassignment()
     {
-        return $this->hasMany(\App\Models\StudentAssignment::class);
+        return $this->hasMany(\App\Models\StudentAssignment::class, 'assignment_id');
     }
 }

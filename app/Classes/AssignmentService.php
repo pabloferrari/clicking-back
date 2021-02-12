@@ -2,6 +2,7 @@
 
 namespace App\Classes;
 
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use App\Models\{Assignment, StudentAssignment, CourseClass};
 use DB;
 use Log;
@@ -52,7 +53,7 @@ class AssignmentService
                 foreach ($data['student_assignments'] as $key) {
                     $newData = [
                         'classroom_student_id' => $key,
-                        'score'                => $data['score'] ?? 0,
+                        'score'                =>  0,
                         'limit_date'           => Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s'),
                         'assignment_status_id' => $data['assignment_status_id']
                     ];
@@ -101,7 +102,7 @@ class AssignmentService
             DB::commit();
             Log::debug(__METHOD__ . ' -> NEW Assignment Student ' . json_encode($newAssignment));
 
-            return Assignment::where('id', $data['assignment_id'])->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
+            return self::getAssignmentDetailById($data['assignment_id']);
         } catch (\Exception $e) {
             DB::rollback();
             Log::error(__METHOD__ . ' - ROLLBACK Assignment Student -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
@@ -124,7 +125,7 @@ class AssignmentService
             DB::commit();
             Log::debug(__METHOD__ . ' -> NEW Deliver Assignment Student ' . json_encode($newAssignment));
 
-            return Assignment::where('id', $data['assignment_id'])->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
+            return self::getAssignmentDetailById($data['assignment_id']);
         } catch (\Exception $e) {
             DB::rollback();
             Log::error(__METHOD__ . ' - ROLLBACK Deliver Assignment Student -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
@@ -231,57 +232,28 @@ class AssignmentService
     public static function getAssignmentDetailById($id)
     {
 
-
-
-        $AssignmentDetail = DB::table('student_assignments')
-            ->select(
-                DB::raw('max(student_assignments.assignment_status_id) AS assignment_status_id'),
-                'assignments.title',
-                'assignments.description',
-                'assignments.limit_date',
-                'assignments.id as assignment_type_id',
-                'students.name as student',
-                'assignment_status.name AS status_name',
-                'student_assignments.classroom_student_id',
-                'user_students.id AS user_student_id'
-            )
-            ->leftJoin('assignments', 'assignments.id', '=', 'student_assignments.assignment_id')
-            ->leftJoin('assignment_status', 'assignment_status.id', '=', 'student_assignments.assignment_status_id')
-            ->leftJoin('classroom_students', 'classroom_students.id', '=', 'student_assignments.classroom_student_id')
-            ->leftJoin('students', 'students.id', '=', 'classroom_students.student_id')
-            ->leftJoin('users AS user_students', 'students.user_id', '=', 'user_students.id')
-            ->leftJoin('classes', 'classes.id', '=', 'assignments.class_id')
-            ->leftJoin('courses', 'courses.id', '=', 'classes.course_id')
-            ->leftJoin('teachers', 'teachers.id', '=', 'courses.teacher_id')
-            ->leftJoin('users AS user_teachers', 'teachers.user_id', '=', 'user_teachers.id')
-            ->leftJoin('assignment_types', 'assignment_types.id', '=', 'assignments.assignment_type_id')
-            ->where('assignments.id', $id)
-            ->groupBy(
-                'assignments.title',
-                'students.name',
-                'assignments.description',
-                'assignments.limit_date',
-                'assignments.id',
-                'assignment_status.name',
-                'student_assignments.classroom_student_id'
-            )
-            ->get();
-        // $dataParser = [];
-        // foreach ($AssignmentDetail as $assigments) {
-        //     $dataParser[] = [
-        //         'title' => $assigments->title
-        //     ];
-        // }
-        // return $AssignmentDetail;
-        return Assignment::where('id', $id)->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])
-            // ->whereIn('assignment.studentsassignment.id', function ($query) {
-            //     return $query->select(DB::raw('id'))
-            //         ->from('student_assignments')
-            //         ->whereRaw('student_assignments.classroom_student_id = studentsassignment.classroomstudents.id');
-            // })
-            // ->whereHas('studentsassignment', function ($query) {
-            //     return $query->where('assignment_status_id', '=', '1');
-            // })
+        $assignment = Assignment::where('id', $id)
+            ->with(['class.course.teacher.user', 'assignmenttype'])
             ->first();
+
+        $studentAssignmentIN = DB::select("SELECT id
+            FROM student_assignments
+            WHERE id IN(
+                SELECT MAX(id) AS id
+                FROM student_assignments
+                WHERE assignment_id = ?
+                GROUP BY classroom_student_id
+            )", [$id]);
+        $studentAssignmentIN =  collect($studentAssignmentIN)->map(function ($x) {
+            return (array) $x;
+        })->toArray();
+
+        $studentAssignment = StudentAssignment::whereIn('id',  $studentAssignmentIN)->with(['classroomstudents.student.user', 'assignmentstatus'])
+            ->get();
+
+        return [
+            'studentsassignment' => $studentAssignment,
+            'assignment'         => $assignment
+        ];
     }
 }
