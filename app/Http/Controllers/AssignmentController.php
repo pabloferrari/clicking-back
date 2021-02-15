@@ -137,4 +137,10 @@ class AssignmentController extends Controller
             return response()->json(["message" => "Error creating assignment"], 400);
         }
     }
+
+    public function assignmentFileTeacher($id)
+    {
+        $Assignment = AssignmentService::assignmentFileTeacherId($id);
+        return response()->json(['data' => $Assignment]);
+    }
 }

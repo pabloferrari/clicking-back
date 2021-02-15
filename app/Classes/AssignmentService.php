@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\Models\{Assignment, StudentAssignment, CourseClass};
+use App\Models\{Assignment, StudentAssignment, CourseClass, File};
 use DB;
 use Log;
 use Illuminate\Support\Carbon;
@@ -114,17 +114,35 @@ class AssignmentService
         try {
             $newAssignment = new Assignment();
             $newData = [
-                'assignment_id'        =>  $data['assignment_id'],
+                'assignment_id'        => $data['assignment_id'],
                 'classroom_student_id' => $data['classroom_student_id'],
                 'score'                => $data['score'] ?? 0,
                 'limit_date'           => Carbon::parse(Carbon::now()->format('Y-m-d H:i:s')),
                 'assignment_status_id' => $data['assignment_status_id']
             ];
             $newAssignment->studentAssignments()->attach($data['assignment_id'], $newData);
-            DB::commit();
-            Log::debug(__METHOD__ . ' -> NEW Deliver Assignment Student ' . json_encode($newAssignment));
 
-            return Assignment::where('id', $data['assignment_id'])->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
+            if ($data->file('files')) {
+                // Load File FileUpload
+                $handleFilesUploadService = new handleFilesUploadService();
+                $dataFile = array(
+                    'model_name' => 'Assignment',
+                    'model_id'   => $newData['assignment_id'],
+                    'request'    => $data
+                );
+                $resultFile = $handleFilesUploadService->createFile($dataFile);
+            }
+
+            if ($resultFile) {
+                DB::commit();
+
+                Log::debug(__METHOD__ . ' -> NEW Deliver Assignment Student ' . json_encode($newAssignment));
+
+                return Assignment::where('id', $data['assignment_id'])->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
+            } else {
+                DB::rollback();
+                return false;
+            }
         } catch (\Exception $e) {
             DB::rollback();
             Log::error(__METHOD__ . ' - ROLLBACK Deliver Assignment Student -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
@@ -283,5 +301,18 @@ class AssignmentService
             //     return $query->where('assignment_status_id', '=', '1');
             // })
             ->first();
+    }
+
+    public static function assignmentFileTeacherId($id)
+    {
+        return File::where('model_id', '=', $id)
+            ->where('model_name', '=', 'Assignment')
+            ->get();
+        /*
+        return File::where('model_id', '=', $id)
+            ->where('model_name', '=', 'Assignment')
+            ->where('model_name', '=', Auth::user()->id)
+            ->get();
+        */
     }
 }
