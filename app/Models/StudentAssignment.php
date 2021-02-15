@@ -22,9 +22,9 @@ class StudentAssignment extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'classroom_student_id',
+        // 'classroom_student_id',
 
-        'assignment_id',
+        // 'assignment_id',
         'assignment_status_id'
 
     ];
@@ -36,7 +36,7 @@ class StudentAssignment extends Model
 
     public function assignments()
     {
-        return $this->hasMany(\App\Models\Assignment::class, 'assignment_id');
+        return $this->belongsTo(\App\Models\Assignment::class, 'assignment_id');
     }
     public function classroomstudents()
     {

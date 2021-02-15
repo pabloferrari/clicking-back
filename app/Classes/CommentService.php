@@ -56,6 +56,7 @@ class CommentService
             ->whereHas('course', function ($query) use ($id) {
                 return $query->where('id', '=', $id);
             })
+            ->orderBy('created_at', 'DESC')
             ->whereNull('children_id')
             ->get();
 

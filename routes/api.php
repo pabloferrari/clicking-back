@@ -31,9 +31,11 @@ use App\Http\Controllers\{
     CommentController,
     LibrariesController,
     TicketsController,
-    EventsController
+    EventsController,
+    FolderController
 };
 use App\Models\Assignment;
+use App\Models\Folders;
 
 /*
 |--------------------------------------------------------------------------
@@ -93,6 +95,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('my-assignments/{id}/{status}', [AssignmentController::class, 'myAssignments']);
         Route::get('my-courses-assignments-count', [CourseController::class, 'myCoursesAssignmentsCount']);
         Route::get('assignments/detail/{id}', [AssignmentController::class, 'assignmentDetail']);
+        Route::get('folders/byCourse/{id}', [FolderController::class, 'folderByCourse']);
         // Route::resource('classes', CourseClassController::class);
 
 
@@ -100,6 +103,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('libraries', LibrariesController::class);
 
         Route::get('assignments/file-teacher/{id}', [AssignmentController::class, 'assignmentFileTeacher']);
+        Route::resource('folders', FolderController::class);d
     });
 
     Route::get('profile', [UsersController::class, 'getProfile']);
