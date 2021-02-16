@@ -48,7 +48,7 @@ class handleFilesUploadService
                     $new->remote_path = Storage::path($value); //Generate
                     $new->url         = Storage::url($value); //Generate
                     $new->migrated    = 0; //Generate
-                    $new->user_id     = Auth::user()->id; //Generate
+                    $new->user_id     = $data['user_id']; // Arg
                     $new->status      = '1'; //Generate
                     $new->size        = Storage::size($value); //Generate
                     #$new->extension   = $resultFile->extension();
@@ -103,6 +103,13 @@ class handleFilesUploadService
             Log::debug(__METHOD__ . ' -> Upload file storage $request empty ' . json_encode($file));
             return false;
         }
+    }
+
+    public static function deleteFileStorage($path = null)
+    {
+        $result = Storage::disk('public')->delete($path);
+        Log::debug(__METHOD__ . ' -> Delete file storage disk ' . json_encode($result));
+        return $result;
     }
 
     public static function deleteFile($id)

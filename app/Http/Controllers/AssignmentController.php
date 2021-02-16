@@ -125,7 +125,7 @@ class AssignmentController extends Controller
             if ($user->hasRole('teacher')) {
                 $newAssignment = AssignmentService::createAssignmentStudent($request->all());
             } else if ($user->hasRole('student')) {
-                $newAssignment = AssignmentService::deliverAssignmentStudent($request->all());
+                $newAssignment = AssignmentService::deliverAssignmentStudent($request->all(), $request);
             } else {
                 $newAssignment = [];
             }
@@ -138,9 +138,41 @@ class AssignmentController extends Controller
         }
     }
 
-    public function assignmentFileTeacher($id)
+    public function getAssignmentTeacher($id, $userId)
     {
-        $Assignment = AssignmentService::assignmentFileTeacherId($id);
+        $request = array(
+            'id'         => $id,
+            'user_Id'     => $userId,
+            'model_name' => 'Assignment',
+            'status'     => 1
+        );
+
+        $Assignment = AssignmentService::getAssignmentTeacherId($request);
         return response()->json(['data' => $Assignment]);
+    }
+
+    public function getAssignmentStudent($id, $userId)
+    {
+        $request = array(
+            'id'         => $id,
+            'user_id'     => $userId,
+            'model_name' => 'Assignment',
+            'status'     => 1
+        );
+
+        $Assignment = AssignmentService::getAssignmentStudentId($request);
+        return response()->json(['data' => $Assignment]);
+    }
+
+    public function deleteFileStudent($id, $assignment_id, $user_id)
+    {
+        try {
+            $deleted = AssignmentService::deletefileStudent($id, $assignment_id, $user_id);
+            Log::debug(__METHOD__ . ' - ASSIGNMENT DELETED FILE id: ' . $id);
+            return response()->json(['data' => $deleted]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "Error deleting Assignment file"], 400);
+        }
     }
 }

@@ -30,7 +30,7 @@ class NewsController extends Controller
     {
         try {
 
-            $News = NewsService::createNews($request->all());
+            $News = NewsService::createNews($request->all(), $request);
             Log::debug(__METHOD__ . ' - NEW News CREATED ' . json_encode($News));
             return response()->json(['data' => $News]);
         } catch (\Throwable $th) {

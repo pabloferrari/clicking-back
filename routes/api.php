@@ -102,8 +102,11 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('assignment-students', [AssignmentController::class, 'storeAssignmentStudent']);
         Route::resource('libraries', LibrariesController::class);
 
-        Route::get('assignments/file-teacher/{id}', [AssignmentController::class, 'assignmentFileTeacher']);
-        Route::resource('folders', FolderController::class);d
+        Route::get('assignments/file-teacher/{id}/{userId}', [AssignmentController::class, 'getAssignmentTeacher']);
+        Route::get('assignments/file-student/{id}/{userId}', [AssignmentController::class, 'getAssignmentStudent']);
+        Route::resource('folders', FolderController::class);
+
+        Route::delete('assignments/delete-file-student/{id}/{assignment_id}/{user_id}', [AssignmentController::class, 'deleteFileStudent']);
     });
 
     Route::get('profile', [UsersController::class, 'getProfile']);

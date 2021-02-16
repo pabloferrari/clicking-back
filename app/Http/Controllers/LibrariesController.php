@@ -30,7 +30,7 @@ class LibrariesController extends Controller
     {
         try {
 
-            $Library = LibraryService::createLibrary($request->all());
+            $Library = LibraryService::createLibrary($request->all(), $request);
             Log::debug(__METHOD__ . ' - NEW Library CREATED ' . json_encode($Library));
             return response()->json(['data' => $Library]);
         } catch (\Throwable $th) {

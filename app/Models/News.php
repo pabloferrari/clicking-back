@@ -32,4 +32,9 @@ class News extends Model
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
+
+    public function fileNews()
+    {
+        return $this->hasOne(\App\Models\File::class, 'model_id')->where('model_name', 'News');
+    }
 }

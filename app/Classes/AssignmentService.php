@@ -65,7 +65,8 @@ class AssignmentService
                 $dataFile = array(
                     'model_name' => 'Assignment',
                     'model_id'   => $newAssignment->id,
-                    'request'    => $request
+                    'request'    => $request,
+                    'user_id'    => Auth::user()->id
                 );
                 $resultFile = $handleFilesUploadService->createFile($dataFile);
             }
@@ -109,7 +110,7 @@ class AssignmentService
             return false;
         }
     }
-    public static function deliverAssignmentStudent($data)
+    public static function deliverAssignmentStudent($data, $request)
     {
         DB::beginTransaction();
         try {
@@ -123,13 +124,16 @@ class AssignmentService
             ];
             $newAssignment->studentAssignments()->attach($data['assignment_id'], $newData);
 
-            if ($data->file('files')) {
+            $resultFile = false;
+
+            if ($request->file('files')) {
                 // Load File FileUpload
                 $handleFilesUploadService = new handleFilesUploadService();
                 $dataFile = array(
                     'model_name' => 'Assignment',
                     'model_id'   => $newData['assignment_id'],
-                    'request'    => $data
+                    'request'    => $request,
+                    'user_id'    => Auth::user()->id
                 );
                 $resultFile = $handleFilesUploadService->createFile($dataFile);
             }
@@ -275,16 +279,72 @@ class AssignmentService
         ];
     }
 
-    public static function assignmentFileTeacherId($id)
+    public static function getAssignmentTeacherId($request = array())
     {
-        return File::where('model_id', '=', $id)
-            ->where('model_name', '=', 'Assignment')
+        $subQueryIn = DB::select('SELECT DISTINCT u.id
+	                    FROM users AS u
+                       INNER JOIN teachers AS t ON t.user_id = u.id');
+
+        $subQueryIn =  collect($subQueryIn)->map(function ($x) {
+            return (array) $x;
+        })->toArray();
+
+        return File::where('model_id', '=', $request['id'])
+            ->where('model_name', '=', $request['model_name'])
+            ->where('status', '=', $request['status'])
+            ->whereIn('user_id', $subQueryIn)
             ->get();
-        /*
-        return File::where('model_id', '=', $id)
-            ->where('model_name', '=', 'Assignment')
-            ->where('model_name', '=', Auth::user()->id)
+    }
+    public static function getAssignmentStudentId($request = array())
+    {
+        // $subQueryIn = DB::select('SELECT DISTINCT u.id
+        //                 FROM users AS u
+        //                INNER JOIN teachers AS t ON t.user_id <> u.id');
+
+        // $subQueryIn =  collect($subQueryIn)->map(function ($x) {
+        //     return (array) $x;
+        // })->toArray();
+        return File::where('model_id', '=', $request['id'])
+            ->where('model_name', '=', $request['model_name'])
+            ->where('status', '=', $request['status'])
+            ->where('user_id', '=', $request['user_id'])
             ->get();
-        */
+    }
+
+    public static function deletefileStudent($id, $assignment_id, $user_id)
+    {
+        DB::beginTransaction();
+        try {
+            // One: Get Path Record
+            $path = File::where('id', '=', $id)->get();
+            Log::debug(__METHOD__ . ' -> Value $path  ' . json_encode($path[0]->name));
+
+            // Two: Delete File Table
+            File::where('id', $id)->delete();
+            Log::debug(__METHOD__ . ' -> DELETE Student File Assignment  ' . json_encode($id));
+
+            $request = array(
+                'id'         => $assignment_id,
+                'user_id'    => $user_id,
+                'model_name' => 'Assignment',
+                'status'     => 1
+            );
+
+            //three: Delete File Storage Disk
+            $handleFilesUploadService = new handleFilesUploadService();
+            $resultFile = $handleFilesUploadService->deleteFileStorage($path[0]->name);
+
+            if ($resultFile) {
+                DB::commit();
+                return self::getAssignmentStudentId($request);
+            } else {
+                DB::rollback();
+                return false;
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error(__METHOD__ . ' - ROLLBACK  DELETE Student File Assignment  -> ' . json_encode($id) . ' exception: ' . $e->getMessage());
+            return false;
+        }
     }
 }

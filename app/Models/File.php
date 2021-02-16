@@ -33,4 +33,9 @@ class File extends Model
     {
         return $this->belongsTo(\App\Models\User::class);
     }
+
+    public function news()
+    {
+        return $this->belongsTo(\App\Models\News::class, 'id');
+    }
 }
