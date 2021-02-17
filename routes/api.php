@@ -14,6 +14,7 @@ use App\Http\Controllers\{
     UsersController,
     TeacherController,
     StudentController,
+    ImageController,
     InstitutionYearController,
     SubjectController,
     CourseTypeController,
@@ -218,6 +219,8 @@ Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'jo
 Route::any('bigbluebutton/callback/{hash}', [BigBlueButtonController::class, 'callback']);
 
 Route::get('socket', [NotificationsController::class, 'testSocket']);
+
+Route::get('/storage/{img}', [ImageController::class, 'index']);
 
 Route::get('/{any}', function ($any) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any", 'url' => env('APP_URL')]);
