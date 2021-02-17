@@ -17,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+// Route::get('/storage/{img}', function () {
+//     return view('welcome');
+// });

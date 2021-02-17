@@ -6,6 +6,7 @@ use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Classes\Helpers;
 use Log;
 
 class handleFilesUploadService
@@ -40,13 +41,16 @@ class handleFilesUploadService
             $resp = true;
             foreach ($resultFile as $value) {
                 if ($value) { // Nota TDD: Se debe trabajar como una transacción... (FALTA)
+
+                    $urlFile = env('APP_URL') . Storage::url($value);
+                    Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' File ' . $urlFile);
                     $new = new File();
                     $new->name        =  trim(str_replace('public/', '', $value)); //Generate
                     $new->model_name  = $data['model_name']; // Arg
                     $new->model_id    = $data['model_id']; // Arg
-                    $new->path        = Storage::path($value); //Generate
-                    $new->remote_path = Storage::path($value); //Generate
-                    $new->url         = Storage::url($value); //Generate
+                    $new->path        = $urlFile; //Generate
+                    $new->remote_path = $urlFile; //Generate
+                    $new->url         = $urlFile; //Generate
                     $new->migrated    = 0; //Generate
                     $new->user_id     = $data['user_id']; // Arg
                     $new->status      = '1'; //Generate

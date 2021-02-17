@@ -220,5 +220,5 @@ Route::any('bigbluebutton/callback/{hash}', [BigBlueButtonController::class, 'ca
 Route::get('socket', [NotificationsController::class, 'testSocket']);
 
 Route::get('/{any}', function ($any) {
-    return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any"]);
+    return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any", 'url' => env('APP_URL')]);
 })->where('any', '.*');

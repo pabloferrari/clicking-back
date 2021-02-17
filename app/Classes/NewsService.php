@@ -35,7 +35,7 @@ class NewsService
         $newNews->date           = Carbon::parse($data['date'])->format('Y-m-d H:i:s');
         $newNews->institution_id = Auth::user()->institution_id;
         $newNews->user_id = Auth::user()->id;
-        $newNews->public         = $data['public'];
+        $newNews->public = $data['public'] ? true : false;
         $newNews->save();
 
         // Load File FileUpload
