@@ -16,8 +16,11 @@ class EventService {
     public function getEvents() 
     {
         $eventsId = UserEvent::where('user_id', Auth::user()->id)->get()->pluck('event_id')->toArray();
-        $events = Event::whereIn('id', $eventsId)->with(['status', 'type', 'users', 'users.user'])->get();
+        $events = Event::whereIn('id', $eventsId)->with(['status', 'type', 'users', 'users.user' => function($query){
+            $query->select('id','name', 'email', 'image');
+        }])->get();
         return $events;
+
     }
 
     public function getEventTypes() 
@@ -39,7 +42,7 @@ class EventService {
             $newEvent->participants = (isset($data['guests'])) ? $this->createUserEvent($newEvent, $data['guests']) : $this->createUserEvent($newEvent);
 
             DB::commit();
-            return $newEvent;
+            return Event::where('id', $newEvent->id)->with(['status', 'type', 'users', 'users.user'])->first();
             // all good
         } catch (\Exception $e) {
             DB::rollback();
