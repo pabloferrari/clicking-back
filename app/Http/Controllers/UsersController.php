@@ -83,4 +83,8 @@ class UsersController extends Controller
         return response()->json($response);
     }
 
+    public function getUsersInstitution($filter) {
+        return response()->json($this->userService->getUsersInstitution($filter));
+    }
+
 }
