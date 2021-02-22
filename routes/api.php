@@ -96,6 +96,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('my-assignments/{id}/{status}', [AssignmentController::class, 'myAssignments']);
         Route::get('my-courses-assignments-count', [CourseController::class, 'myCoursesAssignmentsCount']);
         Route::get('assignments/detail/{id}', [AssignmentController::class, 'assignmentDetail']);
+        Route::get('assignments/detail/student/{id}', [AssignmentController::class, 'assignmentStudentDetailById']);
         Route::get('folders/byCourse/{id}', [FolderController::class, 'folderByCourse']);
         // Route::resource('classes', CourseClassController::class);
 

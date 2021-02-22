@@ -232,14 +232,56 @@ class AssignmentService
             })->get();
     }
 
+    public static function getMyAssignmentStudentPending($id)
+    {
+        // $studentAssignmentIN = DB::select("SELECT id
+        //     FROM student_assignments
+        //     WHERE id IN(
+        //         SELECT MAX(id) AS id
+        //         FROM student_assignments
+        //         WHERE assignment_id = ?
+        //         GROUP BY classroom_student_id
+        //     )", [$id]);
+        // $studentAssignmentIN =  collect($studentAssignmentIN)->map(function ($x) {
+        //     return (array) $x;
+        // })->toArray();
+
+        $assignments = Assignment::where('id', $id)->with([
+            'assignmenttype', 'class.course.subject', 'studentsassignment.assignmentstatus'
+        ])
+
+            ->whereHas('studentsassignment', function ($query) {
+                return $query->whereIn('assignment_status_id', [1, 2]);
+            })
+            ->whereHas('class.course.classroom', function ($query) {
+                return $query->where('institution_id', Auth::user()->institution_id);
+            })
+            ->whereHas('class.course.classroom.classroomStudents', function ($query) {
+                return $query->where('student_id', Auth::user()->student->id);
+            })->get();
+        return $assignments;
+    }
+
     public static function getAssignmentByStudent($id, $status)
     {
+        $studentAssignmentIN = DB::select("SELECT id
+            FROM student_assignments
+            WHERE id IN(
+                SELECT MAX(id) AS id
+                FROM student_assignments
+                WHERE assignment_id = ?
+                GROUP BY classroom_student_id
+            )", [$id]);
+        $studentAssignmentIN =  collect($studentAssignmentIN)->map(function ($x) {
+            return (array) $x;
+        })->toArray();
 
-        return Assignment::where('assignment_type_id', $id)->with([
+        return Assignment::with([
             'assignmenttype', 'class.course.subject'
             // ,'studentsassignment.classroomstudents.student'
             , 'studentsassignment.assignmentstatus'
         ])
+
             ->whereHas('studentsassignment', function ($query) use ($status) {
                 return $query->where('assignment_status_id', $status);
             })
@@ -278,6 +320,38 @@ class AssignmentService
             'assignment'         => $assignment
         ];
     }
+
+    public static function getAssignmentDetailStudentById($id)
+    {
+
+        $assignment = Assignment::where('id', $id)
+            ->with(['class.course.teacher.user', 'assignmenttype'])
+            ->first();
+
+        $studentAssignmentIN = DB::select("SELECT id
+            FROM student_assignments
+            WHERE id IN(
+                SELECT MAX(id) AS id
+                FROM student_assignments
+                WHERE assignment_id = ?
+                GROUP BY classroom_student_id
+            )", [$id]);
+        $studentAssignmentIN =  collect($studentAssignmentIN)->map(function ($x) {
+            return (array) $x;
+        })->toArray();
+
+        $studentAssignment = StudentAssignment::whereIn('id',  $studentAssignmentIN)->with(['classroomstudents.student.user', 'assignmentstatus'])
+            ->whereHas('classroomstudents.student', function ($query) {
+                return $query->where('student_id', Auth::user()->student->id);
+            })
+            ->get();
+
+        return [
+            'studentsassignment' => $studentAssignment,
+            'assignment'         => $assignment
+        ];
+    }
+
 
     public static function getAssignmentTeacherId($request = array())
     {

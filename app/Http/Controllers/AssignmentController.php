@@ -105,7 +105,13 @@ class AssignmentController extends Controller
         if ($user->hasRole('teacher')) {
             $Assignment = AssignmentService::getAssignmentByTeacher($id, $status);
         } else if ($user->hasRole('student')) {
-            $Assignment = AssignmentService::getAssignmentByStudent($id, $status);
+
+            if ($status === 'pending') {
+                $Assignment = AssignmentService::getAssignmentByStudent($id, $status);
+                // $Assignment = AssignmentService::getMyAssignmentStudentPending($id);
+            } else {
+                $Assignment = AssignmentService::getAssignmentByStudent($id, $status);
+            }
         } else {
             $Assignment = [];
         }
@@ -115,6 +121,11 @@ class AssignmentController extends Controller
     public function assignmentDetail($id)
     {
         $Assignment = AssignmentService::getAssignmentDetailById($id);
+        return response()->json(['data' => $Assignment]);
+    }
+    public function assignmentStudentDetailById($id)
+    {
+        $Assignment = AssignmentService::getAssignmentDetailStudentById($id);
         return response()->json(['data' => $Assignment]);
     }
 
