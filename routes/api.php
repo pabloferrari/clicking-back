@@ -60,6 +60,23 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['middleware' => 'auth:api'], function () {
 
+    Route::get('profile', [UsersController::class, 'getProfile']);
+    Route::get('notifications', [NotificationsController::class, 'getNotifications']);
+    Route::post('tickets', [TicketsController::class, 'create']);
+    Route::get('event-types', [EventsController::class, 'getEventTypes']);
+    Route::get('events', [EventsController::class, 'index']);
+    Route::post('events', [EventsController::class, 'create']);
+
+    Route::put('profile', [UsersController::class, 'updateProfile']);
+    Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
+
+    Route::get('courses/byClassroom/{id}', [CourseController::class, 'coursesByClassroom']);
+
+    // FIND USERS BY INSTITUTION AND FILTER
+    Route::get('get-users-institution/{filter}', [UsersController::class, 'getUsersInstitution']);
+    Route::get('bigbluebutton/get-meeting-types', [BigBlueButtonController::class, 'getMeetingTypes']);
+
+
 
     Route::group(['middleware' => 'role:institution,teacher,admin,root,student'], function () {
         Route::get('/testAdmin', [AuthController::class, 'test']);
@@ -110,20 +127,6 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::delete('assignments/delete-file-student/{id}/{assignment_id}/{user_id}', [AssignmentController::class, 'deleteFileStudent']);
     });
-
-    Route::get('profile', [UsersController::class, 'getProfile']);
-    Route::get('notifications', [NotificationsController::class, 'getNotifications']);
-    Route::post('tickets', [TicketsController::class, 'create']);
-    Route::get('event-types', [EventsController::class, 'getEventTypes']);
-    Route::get('events', [EventsController::class, 'index']);
-    Route::post('events', [EventsController::class, 'create']);
-
-    Route::put('profile', [UsersController::class, 'updateProfile']);
-    Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
-
-    Route::get('courses/byClassroom/{id}', [CourseController::class, 'coursesByClassroom']);
-    Route::get('bigbluebutton/get-meeting-types', [BigBlueButtonController::class, 'getMeetingTypes']);
-
 
     Route::group(['middleware' => 'admin'], function () {
 
@@ -213,6 +216,7 @@ Route::group(['middleware' => 'auth:api'], function () {
             Route::post('join-as-attendee', [BigBlueButtonController::class, 'joinAsAttendee']);
         });
     });
+
 });
 
 Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCreateMeetingUsers']);

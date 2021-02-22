@@ -90,6 +90,19 @@ class UserService
         return User::whereIn('id', $ids)->get();
     }
 
+    public function getUsersInstitution($filter) {
+        return User::where('institution_id', Auth::user()->institution_id)
+        ->with(['student', 'teacher'])
+        ->where(function($query) use ($filter) {
+                $query->where('name', 'LIKE', "%$filter%")
+                ->orWhere('email', 'LIKE', "%$filter%")
+                ->orWhere('description', 'LIKE', "%$filter%");
+            })
+        ->select('id','name', 'email', 'image')
+        ->get();
+
+    }
+
     // NOTIFICATIONS
     // public function createNotification($userId, $data) {
     //     $data['type'] = "meeting";
