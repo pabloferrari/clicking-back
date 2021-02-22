@@ -16,10 +16,17 @@ class EventService {
     public function getEvents() 
     {
         $eventsId = UserEvent::where('user_id', Auth::user()->id)->get()->pluck('event_id')->toArray();
-        $events = Event::whereIn('id', $eventsId)->with(['status', 'type', 'users', 'users.user' => function($query){
+        return Event::whereIn('id', $eventsId)->with(['status', 'type', 'users', 'users.user' => function($query){
             $query->select('id','name', 'email', 'image');
-        }])->get();
-        return $events;
+        }, 'users.user.teacher', 'users.user.student'])->get();
+    }
+
+    public function getEvent($id) 
+    {
+        return Event::where('id', $id)
+        ->with(['status', 'type', 'users', 'users.user' => function($query){
+            $query->select('id','name', 'email', 'image');
+        }, 'users.user.teacher', 'users.user.student'])->first();
 
     }
 

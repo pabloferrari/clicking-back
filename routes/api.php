@@ -65,6 +65,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('tickets', [TicketsController::class, 'create']);
     Route::get('event-types', [EventsController::class, 'getEventTypes']);
     Route::get('events', [EventsController::class, 'index']);
+    Route::get('events/{id}', [EventsController::class, 'getEvent']);
     Route::post('events', [EventsController::class, 'create']);
 
     Route::put('profile', [UsersController::class, 'updateProfile']);
