@@ -108,19 +108,19 @@ class CommentService
         $comments =  Comment::with(['user', 'course.subject', 'assignment.assignmenttype', 'commentChild.user'])
             // add WhereHas Institution user
             ->whereHas('user', function ($query) {
-                return $query->where('institution_id', '=', Auth::user()->institution_id);
+                $query->where('institution_id', '=', Auth::user()->institution_id);
             })
             // add whereHas Assignments
             ->whereHas('assignment', function ($query) use ($id) {
-                return $query->where('id', '=', $id);
+                $query->where('id', '=', $id);
             })
             ->whereHas('comment', function ($query) {
-                return $query->where('user_id', '=', Auth::user()->id);
+                $query->where('user_id', '=', Auth::user()->id);
             })
             // //add whereHas To Users
             ->whereHas('comment', function ($query) use ($user_id) {
-                return $query->where('to_user_id', '=', $user_id);
-                return $query->where('model_name', '=', 'assignments');
+                $query->where('to_user_id', '=', $user_id);
+                $query->where('model_name', '=', 'assignments');
             })
 
             ->whereNull('children_id')
