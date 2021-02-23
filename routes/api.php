@@ -89,6 +89,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::get('classes/course/{id}/students', [CourseClassController::class, 'courseClassByStudents']);
         Route::get('assignments/course/{id}', [AssignmentController::class, 'assignmentByCourse']);
+        Route::resource('libraries', LibrariesController::class);
 
         Route::resource('news', NewsController::class);
         // ----- comments Routes --- //
@@ -120,8 +121,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
         Route::post('assignment-students', [AssignmentController::class, 'storeAssignmentStudent']);
-        Route::resource('libraries', LibrariesController::class);
-
+        
         Route::get('assignments/file-teacher/{id}/{userId}', [AssignmentController::class, 'getAssignmentTeacher']);
         Route::get('assignments/file-student/{id}/{userId}', [AssignmentController::class, 'getAssignmentStudent']);
         Route::resource('folders', FolderController::class);

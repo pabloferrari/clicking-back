@@ -15,7 +15,7 @@ class NewsService
     {
         return News::where('institution_id', Auth::user()->institution_id)
             ->with(['institution', 'user', 'fileNews'])
-            ->get();
+            ->orderBy('date', 'desc')->get();
     }
 
     public static function getNews($id)
