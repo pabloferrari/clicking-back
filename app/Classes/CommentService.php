@@ -122,7 +122,6 @@ class CommentService
                 $query->where('to_user_id', '=', $user_id);
                 $query->where('model_name', '=', 'assignments');
             })
-
             ->whereNull('children_id')
             ->get();
         $commentParse = [];
