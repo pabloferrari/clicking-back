@@ -28,7 +28,7 @@ class FolderController extends Controller
     public function store(Request $request)
     {
         try {
-            $newFolder = FolderService::createFolder($request->all());
+            $newFolder = FolderService::createFolder($request->all(), $request);
             Log::debug(__METHOD__ . ' - NEW FOLDER CREATED ' . json_encode($newFolder));
             return response()->json(['data' => $newFolder]);
         } catch (\Throwable $th) {

@@ -22,19 +22,31 @@ class handleFilesUploadService
         return File::where('id', $id)->with(['user'])->first();
     }
 
-    public static function createFile($data)
+    public static function CreateDirectory($directory)
+    {
+        $result = Storage::makeDirectory($directory);
+        Log::debug(__METHOD__ . ' -> Created file storage disk ' . json_encode($result));
+        return $result;
+    }
+
+    public static function createFile($data, $directory = null)
     {
 
         if (!$data['request']->file('files')) {
             return true; // temporalmente
         }
+
+        if ($directory) {
+            self::CreateDirectory($directory);
+        }
+
         // Load File FileUpload
         $handleFilesUploadService = new handleFilesUploadService();
 
         $resultFile = [];
 
         foreach ($data['request']->file('files') as $file) {
-            $resultFile[] = $handleFilesUploadService->uploadFile($file);
+            $resultFile[] = $handleFilesUploadService->uploadFile($file, $directory);
         }
 
         if ($resultFile) {
@@ -94,11 +106,15 @@ class handleFilesUploadService
         return $file;
     }
 
-    public static function uploadFile($file)
+    public static function uploadFile($file, $directory = null)
     {
         // storage file client
         if ($file) {
-            $result = Storage::disk('local')->put('public', $file);
+            if ($directory) {
+                $result = Storage::disk('local')->put($directory, $file);
+            } else {
+                $result = Storage::disk('local')->put('public', $file);
+            }
 
             // Format result return $result = public\ICR5n2x03LTg5jttGbmpsPern4QdyPTH7OEKFgUD.jpeg
             Log::debug(__METHOD__ . ' -> Upload file storage Create ' . json_encode($result));
