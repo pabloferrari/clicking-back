@@ -31,6 +31,11 @@ class Event extends Model
         return $this->hasMany('App\Models\UserEvent');
     }
 
+    public function creator()
+    {
+        return $this->hasOne('App\Models\User', 'id', 'creator_id');
+    }
+
     public function status()
     {
         return $this->hasOne('App\Models\EventStatus', 'id', 'status_id');
