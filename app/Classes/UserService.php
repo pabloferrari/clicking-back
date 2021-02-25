@@ -103,6 +103,12 @@ class UserService
 
     }
 
+    public function getUsersByInstitutionId($id) {
+        return User::where('institution_id', $id)
+        ->with(['student', 'teacher'])
+        ->get()->pluck('id');
+    }
+
     // NOTIFICATIONS
     // public function createNotification($userId, $data) {
     //     $data['type'] = "meeting";
