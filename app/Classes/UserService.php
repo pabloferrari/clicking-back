@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Log;
 use Hash;
 
-use App\Models\{ User, Role, RoleUser};
+use App\Models\{ User, Role, RoleUser, Student, Teacher};
 use App\Classes\{Helpers, NotificationService};
 
 class UserService
@@ -100,13 +100,30 @@ class UserService
             })
         ->select('id','name', 'email', 'image')
         ->get();
-
     }
 
     public function getUsersByInstitutionId($id) {
         return User::where('institution_id', $id)
         ->with(['student', 'teacher'])
         ->get()->pluck('id');
+    }
+
+    public function getUserIdFromStudentId($ids) {
+        $users = [];
+        $students = Student::with('user')->whereIn('id', $ids)->get();
+        foreach($students as $st) {
+            $users[] = $st->user->id;
+        }
+        return $users;
+    }
+
+    public function getUserIdFromTeacherId($ids) {
+        $users = [];
+        $teachers = Teacher::with('user')->whereIn('id', $ids)->get();
+        foreach($teachers as $ts) {
+            $users[] = $ts->user->id;
+        }
+        return $users;
     }
 
     // NOTIFICATIONS

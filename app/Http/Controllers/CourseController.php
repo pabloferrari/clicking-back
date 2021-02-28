@@ -110,7 +110,6 @@ class CourseController extends Controller
     }
     public function myCourses(Request $request)
     {
-
         $user = Auth::user();
         try {
 

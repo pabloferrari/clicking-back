@@ -22,11 +22,8 @@ class EventTypeSeeder extends Seeder
             ["name" => "Examen", "color" => "#7bd148", "google_color_id" => "9", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
             ["name" => "Recuparatorio", "color" => "#ffad46", "google_color_id" => "6", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
             ["name" => "Final", "color" => "#f83a22", "google_color_id" => "3", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
-            // ["name" => "", "color" => "", "google_color_id" => "", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
-            // ["name" => "", "color" => "", "google_color_id" => "", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
-            // ["name" => "", "color" => "", "google_color_id" => "", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
-            // ["name" => "", "color" => "", "google_color_id" => "", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
-            // ["name" => "", "color" => "", "google_color_id" => "", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")]
+            ["name" => "Tarea", "color" => "#f83a22", "google_color_id" => "3", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")],
+            ["name" => "TP", "color" => "#ffad46", "google_color_id" => "3", "created_at" => date("Y-m-d H:i:s"), "updated_at" => date("Y-m-d H:i:s")]
         ]);
     }
 }
