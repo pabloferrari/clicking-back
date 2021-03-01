@@ -88,4 +88,16 @@ class ClassroomStudentController extends Controller
             return response()->json(["message" => "Error deleting classroom student"], 400);
         }
     }
+
+    /**
+     * Display the ratings students in specified course types ID
+     * @param int $course_type_id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function ratingStudent($course_type_id)
+    {
+        $RatingStudent = ClassroomStudentService::getRatingStudent($course_type_id);
+        return response()->json(['data' => $RatingStudent]);
+    }
 }

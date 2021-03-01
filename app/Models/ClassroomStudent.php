@@ -30,4 +30,8 @@ class ClassroomStudent extends Model
     {
         return $this->belongsTo(\App\Models\Student::class);
     }
+    public function assignmentStudent()
+    {
+        return $this->hasMany(\App\Models\StudentAssignment::class, 'classroom_student_id', 'id');
+    }
 }
