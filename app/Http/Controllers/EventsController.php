@@ -24,7 +24,7 @@ class EventsController extends Controller
      */
     public function index()
     {
-        return response()->json(['data' => $this->eventService->getEvents()]);
+        return response()->json(['data' => $this->eventService->getEvents(), 'next' => $this->eventService->getNextEvents()]);
     }
 
     public function getEvent($id)

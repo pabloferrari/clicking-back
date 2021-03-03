@@ -3,11 +3,12 @@
 namespace App\Classes;
 
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use App\Models\{Assignment, StudentAssignment, CourseClass,  File};
+use App\Models\{Assignment, StudentAssignment, CourseClass,  File, ClassroomStudent};
 use DB;
 use Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Classes\{EventService, UserService};
 
 class AssignmentService
 {
@@ -36,14 +37,17 @@ class AssignmentService
 
     public static function createAssignment($data, $request = null)
     {
-        DB::beginTransaction();
+        $eventService = new EventService();
+        $userService = new UserService();
 
+        DB::beginTransaction();
         try {
             $newAssignment = new Assignment();
             $newAssignment->title              = $data['title'];
             $newAssignment->description        = $data['description'];
-            $newAssignment->limit_date        =  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
+            $newAssignment->limit_date         =  Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
             $newAssignment->class_id           = $data['class_id'];
+            $newAssignment->score              = $data['score']  ?? 0;
             $newAssignment->groupqty           = $data['groupqty'] ?? 0;
             $newAssignment->assignment_type_id = $data['assignment_type_id'];
 
@@ -59,6 +63,15 @@ class AssignmentService
                     ];
                     $newAssignment->studentAssignments()->attach($newAssignment->id, $newData);
                 }
+
+                // CREATE EVENT TO ALL STUDENTS
+                $dataEvent['title'] = $newAssignment->title;
+                $dataEvent['notes'] = $newAssignment->description;
+                $dataEvent['start_date'] = Carbon::parse($data['limit_date'])->subMinutes('30')->format('Y-m-d H:i:s');
+                $dataEvent['end_date'] = Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
+                $dataEvent['event_type'] = $data['assignment_type_id'] == 1 ? 8 : ($data['assignment_type_id'] == 2 ? 5 : 9);
+                $dataEvent['guests'] = $userService->getUserIdFromStudentId($data['student_assignments']);
+                $eventService->createEvent($dataEvent);
 
                 // Load File FileUpload
                 $handleFilesUploadService = new handleFilesUploadService();
@@ -140,9 +153,7 @@ class AssignmentService
 
             if ($resultFile) {
                 DB::commit();
-
                 Log::debug(__METHOD__ . ' -> NEW Deliver Assignment Student ' . json_encode($newAssignment));
-
                 return Assignment::where('id', $data['assignment_id'])->with(['class.course.teacher.user', 'assignmenttype', 'studentsassignment.assignmentstatus', 'studentsassignment.classroomstudents.student.user'])->first();
             } else {
                 DB::rollback();
@@ -264,33 +275,38 @@ class AssignmentService
 
     public static function getAssignmentByStudent($id, $status)
     {
-        $studentAssignmentIN = DB::select("SELECT id
-            FROM student_assignments
-            WHERE id IN(
-                SELECT MAX(id) AS id
-                FROM student_assignments
-                WHERE assignment_id = ?
-                GROUP BY classroom_student_id
-            )", [$id]);
-        $studentAssignmentIN =  collect($studentAssignmentIN)->map(function ($x) {
-            return (array) $x;
-        })->toArray();
+        // id -> typo de tarea / status -> status de la tarea
+        $classrooms = ClassroomStudent::where('student_id', Auth::user()->student->id)->get()->pluck('id')->toArray();
+        $studentAssignments = StudentAssignment::whereIn('classroom_student_id', $classrooms)->orderBY('assignment_id')->orderBY('assignment_status_id', 'DESC')->get();
+        $studentAssignmentId = [];
+        $excluded = [];
+        foreach ($studentAssignments as $as) {
+            if (!in_array($as->assignment_id, $studentAssignmentId)) {
+                if (!in_array($as->assignment_id, $excluded)) {
+                    if ($as->assignment_status_id == $status) {
+                        $studentAssignmentId[] = $as->assignment_id;
+                    } else {
+                        $excluded[] = $as->assignment_id;
+                    }
+                }
+            }
+        }
 
-        return Assignment::with([
-            'assignmenttype', 'class.course.subject'
-            // ,'studentsassignment.classroomstudents.student'
-            , 'studentsassignment.assignmentstatus'
-        ])
+        $assignment = Assignment::with(['assignmenttype', 'class.course.subject', 'studentsassignment.assignmentstatus',  'class.course.classroom.shift'])
+            ->whereHas('studentsassignment', function ($qq) use ($classrooms) {
+                $qq->whereIn('classroom_student_id', $classrooms);
+            })
+            ->where('assignment_type_id', $id)
+            ->whereIn('id', $studentAssignmentId)
+            ->get();
 
-            ->whereHas('studentsassignment', function ($query) use ($status) {
-                return $query->where('assignment_status_id', $status);
-            })
-            ->whereHas('class.course.classroom', function ($query) {
-                return $query->where('institution_id', Auth::user()->institution_id);
-            })
-            ->whereHas('class.course.classroom.classroomStudents', function ($query) {
-                return $query->where('student_id', Auth::user()->student->id);
-            })->get();
+        foreach ($assignment as $kl => $as) {
+            foreach ($as->studentsassignment as $k => $sa) {
+                $as->studentsassignment[$k]->itsme = $sa->assignmentstatus->id == $status && in_array($sa->classroom_student_id, $classrooms) ? true : false;
+            }
+        }
+
+        return $assignment;
     }
 
     public static function getAssignmentDetailById($id)

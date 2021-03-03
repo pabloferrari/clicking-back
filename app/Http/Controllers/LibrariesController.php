@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Classes\LibraryService;
+use App\Http\Requests\LibraryRequests\{CreateLibraryRequest};
 use Log;
 
 class LibrariesController extends Controller
@@ -26,10 +27,9 @@ class LibrariesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateLibraryRequest $request)
     {
         try {
-
             $Library = LibraryService::createLibrary($request->all(), $request);
             Log::debug(__METHOD__ . ' - NEW Library CREATED ' . json_encode($Library));
             return response()->json(['data' => $Library]);

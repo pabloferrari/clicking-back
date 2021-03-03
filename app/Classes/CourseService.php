@@ -169,12 +169,11 @@ class CourseService
 
     public static function getCoursesStudent()
     {
-
         $classroomIds = [];
         foreach (Auth::user()->student->classroomStudents as $cst) {
             $classroomIds[] = $cst->classroom_id;
         }
-        $courses = Course::whereIn('classroom_id', $classroomIds)->with(['subject', 'courseType', 'classroom', 'classroom.shift'])->get();
+        $courses = Course::whereIn('classroom_id', $classroomIds)->with(['subject', 'courseType', 'classroom', 'classroom.shift', 'classroom.classroomStudents.student'])->get();
         $coursesByType = [];
         foreach ($courses as $course) {
             $coursesByType[$course->courseType->name][] = $course;

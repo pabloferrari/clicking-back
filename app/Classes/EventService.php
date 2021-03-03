@@ -16,9 +16,21 @@ class EventService {
     public function getEvents() 
     {
         $eventsId = UserEvent::where('user_id', Auth::user()->id)->get()->pluck('event_id')->toArray();
-        return Event::whereIn('id', $eventsId)->with(['status', 'type', 'users', 'users.user' => function($query){
+        return Event::whereIn('id', $eventsId)->with(['status', 'creator' => function($query){
+            $query->select('id','name', 'email', 'image');
+        }, 'type', 'users', 'users.user' => function($query){
             $query->select('id','name', 'email', 'image');
         }, 'users.user.teacher', 'users.user.student'])->get();
+    }
+
+    public function getNextEvents()
+    {
+        $eventsId = UserEvent::where('user_id', Auth::user()->id)->get()->pluck('event_id')->toArray();
+        return Event::whereIn('id', $eventsId)->with(['status', 'creator' => function($query){
+            $query->select('id','name', 'email', 'image');
+        }, 'type', 'users', 'users.user' => function($query){
+            $query->select('id','name', 'email', 'image');
+        }, 'users.user.teacher', 'users.user.student'])->where('start_date', '>', date("Y-m-d H:i"))->limit(5)->get();
     }
 
     public function getEvent($id) 
