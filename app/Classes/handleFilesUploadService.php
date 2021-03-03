@@ -36,9 +36,9 @@ class handleFilesUploadService
             return true; // temporalmente
         }
 
-        if ($directory) {
-            self::CreateDirectory($directory);
-        }
+        // if ($directory) {
+        //     self::CreateDirectory($directory);
+        // }
 
         // Load File FileUpload
         $handleFilesUploadService = new handleFilesUploadService();
@@ -111,7 +111,7 @@ class handleFilesUploadService
         // storage file client
         if ($file) {
             if ($directory) {
-                $result = Storage::disk('local')->put($directory, $file);
+                $result = Storage::disk('local')->put('public/' . $directory, $file);
             } else {
                 $result = Storage::disk('local')->put('public', $file);
             }
