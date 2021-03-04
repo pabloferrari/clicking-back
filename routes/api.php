@@ -33,7 +33,9 @@ use App\Http\Controllers\{
     LibrariesController,
     TicketsController,
     EventsController,
-    FolderController
+    FolderController,
+    NoteController,
+    NoteContentController
 };
 use App\Models\Assignment;
 use App\Models\Folders;
@@ -77,7 +79,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::get('get-users-institution/{filter}', [UsersController::class, 'getUsersInstitution']);
     Route::get('bigbluebutton/get-meeting-types', [BigBlueButtonController::class, 'getMeetingTypes']);
 
-
+    Route::resource('notes', NoteController::class);
+    Route::resource('note-contents', NoteContentController::class);
 
     Route::group(['middleware' => 'role:institution,teacher,admin,root,student'], function () {
         Route::get('/testAdmin', [AuthController::class, 'test']);
@@ -121,7 +124,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 
         Route::post('assignment-students', [AssignmentController::class, 'storeAssignmentStudent']);
-        
+
         Route::get('assignments/file-teacher/{id}/{userId}', [AssignmentController::class, 'getAssignmentTeacher']);
         Route::get('assignments/file-student/{id}/{userId}', [AssignmentController::class, 'getAssignmentStudent']);
         Route::resource('folders', FolderController::class);

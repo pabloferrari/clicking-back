@@ -6,14 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\SoftDeletes;
 
-class News extends Model
+class Note extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected $table = 'notes';
+
+
     protected $fillable = [
+        'id',
         'title',
-        'description',
-        'public',
-        'date',
+        '   ',
         'user_id'
     ];
 
@@ -21,20 +24,16 @@ class News extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'institution_id'
+        'user_id'
     ];
 
-    public function institution()
-    {
-        return $this->belongsTo(\App\Models\Institution::class, 'institution_id');
-    }
     public function user()
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
 
-    public function fileNews()
+    public function noteContents()
     {
-        return $this->hasOne(\App\Models\File::class, 'model_id')->where('model_name', 'News');
+        return $this->hasMany('App\Models\NoteContent');
     }
 }
