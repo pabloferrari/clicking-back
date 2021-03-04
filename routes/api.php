@@ -87,7 +87,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('classrooms', ClassroomController::class);
         Route::resource('courses', CourseController::class);
         Route::resource('classes', CourseClassController::class);
-
+        Route::resource('course-types', CourseTypeController::class);
         Route::get('classes/assignments/{id}/dashboard', [CourseClassController::class, 'classAssignmentCount']);
 
         Route::get('classes/course/{id}/students', [CourseClassController::class, 'courseClassByStudents']);
@@ -154,7 +154,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
         Route::resource('shifts', ShiftController::class);
         Route::resource('subjects', SubjectController::class);
-        Route::resource('course-types', CourseTypeController::class);
+
         // Route::resource('classrooms', ClassroomController::class);
         // Route::resource('courses', CourseController::class);
         Route::resource('classroom-students', ClassroomStudentController::class);
@@ -177,7 +177,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('shifts', ShiftController::class);
         // Route::resource('classrooms', ClassroomController::class);
         Route::resource('subjects', SubjectController::class);
-        Route::resource('course-types', CourseTypeController::class);
+        //Route::resource('course-types', CourseTypeController::class);
         // Route::resource('classes', CourseClassController::class);
         Route::resource('assignment-types', AssignmentTypeController::class);
         // Route::resource('assignments', AssignmentController::class);
@@ -213,14 +213,13 @@ Route::group(['middleware' => 'auth:api'], function () {
     });
 
     Route::group(['middleware' => 'student'], function () {
-
+        Route::get('student/ratings/{course_type_id}', [ClassroomStudentController::class, 'ratingStudent']);
 
         Route::prefix('bigbluebutton')->group(function () {
 
             Route::post('join-as-attendee', [BigBlueButtonController::class, 'joinAsAttendee']);
         });
     });
-
 });
 
 Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCreateMeetingUsers']);
