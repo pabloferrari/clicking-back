@@ -108,7 +108,6 @@ class AssignmentController extends Controller
 
             if ($status === 'pending') {
                 $Assignment = AssignmentService::getAssignmentByStudent($id, $status);
-                // $Assignment = AssignmentService::getMyAssignmentStudentPending($id);
             } else {
                 $Assignment = AssignmentService::getAssignmentByStudent($id, $status);
             }

@@ -229,7 +229,7 @@ class AssignmentService
 
     public static function getAssignmentByTeacher($id, $status)
     {
-        return Assignment::where('assignment_type_id', $id)->with([
+        $assignment = Assignment::where('assignment_type_id', $id)->with([
             'assignmenttype', 'class.course.classroom.shift', 'studentsassignment.classroomstudents.student.user', 'studentsassignment.assignmentstatus'
         ])
             ->whereHas('studentsassignment', function ($query) use ($status) {
@@ -241,6 +241,13 @@ class AssignmentService
             ->whereHas('class.course', function ($query) {
                 return $query->where('teacher_id', Auth::user()->teacher->id);
             })->get();
+
+        // foreach ($assignment as $kl => $as) {
+        //     foreach ($as->studentsassignment as $k => $sa) {
+        //         $as->studentsassignment[$k]->itsme = true;
+        //     }
+        // }
+        return $assignment;
     }
 
     public static function getMyAssignmentStudentPending($id)
