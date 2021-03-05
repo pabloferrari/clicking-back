@@ -8,8 +8,8 @@ use App\Models\Teacher;
 use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\User;
-
 use App\Classes\Helpers;
+use DB;
 
 class InstitutionService
 {
@@ -42,6 +42,13 @@ class InstitutionService
     {
         $params = Helpers::paramBuilder('Institution', $data);
         $newInstitution = Institution::create($params);
+
+        // CREO LOS TIPOS DE CURSOS
+        DB::table('course_types')->insert([
+            ['name' => "Curso", "institution_id" => $newInstitution->id],
+            ['name' => "Taller", "institution_id" => $newInstitution->id]
+        ]);
+        
         return self::getInstitution($newInstitution->id);
     }
 
