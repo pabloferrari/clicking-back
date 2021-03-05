@@ -24,8 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        \Log::debug('$schedule->command(\'command:closeUserSessions\')->cron(\'* * * * *\')');
-        $schedule->command('command:closeUserSessions')->cron('* * * * *');
+        $schedule->command('command:closeUserSessions')->cron('0 4 * * *');
     }
 
     /**
