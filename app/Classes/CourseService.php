@@ -173,7 +173,7 @@ class CourseService
         foreach (Auth::user()->student->classroomStudents as $cst) {
             $classroomIds[] = $cst->classroom_id;
         }
-        $courses = Course::whereIn('classroom_id', $classroomIds)->with(['subject', 'courseType', 'classroom', 'classroom.shift', 'classroom.classroomStudents.student'])->get();
+        $courses = Course::whereIn('classroom_id', $classroomIds)->with(['subject', 'courseType', 'classroom', 'classroom.shift', 'classroom.classroomStudents.student.user'])->get();
         $coursesByType = [];
         foreach ($courses as $course) {
             $coursesByType[$course->courseType->name][] = $course;

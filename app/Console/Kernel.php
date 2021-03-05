@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        \Log::debug('$schedule->command(\'command:closeUserSessions\')->cron(\'* * * * *\')');
+        $schedule->command('command:closeUserSessions')->cron('* * * * *');
     }
 
     /**
