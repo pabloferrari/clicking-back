@@ -79,6 +79,9 @@ class InstitutionService
 
     public static function deleteInstitution($id)
     {
+        $inst = Institution::where('id', $id)->first();
+        $inst->email = $inst->email.time();
+        $inst->save();
         return Institution::where('id', $id)->delete();
     }
 
