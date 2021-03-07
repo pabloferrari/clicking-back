@@ -38,6 +38,7 @@ use App\Http\Controllers\{
     NoteContentController
 };
 use App\Models\Assignment;
+use App\Models\Course;
 use App\Models\Folders;
 
 /*
@@ -194,8 +195,10 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('assignment-groups', AssignmentGroupController::class);
         Route::get('assignment-groups/byAssignment/{id}', [AssignmentGroupController::class, 'assignmentGroupByAssignment']);
 
-
-
+        // Route Add Student in Course in view Course, button Student List
+        Route::get('courses/student-not-in-course/{id}', [CourseController::class, 'studentNotInCourse']);
+        Route::post('courses/add-student-in-course', [CourseController::class, 'storeStudentInCourse']);
+        Route::delete('courses/delete-student-course/{id}', [CourseController::class, 'deleteStudentCourse']);
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
 

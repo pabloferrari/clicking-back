@@ -3,9 +3,11 @@
 namespace App\Classes;
 
 use Illuminate\Support\Facades\Auth;
-use App\Models\{Course, CourseType};
+use App\Models\{Classroom, Course, CourseType, ClassroomStudent, Student};
 use App\Models\Assignment;
 use Illuminate\Http\Request;
+use DB;
+use Illuminate\Support\Facades\Log;
 
 class CourseService
 {
@@ -179,5 +181,73 @@ class CourseService
             $coursesByType[$course->courseType->name][] = $course;
         }
         return $coursesByType;
+    }
+
+    public static function getStudentNotInCourse($id)
+    {
+
+        $classroom = Classroom::where('institution_id', Auth::user()->institution_id)->with('courses')
+            ->whereHas('courses', function ($query) use ($id) {
+                $query->where('id', $id);
+            })
+            ->first();
+
+        $studentInClassRoom = ClassroomStudent::where('classroom_id', $classroom->id)->get();
+        $studentIn = [];
+        foreach ($studentInClassRoom as $student) {
+            $studentIn[] = $student->student_id;
+        }
+        $students = Student::with('user')
+            ->whereHas('user', function ($query) {
+                $query->where('institution_id', Auth::user()->institution_id);
+            })
+            ->whereNotIn('id', $studentIn)->get();
+
+        return $students;
+    }
+
+    public static function addStudentInCourse($data)
+    {
+        $course_id = $data['course_id'];
+        $student_id  =  $data['student_id'];
+        $classroom = Classroom::where('institution_id', Auth::user()->institution_id)->with('courses')
+            ->whereHas('courses', function ($query) use ($course_id) {
+                $query->where('id', $course_id);
+            })
+            ->first();
+
+
+        DB::beginTransaction();
+        try {
+
+            foreach ($student_id as $student) {
+                $newClassroomStudent = new ClassroomStudent();
+                $newClassroomStudent->student_id = $student;
+                $newClassroomStudent->classroom_id = $classroom->id;
+                $newClassroomStudent->save();
+            }
+            Log::debug(__METHOD__ . ' -> NEW STUDENT IN COURSE ' . json_encode($newClassroomStudent));
+            DB::commit();
+            return self::getCourse($course_id);
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error(__METHOD__ . ' - ROLLBACK STUDENT in Copurse -> ' . json_encode($data) . ' exception: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public static function deleteStudentCourse($id)
+    {
+        DB::beginTransaction();
+        try {
+            ClassroomStudent::where('id', $id)->delete();
+            Log::debug(__METHOD__ . ' -> DELETE  Student in Course  ' . json_encode($id));
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error(__METHOD__ . ' - ROLLBACK Student in Course  -> ' . json_encode($id) . ' exception: ' . $e->getMessage());
+            return false;
+        }
     }
 }
