@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests\CourseRequests\{CreateCourseRequest, UpdateCourseRequest};
+use App\Http\Requests\CourseRequests\{CreateCourseRequest, UpdateCourseRequest, CreateCourseStudentRequest};
 use App\Classes\CourseService;
 use Illuminate\Support\Facades\Auth;
 
@@ -148,7 +148,7 @@ class CourseController extends Controller
         }
     }
 
-    public function storeStudentInCourse(Request $request)
+    public function storeStudentInCourse(CreateCourseStudentRequest $request)
     {
         try {
             $newStudentInCourse = CourseService::addStudentInCourse($request->all());
