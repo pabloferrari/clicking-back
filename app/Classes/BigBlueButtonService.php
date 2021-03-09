@@ -16,7 +16,7 @@ use BigBlueButton\Parameters\{
 };
 use BigBlueButton\Responses\GetMeetingInfoResponse;
 
-use App\Models\{MeetingType,MeetingRequest,Meeting,MeetingUser,Classroom,IntitutionClass,Teacher,Student,User};
+use App\Models\{BBBMeetingType,BBBMeetingRequest,BBBMeeting,BBBMeetingUser,Classroom,IntitutionClass,Teacher,Student,User};
 use App\Classes\{Helpers,UserService,TeacherService,StudentService,ClassroomService,CourseClassService,NotificationService};
 use DB;
 use Log;
@@ -171,7 +171,7 @@ class BigBlueButtonService
             'internalMeetingID' => $meeting->meetingId
         ];
 
-        $newMeetingModerator = MeetingUser::create($newMeetingModeratorData);
+        $newMeetingModerator = BBBMeetingUser::create($newMeetingModeratorData);
 
         Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' New Meeting Moderator -> ' . json_encode($newMeetingModerator));
         $newMeetingModerator['public_url'] = env('APP_URL').'/api/bigbluebutton/join-to-meeting?clicking_token=' . $newMeetingModeratorData['clicking_token'];
@@ -195,7 +195,7 @@ class BigBlueButtonService
     public function getUsersByMeetingType($meeting) {
         $users = [];
         try {
-            $meetingType = MeetingType::where('id', $meeting->meetingRequest->meeting_type)->first();
+            $meetingType = BBBMeetingType::where('id', $meeting->meetingRequest->meeting_type)->first();
             switch ($meetingType->type) {
                 case 'classroom':
                     // FIND MODEL ID

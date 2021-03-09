@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     AuthController,
     BigBlueButtonController,
+    MeetingController,
     CityController,
     ProvinceController,
     CountryController,
@@ -78,7 +79,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     // FIND USERS BY INSTITUTION AND FILTER
     Route::get('get-users-institution/{filter}', [UsersController::class, 'getUsersInstitution']);
-    Route::get('bigbluebutton/get-meeting-types', [BigBlueButtonController::class, 'getMeetingTypes']);
+    // Route::get('bigbluebutton/get-meeting-types', [BigBlueButtonController::class, 'getMeetingTypes']);
 
     Route::resource('notes', NoteController::class);
     Route::resource('note-contents', NoteContentController::class);
@@ -104,14 +105,23 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('teachers', TeacherController::class);
         Route::resource('students', StudentController::class);
         // ------------ BigBlueButton Routes ------------ //
-        Route::prefix('bigbluebutton')->group(function () {
+        // Route::prefix('bigbluebutton')->group(function () {
+        //     Route::post('create-meeting', [BigBlueButtonController::class, 'createMeeting']);
+        //     Route::post('end-meeting', [BigBlueButtonController::class, 'endMeeting']);
+        //     Route::post('join-as-moderator', [BigBlueButtonController::class, 'joinAsModerator']);
+        // });
+        // ------------ MEETING Routes ------------ //
+        Route::post('create-meeting', [MeetingController::class, 'createMeeting']);
+        Route::post('end-meeting', [MeetingController::class, 'endMeeting']);
 
-            Route::post('create-meeting', [BigBlueButtonController::class, 'createMeeting']);
-            Route::post('end-meeting', [BigBlueButtonController::class, 'endMeeting']);
-            Route::post('join-as-moderator', [BigBlueButtonController::class, 'joinAsModerator']);
-        });
     });
 
+    Route::group(['middleware' => 'role:teacher,institution'], function () {
+        // Route Add Student in Course in view Course, button Student List
+        Route::get('courses/student-not-in-course/{id}', [CourseController::class, 'studentNotInCourse']);
+        Route::post('courses/add-student-in-course', [CourseController::class, 'storeStudentInCourse']);
+        Route::delete('courses/delete-student-course/{id}', [CourseController::class, 'deleteStudentCourse']);
+    });
 
     Route::group(['middleware' => 'role:teacher,student'], function () {
 
@@ -195,10 +205,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::resource('assignment-groups', AssignmentGroupController::class);
         Route::get('assignment-groups/byAssignment/{id}', [AssignmentGroupController::class, 'assignmentGroupByAssignment']);
 
-        // Route Add Student in Course in view Course, button Student List
-        Route::get('courses/student-not-in-course/{id}', [CourseController::class, 'studentNotInCourse']);
-        Route::post('courses/add-student-in-course', [CourseController::class, 'storeStudentInCourse']);
-        Route::delete('courses/delete-student-course/{id}', [CourseController::class, 'deleteStudentCourse']);
         // Route::resource('courses', CourseController::class);
         // Route::resource('classes', CourseClassController::class);
 
@@ -218,16 +224,16 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::group(['middleware' => 'student'], function () {
         Route::get('student/ratings/{course_type_id}', [ClassroomStudentController::class, 'ratingStudent']);
 
-        Route::prefix('bigbluebutton')->group(function () {
-
-            Route::post('join-as-attendee', [BigBlueButtonController::class, 'joinAsAttendee']);
-        });
+        // Route::prefix('bigbluebutton')->group(function () {
+        //     Route::post('join-as-attendee', [BigBlueButtonController::class, 'joinAsAttendee']);
+        // });
     });
 });
 
-Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCreateMeetingUsers']);
-Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'joinToMeeting']);
-Route::any('bigbluebutton/callback/{hash}', [BigBlueButtonController::class, 'callback']);
+// Route::get('bigbluebutton/test/{id}', [BigBlueButtonController::class, 'testCreateMeetingUsers']);
+// Route::get('bigbluebutton/join-to-meeting', [BigBlueButtonController::class, 'joinToMeeting']);
+// Route::any('bigbluebutton/callback/{hash}', [BigBlueButtonController::class, 'callback']);
+Route::get('meeting', [MeetingController::class, 'joinToMeeting']);
 
 Route::get('socket', [NotificationsController::class, 'testSocket']);
 
