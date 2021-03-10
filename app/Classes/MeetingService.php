@@ -108,7 +108,7 @@ class MeetingService
         $meeting->finished = true;
         $meeting->save();
         $meetUsers = MeetingUser::where('meeting_id', $meeting->id)->get()->pluck('id');
-        Notification::where('type', 'meeting')->whereIn('model_id', $meetUsers)->update(['finished' => true]);
+        $this->notificationService->closeMeetingNotification($meetUsers);
         return $meeting;
     }
 
