@@ -12,7 +12,7 @@ class UsersController extends Controller
 
     public $userService;
     public function __construct(UserService $userService){
-        
+
         $this->userService = $userService;
 
     }
@@ -69,7 +69,7 @@ class UsersController extends Controller
         }
     }
 
-    public function updateProfile(UpdateProfileRequest $request)
+    public function updateProfile(Request $request)
     {
         $data = $request->all();
         $params = Helpers::paramBuilder('User', $data);
@@ -77,8 +77,20 @@ class UsersController extends Controller
         return response()->json($response);
     }
 
+    public function updateAvatar(Request $request)
+    {
+        try {
+            $user = $this->userService->updateAvatar($request->all(), $request);
+            Log::debug(__METHOD__ . ' - UPDATE USER AVATAR ' . json_encode($user));
+            return response()->json(['data' => $user]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
+            return response()->json(["message" => "Error updating avatar", "error" => $th->getMessage()], 400);
+        }
+    }
+
     public function resetPassword(RessetPasswordRequest $request)
-    {   
+    {
         $response = $this->userService->resetPassword($request->user()->id, $request->input('new-password'));
         return response()->json($response);
     }

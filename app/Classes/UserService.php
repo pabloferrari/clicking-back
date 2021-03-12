@@ -5,6 +5,7 @@ namespace App\Classes;
 use Illuminate\Support\Facades\Auth;
 use Log;
 use Hash;
+use DB;
 
 use App\Models\{ User, Role, RoleUser, Student, Teacher};
 use App\Classes\{Helpers, NotificationService};
@@ -124,6 +125,33 @@ class UserService
             $users[] = $ts->user->id;
         }
         return $users;
+    }
+
+    public static function updateAvatar($data, $request)
+    {
+        DB::beginTransaction();
+        // Load File FileUpload
+        $handleFilesUploadService = new handleFilesUploadService();
+        $dataFile = array(
+            'model_name' => 'User',
+            'model_id'   => Auth::user()->id,
+            'request'    => $request,
+            'user_id'    => Auth::user()->id
+        );
+        $resultFile = $handleFilesUploadService->createFile($dataFile);
+        $user = User::where('id', Auth::user()->id)->first();
+        $user->image = $resultFile->url;
+        $user->save();
+
+        $user = User::with(['roles'])->find($user->id);
+        if ($resultFile) {
+            DB::commit();
+            Log::debug(__METHOD__ . ' -> NEW UPLOAD FILE USER ' . json_encode($resultFile));
+            return $user;
+        } else {
+            DB::rollback();
+            return false;
+        }
     }
 
     // NOTIFICATIONS

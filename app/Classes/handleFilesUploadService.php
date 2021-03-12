@@ -31,7 +31,6 @@ class handleFilesUploadService
 
     public static function createFile($data, $directory = null)
     {
-
         if (!$data['request']->file('files')) {
             return true; // temporalmente
         }
@@ -48,7 +47,6 @@ class handleFilesUploadService
         foreach ($data['request']->file('files') as $file) {
             $resultFile[] = $handleFilesUploadService->uploadFile($file, $directory);
         }
-
         if ($resultFile) {
             $resp = true;
             foreach ($resultFile as $value) {

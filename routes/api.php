@@ -72,6 +72,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::put('profile', [UsersController::class, 'updateProfile']);
     Route::put('profile/reset-password', [UsersController::class, 'resetPassword']);
+    Route::post('profile/update-avatar', [UsersController::class, 'updateAvatar']);
 
     Route::get('courses/byClassroom/{id}', [CourseController::class, 'coursesByClassroom']);
 
