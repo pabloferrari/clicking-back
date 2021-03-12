@@ -26,8 +26,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('command:closeUserSessions')->cron('0 4 * * *');
         $schedule->command('command:finishMeetings')->everyFifteenMinutes();
-
-        $schedule->command('command:testLog')->everyMinute();
+        // $schedule->command('command:testLog')->everyMinute();
     }
 
     /**
