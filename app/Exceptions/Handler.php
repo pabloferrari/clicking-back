@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Illuminate\Support\Str;
 use Throwable;
 use Log;
@@ -60,7 +62,6 @@ class Handler extends ExceptionHandler
     function render($request, Throwable $exception)
     {
         $hash = Str::random(15);
-        Log::channel('exceptions')->error($hash . ' ' . $exception->getMessage());
         $error = env('APP_ENV') == 'production' ? $hash : $exception->getMessage();
         
         if ($exception instanceof ValidationException) {
@@ -72,20 +73,21 @@ class Handler extends ExceptionHandler
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        if ($exception instanceof \Exception) {
-            return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
-        }
-
-        if ($exception instanceof NotFoundHttpException) { // for 404
-            return response()->json(['message' => 'NotFoundHttp not found.', 'code' => $error], 404);
-        }
+        // if ($exception instanceof \Exception) {
+        //     dd($exception);
+        //     return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
+        // }
         
         if ($exception instanceof MethodNotAllowedHttpException) { // for checking  api method
             // do stuff
             return response()->json(['message' => 'Route not found.', 'code' => $error], 404);
         }
 
-        return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
+        if ($exception instanceof NotFoundHttpException) { // for 404
+            return response()->json(['message' => 'Not Found Http', 'code' => $error], 404);
+        }
+
+        return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
     }
 
     /**

@@ -25,7 +25,7 @@ class CreateInstitutionRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:institutions|string',
+            'name' => 'required|string',
             'email' => 'required|unique:institutions|email',
             // 'phone' => 'required|regex:/(54)[0-9]{9}/',
             'phone' => 'required|string',

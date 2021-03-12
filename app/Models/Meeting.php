@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Meeting extends Model
 {
     use HasFactory;
-    protected $table = 'bbb_meetings';
+    protected $table = 'meetings';
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['meeting_request_id','meetingId','internalMeetingID','parentMeetingID','name','hash','attendeePW','moderatorPW','createTime','voiceBridge','dialNumber','createDate','record_id','welcome','returncode','record','autoStartRecording','allowStartStopRecording','webcamsOnlyForModerator','muteOnStart','allowModsToUnmuteUsers','lockSettingsDisableCam','lockSettingsDisableMic','lockSettingsDisablePrivateChat','lockSettingsDisablePublicChat','lockSettingsDisableNote','lockSettingsLockedLayout','lockSettingsLockOnJoin','lockSettingsLockOnJoinConfigurable','logo','bannerText','bannerColor','webVoice','logoutUrl','maxParticipants','duration','meta','webVoiceConf','publish','redirect','clientUrl','configToken','avatarUrl','checksum'];
+    protected $fillable = ['user_id','institution_id','link','model','model_id','ids','minutes','user_id','hash','finished'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -24,9 +24,8 @@ class Meeting extends Model
      */
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
-    public function meetingRequest()
-    {
-        return $this->belongsTo(\App\Models\MeetingRequest::class);
-    }
-
+    // public function meetingRequest()
+    // {
+    //     return $this->belongsTo(\App\Models\MeetingRequest::class);
+    // }
 }

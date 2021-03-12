@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests\CourseRequests\{CreateCourseRequest, UpdateCourseRequest};
+use App\Http\Requests\CourseRequests\{CreateCourseRequest, UpdateCourseRequest, CreateCourseStudentRequest};
 use App\Classes\CourseService;
 use Illuminate\Support\Facades\Auth;
 
@@ -145,6 +145,41 @@ class CourseController extends Controller
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $user->id);
             return response()->json(["message" => "error"], 400);
+        }
+    }
+
+    public function storeStudentInCourse(CreateCourseStudentRequest $request)
+    {
+        try {
+            $newStudentInCourse = CourseService::addStudentInCourse($request->all());
+            Log::debug(__METHOD__ . ' - NEW STUDENT IN COURSES CREATED ' . json_encode($newStudentInCourse));
+            return response()->json(['data' => $newStudentInCourse]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
+            return response()->json(["message" => "Error creating student in courses"], 400);
+        }
+    }
+
+    public function studentNotInCourse($id)
+    {
+        try {
+            $courses = CourseService::getStudentNotInCourse($id);
+            return response()->json(['data' => $courses]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "error"], 400);
+        }
+    }
+
+    public function  deleteStudentCourse($id)
+    {
+        try {
+            $deleted = CourseService::deleteStudentCourse($id);
+            Log::debug(__METHOD__ . ' - STUDENT COURSE DELETED id: ' . $id);
+            return response()->json(['deleted' => $deleted]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "Error deleting student in course"], 400);
         }
     }
 }

@@ -21,11 +21,11 @@ class SocketService
             $elephant->emit($channel, $data);
             $elephant->close();
 
-            Log::channel('socket')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' SUCCESS ' . $channel . ' -> ' . json_encode($data));
+            Log::channel('socket')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' ip: ' . $ip . ' SUCCESS ' . $channel . ' -> ' . json_encode($data));
 
         } catch (\Throwable $th) {
             
-            Log::channel('socket')->error(__METHOD__ . ' ' . Helpers::lsi() . ' channel: ' . $channel . ' ' . json_encode($data) . ' -> ' . $th->getMessage() . ' ip ' . $ip);
+            Log::channel('socket')->error(__METHOD__ . ' ' . Helpers::lsi() . ' ip: ' . $ip . ' channel: ' . $channel . ' ' . json_encode($data) . ' -> ' . $th->getMessage() . ' ip ' . $ip);
 
         }
     }
