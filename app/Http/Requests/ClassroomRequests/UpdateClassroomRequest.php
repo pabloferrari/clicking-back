@@ -25,7 +25,7 @@ class UpdateClassroomRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            'name'           => 'required|unique:classrooms,name,' . $request->get('id') . '|string',
+            'name'           => 'required|string',
             'shift_id'       => 'required|exists:shifts,id',
             'institution_id' => 'required|exists:institutions,id',
         ];
