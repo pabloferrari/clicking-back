@@ -7,7 +7,7 @@ use Log;
 use Hash;
 use DB;
 
-use App\Models\{ User, Role, RoleUser, Student, Teacher};
+use App\Models\{ User, Role, RoleUser, Student, Teacher, ClassroomStudent};
 use App\Classes\{Helpers, NotificationService};
 
 class UserService
@@ -118,6 +118,17 @@ class UserService
         }
         return $users;
     }
+
+    public function getUserIdFromClassroomStudentId($ids) {
+        $users = [];
+        Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' USERS -> ' . json_encode($ids));
+        $classroomStudent = ClassroomStudent::with(['student', 'student.user'])->whereIn('id', $ids)->get();
+        foreach($classroomStudent as $clst) {
+            $users[] = $clst->student->user->id;
+        }
+        return $users;
+    }
+
     public function getUserIdFromTeacherId($ids) {
         $users = [];
         Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' USERS -> ' . json_encode($ids));

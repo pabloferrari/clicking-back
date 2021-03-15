@@ -86,8 +86,12 @@ class Handler extends ExceptionHandler
         if ($exception instanceof NotFoundHttpException) { // for 404
             return response()->json(['message' => 'Not Found Http', 'code' => $error], 404);
         }
-
-        return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
+        try {
+            //code...
+            return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
+        }
     }
 
     /**

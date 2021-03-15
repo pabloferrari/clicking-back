@@ -240,6 +240,7 @@ Route::get('socket', [NotificationsController::class, 'testSocket']);
 
 Route::get('/storage/{img}', [ImageController::class, 'index']);
 
+
 // Route::get('/{any}', function ($any) {
 //     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any", 'url' => env('APP_URL')]);
 // })->where('any', '.*');
@@ -247,3 +248,5 @@ Route::get('/storage/{img}', [ImageController::class, 'index']);
 Route::fallback(function ($route) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => $route, 'url' => env('APP_URL') . '/api/'], 404);
 });
+
+

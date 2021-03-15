@@ -70,7 +70,7 @@ class AssignmentService
                 $dataEvent['start_date'] = Carbon::parse($data['limit_date'])->subMinutes('30')->format('Y-m-d H:i:s');
                 $dataEvent['end_date'] = Carbon::parse($data['limit_date'])->format('Y-m-d H:i:s');
                 $dataEvent['event_type'] = $data['assignment_type_id'] == 1 ? 8 : ($data['assignment_type_id'] == 2 ? 5 : 9);
-                $dataEvent['guests'] = $userService->getUserIdFromStudentId($data['student_assignments']);
+                $dataEvent['guests'] = $userService->getUserIdFromClassroomStudentId($data['student_assignments']);
                 $eventService->createEvent($dataEvent);
 
                 // Load File FileUpload
