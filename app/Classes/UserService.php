@@ -111,15 +111,16 @@ class UserService
 
     public function getUserIdFromStudentId($ids) {
         $users = [];
+        Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' USERS -> ' . json_encode($ids));
         $students = Student::with('user')->whereIn('id', $ids)->get();
         foreach($students as $st) {
             $users[] = $st->user->id;
         }
         return $users;
     }
-
     public function getUserIdFromTeacherId($ids) {
         $users = [];
+        Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' USERS -> ' . json_encode($ids));
         $teachers = Teacher::with('user')->whereIn('id', $ids)->get();
         foreach($teachers as $ts) {
             $users[] = $ts->user->id;

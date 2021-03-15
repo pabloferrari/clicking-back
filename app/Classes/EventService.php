@@ -55,7 +55,7 @@ class EventService {
             $params['creator_id'] = Auth::user()->id;
             $params['event_type_id'] = $data['event_type'];
             $params['status_id'] = 1;
-
+            Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' -> ' . json_encode($data));
             $newEvent = Event::create($params);
 
             $newEvent->participants = (isset($data['guests'])) ? $this->createUserEvent($newEvent, $data['guests']) : $this->createUserEvent($newEvent);
@@ -71,6 +71,7 @@ class EventService {
 
     public function createUserEvent($event, $users = []) 
     {
+        Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' USERS -> ' . json_encode($users));
         $participants = [];
         $users = array_filter($users, function (int $i) { return $i != Auth::user()->id; });
         $participants[] = UserEvent::create(['event_id' => $event->id, 'user_id' => Auth::user()->id]);
