@@ -51,12 +51,12 @@ class CreateMeetingRequest extends FormRequest
         ];
     }
 
-    protected function getValidatorInstance()
-    {
-        return parent::getValidatorInstance()->after(function ($validator) {
-            $this->after($validator);
-        });
-    }
+    // protected function getValidatorInstance()
+    // {
+    //     return parent::getValidatorInstance()->after(function ($validator) {
+    //         $this->after($validator);
+    //     });
+    // }
 
     public function after($validator)
     {
