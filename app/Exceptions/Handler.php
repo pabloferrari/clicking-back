@@ -66,37 +66,30 @@ class Handler extends ExceptionHandler
         
         if ($exception instanceof ValidationException) {
             $errors = self::getCustomMessagesByValidator($exception->errors());
-            Log::debug(__METHOD__ . ' -> ' . __LINE__);
             return response()->json(["message" => $errors], 422);
         }
 
         if ($exception instanceof AuthenticationException) {
-            Log::debug(__METHOD__ . ' -> ' . __LINE__);
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
         // if ($exception instanceof \Exception) {
         //     dd($exception);
-        Log::debug(__METHOD__ . ' -> ' . __LINE__);//     
         return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
         // }
         
         if ($exception instanceof MethodNotAllowedHttpException) { // for checking  api method
             // do stuff
-            Log::debug(__METHOD__ . ' -> ' . __LINE__);
             return response()->json(['message' => 'Route not found.', 'code' => $error], 404);
         }
 
         if ($exception instanceof NotFoundHttpException) { // for 404
-            Log::debug(__METHOD__ . ' -> ' . __LINE__);
             return response()->json(['message' => 'Not Found Http', 'code' => $error], 404);
         }
         try {
             //code...
-            Log::debug(__METHOD__ . ' -> ' . __LINE__);
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
         } catch (\Throwable $th) {
-            Log::debug(__METHOD__ . ' -> ' . __LINE__);
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
         }
     }

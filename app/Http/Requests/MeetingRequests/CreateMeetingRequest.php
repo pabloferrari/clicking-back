@@ -65,7 +65,7 @@ class CreateMeetingRequest extends FormRequest
             $user = Auth::user();
             $meeting = Meeting::where('user_id', $user->id)->where('finished', false)->where('model', $this->input('model'))->where('model_id', $this->input('model_id'))->first();
             if($meeting) {
-                $validator->errors()->add('meeting', 'La meeting ya fue creada: ' . $meeting->link);
+                $validator->errors()->add('message', 'La meeting ya fue creada: ' . $meeting->link);
             } 
         }
     }
