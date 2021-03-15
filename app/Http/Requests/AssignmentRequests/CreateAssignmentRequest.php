@@ -56,8 +56,8 @@ class CreateAssignmentRequest extends FormRequest
         return [
 
 
-            'title.required' => 'Title is required!',
-            'title.unique' => 'Name will be unique',
+            'title.required' => 'Title es requerido!',
+            'title.unique' => 'El titulo debe ser unico',
 
             'description.required' => 'Description is required!',
             'class_id.required' => 'Class is required!',

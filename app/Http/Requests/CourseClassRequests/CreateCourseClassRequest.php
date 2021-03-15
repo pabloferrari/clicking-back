@@ -53,8 +53,8 @@ class CreateCourseClassRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => 'Title is required!',
-            'title.unique' => 'Title will be unique',
+            'title.required' => 'Title es reqrido!',
+            'title.unique' => 'El titulo debe ser unico',
             'description.string' => 'description is string!',
             'course_id.required' => 'course id is required!',
             'course_id.exists' => 'course id must exist in courses',
