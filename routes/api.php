@@ -114,7 +114,6 @@ Route::group(['middleware' => 'auth:api'], function () {
         // ------------ MEETING Routes ------------ //
         Route::post('create-meeting', [MeetingController::class, 'createMeeting']);
         Route::post('end-meeting', [MeetingController::class, 'endMeeting']);
-
     });
 
     Route::group(['middleware' => 'role:teacher,institution'], function () {
@@ -132,6 +131,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('assignments/detail/{id}', [AssignmentController::class, 'assignmentDetail']);
         Route::get('assignments/detail/student/{id}', [AssignmentController::class, 'assignmentStudentDetailById']);
         Route::get('folders/byCourse/{id}', [FolderController::class, 'folderByCourse']);
+        Route::post('folders/addFileFolder', [FolderController::class, 'folderAddFile']);
+
         // Route::resource('classes', CourseClassController::class);
 
 
@@ -248,5 +249,3 @@ Route::get('/storage/{img}', [ImageController::class, 'index']);
 Route::fallback(function ($route) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => $route, 'url' => env('APP_URL') . '/api/'], 404);
 });
-
-

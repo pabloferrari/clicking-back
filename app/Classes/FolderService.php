@@ -6,18 +6,61 @@ use App\Models\Folder;
 use Log;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use App\Classes\UserService;
 
 class FolderService
 {
 
     public static function getFolders()
     {
-        return Folder::get();
+        // return Folder::get();
+        #$userService = new UserService();
+        #$users = $userService->getUsersByInstitutionId(Auth::user()->institution_id);
+        $institution_id = Auth::user()->institution_id;
+
+        return DB::table('folders')
+            ->join('files', 'files.model_id', '=', 'folders.id')
+            ->where('files.model_name', 'Folder')
+            ->where('folders.institution_id', $institution_id)
+            ->select(
+                'folders.*',
+                'files.*',
+                'folders.name AS folders_name'
+            )
+            ->get();
     }
 
     public static function getFolder($id)
     {
-        return Folder::where('id', $id)->first();
+        // return Folder::where('id', $id)->first();
+        $institution_id = Auth::user()->institution_id;
+
+        return DB::table('folders')
+            ->join('files', 'files.model_id', '=', 'folders.id')
+            ->where('files.model_name', 'Folder')
+            ->where('folders.id', $id)
+            ->where('folders.institution_id', $institution_id)
+            ->select(
+                'folders.*',
+                'files.*',
+                'folders.name AS folders_name'
+            )
+            ->get();
+    }
+
+    public static function getFolderFirst($id)
+    {
+        //return Folder::where('course_id', $id)->get();
+        $institution_id = Auth::user()->institution_id;
+
+        return DB::table('folders')
+            ->where('folders.id', $id)
+            ->where('folders.institution_id', $institution_id)
+            ->select(
+                'folders.*',
+                'folders.name AS folders_name'
+            )
+            ->first();
     }
 
     public static function createFolder($data, $request)
@@ -33,7 +76,7 @@ class FolderService
         // Load File FileUpload
         $handleFilesUploadService = new handleFilesUploadService();
         $dataFile = array(
-            'model_name' => 'Library',
+            'model_name' => 'Folder',
             'model_id'   => $newFolder->id,
             'request'    => $request,
             'user_id'    => Auth::user()->id
@@ -44,7 +87,39 @@ class FolderService
         if ($resultFile) {
             DB::commit();
             Log::debug(__METHOD__ . ' -> NEW UPLOAD FILE FOLDER ' . json_encode($resultFile));
-            return self::getFolder($newFolder->id);
+            return self::getFolderFirst($newFolder->id);
+        } else {
+            DB::rollback();
+            return false;
+        }
+    }
+
+    public static function createFileFolder($data, $request)
+    {
+        DB::beginTransaction();
+        // $newFolder = new Folder();
+        // $newFolder->name = $data['name'];
+        // $newFolder->course_id = $data['course_id'];
+        // $newFolder->path = str_replace(' ', '_', $data['name']);
+        // $newFolder->institution_id = Auth::user()->institution_id;
+        // $newFolder->save();
+        $data = self::getFolderFirst($data['folder_id']);
+
+        // Load File FileUpload
+        $handleFilesUploadService = new handleFilesUploadService();
+        $dataFile = array(
+            'model_name' => 'Folder',
+            'model_id'   => $data->id,
+            'request'    => $request,
+            'user_id'    => Auth::user()->id
+        );
+        $nameFolder = $data->institution_id . '-' . $data->course_id . '-' . $data->name;
+        $resultFile = $handleFilesUploadService->createFile($dataFile, $nameFolder);
+
+        if ($resultFile) {
+            DB::commit();
+            Log::debug(__METHOD__ . ' -> NEW UPLOAD FILE FOLDER ADD+' . json_encode($resultFile));
+            return self::getFolder($data->id);
         } else {
             DB::rollback();
             return false;
@@ -69,6 +144,16 @@ class FolderService
 
     public static function getFolderByCourse($id)
     {
-        return Folder::where('course_id', $id)->get();
+        //return Folder::where('course_id', $id)->get();
+        $institution_id = Auth::user()->institution_id;
+
+        return DB::table('folders')
+            ->where('folders.course_id', $id)
+            ->where('folders.institution_id', $institution_id)
+            ->select(
+                'folders.*',
+                'folders.name AS folders_name'
+            )
+            ->get();
     }
 }

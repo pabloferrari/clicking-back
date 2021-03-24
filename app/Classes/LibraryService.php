@@ -16,7 +16,7 @@ class LibraryService
     {
         $userService = new UserService();
         $users = $userService->getUsersByInstitutionId(Auth::user()->institution_id);
-        
+
         return DB::table('libraries')
             ->join('files', 'files.model_id', '=', 'libraries.id')
             ->where('files.model_name', 'Library')
@@ -41,7 +41,7 @@ class LibraryService
     {
         DB::beginTransaction();
         try {
-        
+
             $newLibrary = new Library();
             $newLibrary->article = $data['article'];
             $newLibrary->description = $data['description'];
@@ -62,7 +62,6 @@ class LibraryService
 
             DB::commit();
             return self::getLibrary($newLibrary->id);
-            
         } catch (\Throwable $th) {
             Log::error(__METHOD__ . ' ' . Helpers::lsi() . " " . $th->getMessage() . " " . json_encode($data));
             DB::rollback();

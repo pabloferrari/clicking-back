@@ -103,4 +103,16 @@ class FolderController extends Controller
         $folders = FolderService::getFolderByCourse($id);
         return response()->json(['data' => $folders]);
     }
+
+    public function folderAddFile(Request $request)
+    {
+        try {
+            $newFolder = FolderService::createFileFolder($request->all(), $request);
+            Log::debug(__METHOD__ . ' - NEW ADD FILE FOLDER ' . json_encode($newFolder));
+            return response()->json(['data' => $newFolder]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . json_encode($request->all()));
+            return response()->json(["message" => "Error creating folder"], 400);
+        }
+    }
 }
