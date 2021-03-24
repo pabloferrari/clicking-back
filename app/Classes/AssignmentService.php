@@ -229,25 +229,102 @@ class AssignmentService
 
     public static function getAssignmentByTeacher($id, $status)
     {
-        $assignment = Assignment::where('assignment_type_id', $id)->with([
-            'assignmenttype', 'class.course.classroom.shift', 'studentsassignment.classroomstudents.student.user', 'studentsassignment.assignmentstatus'
-        ])
-            ->whereHas('studentsassignment', function ($query) use ($status) {
-                return $query->where('assignment_status_id', $status);
-            })
-            ->whereHas('class.course.classroom', function ($query) {
-                return $query->where('institution_id', Auth::user()->institution_id);
-            })
-            ->whereHas('class.course', function ($query) {
-                return $query->where('teacher_id', Auth::user()->teacher->id);
-            })->get();
+        // $assignment = Assignment::where('assignment_type_id', $id)->with([
+        //     'assignmenttype', 'class.course.classroom.shift', 'studentsassignment.classroomstudents.student.user', 'studentsassignment.assignmentstatus'
+        // ])
+        // ->whereHas('studentsassignment', function ($query) use ($status) {
+        //     return $query->where('assignment_status_id', $status);
+        // })
+        // ->whereHas('class.course.classroom', function ($query) {
+        //     return $query->where('institution_id', Auth::user()->institution_id);
+        // })
+        // ->whereHas('class.course', function ($query) {
+        //     return $query->where('teacher_id', Auth::user()->teacher->id);
+        // })->get();
 
-        // foreach ($assignment as $kl => $as) {
-        //     foreach ($as->studentsassignment as $k => $sa) {
-        //         $as->studentsassignment[$k]->itsme = true;
-        //     }
+        // foreach($assignment as $ass) {
+            
+        //     $totals = collect($ass->studentsassignment)->map(function ($sta) {
+        //         return $sta->assignment_status_id;
+        //     });
+        //     $groups = array_count_values($totals->toArray());
+        //     $ass->totals = [
+        //         'q' => count($ass->studentsassignment),
+        //         'pending' => isset($groups[1]) ? $groups[1] : 0,
+        //         'inProcess' => isset($groups[2]) ? $groups[2] : 0,
+        //         'complete' => isset($groups[3]) ? $groups[3] : 0
+        //     ];
         // }
+        // return $assignment;
+
+        // TRAIGO LAS ASIGNACIONES
+        $assignment = Assignment::where('assignment_type_id', $id)->with(['assignmenttype', 'class.course.classroom.shift'])
+        ->whereHas('class.course.classroom', function ($query) {
+            return $query->where('institution_id', Auth::user()->institution_id);
+        })
+        ->whereHas('class.course', function ($query) {
+            return $query->where('teacher_id', Auth::user()->teacher->id);
+        })->get();
+
+        $assignmentIds = [];
+        $totalAssignments = [];
+        $usersByAssignment = [];
+
+        // BUSCO SOLO LAS QUE CORRESPONDEN AL STATUS QUE TENGAN USUARIOS
+        foreach($assignment as $ass) {
+            
+            $count = StudentAssignment::where('assignment_id', $ass->id)->groupBy('classroom_student_id')->select('classroom_student_id')->get();
+            $totalAssignments[$ass->id] = count($count);
+            
+            $studentAssigments = StudentAssignment::where('assignment_id', $ass->id)->orderBy('classroom_student_id')->orderBy('assignment_status_id', 'desc')->get();
+            
+            $usersInStatus = [];
+            $classroomStudentId = [];
+            $usersExcluded = [];
+            foreach($studentAssigments as $studentAss) {
+
+                if($studentAss->assignment_status_id == $status) {
+                    if(!in_array($studentAss->classroom_student_id, $usersExcluded)){
+                        $usersInStatus[] = $studentAss->classroom_student_id; 
+                        $classroomStudentId[] = $studentAss->id;
+                    }
+                } else {
+                    if($studentAss->assignment_status_id > $status)
+                    $usersExcluded[] = $studentAss->classroom_student_id;
+                }
+                
+            }
+            
+            // if($ass->id == 9)
+            // die(json_encode($classroomStudentId));
+            
+
+            if(count($usersInStatus) == 0)
+            continue;
+
+            $usersByAssignment[$ass->id] = $classroomStudentId;
+
+            $assignmentIds[] = $ass->id;
+
+        }
+
+        // TRAIGO LAS ASIGNACIONES
+        $assignment = Assignment::where('assignment_type_id', $id)->with(['assignmenttype', 'class.course.classroom.shift'])->whereIn('id', $assignmentIds)->get();
+        
+        foreach($assignment as $ass) {
+
+            // $ass->studentsassignment = StudentAssignment::where('assignment_id', $ass->id)->where('assignment_status_id', $status)->whereIn('id', $usersByAssignment[$ass->id])->get();
+            $ass->studentsassignment = StudentAssignment::with(['classroomstudents.student.user', 'assignmentstatus'])->where('assignment_status_id', $status)->whereIn('id', $usersByAssignment[$ass->id])->get();
+            $ass->totals = [
+                'q' => $totalAssignments[$ass->id],
+                'pending' => ($status == 1) ? count($ass->studentsassignment) : 0,
+                'inProcess' => ($status == 2) ? count($ass->studentsassignment) : 0,
+                'complete' => ($status == 3) ? count($ass->studentsassignment) : 0
+            ];
+        }
+    
         return $assignment;
+
     }
 
     public static function getMyAssignmentStudentPending($id)
@@ -335,11 +412,17 @@ class AssignmentService
             return (array) $x;
         })->toArray();
 
+        
         $studentAssignment = StudentAssignment::whereIn('id',  $studentAssignmentIN)->with(['classroomstudents.student.user', 'assignmentstatus'])
-            ->get();
-
+        ->get();
+        
+        $studentAssignmentFix = collect($studentAssignment)->filter(function ($sa){
+            return $sa->classroomstudents;
+        })->values()->all();
+        // dd($studentAssignment, $studentAssignmentFix);
         return [
-            'studentsassignment' => $studentAssignment,
+            // 'studentsassignment' => $studentAssignment,
+            'studentsassignment' => $studentAssignmentFix,
             'assignment'         => $assignment
         ];
     }

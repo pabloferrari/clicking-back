@@ -8,6 +8,7 @@ use App\Models\Assignment;
 use App\Models\Course;
 use App\Models\IntitutionClass;
 use App\Models\Classroom;
+use App\Models\{Meeting,MeetingUser};
 use DB;
 
 class CourseClassService
@@ -70,15 +71,40 @@ class CourseClassService
             $countStudent = count($value->classroom->classroomstudents);
         }
 
-        $assistance = DB::table('student_assignments')
-            ->select(DB::raw('count(*) as count_students'))
-            ->leftJoin('assignments', 'assignments.id', '=', 'student_assignments.assignment_id')
-            ->leftJoin('classes', 'classes.id', '=', 'assignments.class_id')
-            ->where('classes.course_id', $id)
-            ->get();
+        
+        // $assistance = DB::table('student_assignments')
+        //     ->select(DB::raw('count(*) as count_students'))
+        //     ->leftJoin('assignments', 'assignments.id', '=', 'student_assignments.assignment_id')
+        //     ->leftJoin('classes', 'classes.id', '=', 'assignments.class_id')
+        //     ->where('classes.course_id', $id)
+        //     ->get();
+        // dd($assistance);
+        $user = Auth::user();
+        if ($user->hasRole('teacher')) {
+            
+            $classes = CourseClass::where('course_id', $id)->get()->pluck('id')->toArray();
+            $meetings = Meeting::where('model', 'class')->whereIn('model_id', $classes)->get()->pluck('id')->toArray();
+            $meetingUsers = MeetingUser::whereIn('meeting_id', $meetings)->get();
+            $countStudents = count($meetingUsers);
+            $assistance = 0;
+            foreach ($meetingUsers as $mu) {
+                $assistance += $mu->joined;
+            }
+            $totalAssitance = $countStudents > 0 ? ($assistance / $countStudents)*100 : 0;
 
+        } else if ($user->hasRole('student')) {
 
-        $totalAssitance = ($assistance[0]->count_students / $countStudent) * 100;
+            $classes = CourseClass::where('course_id', $id)->get()->pluck('id')->toArray();
+            $meetings = Meeting::where('model', 'class')->whereIn('model_id', $classes)->get()->pluck('id')->toArray();
+            $meetingUsers = MeetingUser::whereIn('meeting_id', $meetings)->where('user_id', $user->id)->get();
+            $countStudents = count($meetingUsers);
+            $assistance = 0;
+            foreach ($meetingUsers as $mu) {
+                $assistance += $mu->joined;
+            }
+            $totalAssitance = $countStudents > 0 ? ($assistance / $countStudents)*100 : 0;
+
+        }
 
         // assignment type task 1
         $tasks =  CourseClass::where('course_id', $id)->with('assignments')
@@ -97,7 +123,7 @@ class CourseClassService
             ->count();
 
         return [
-            'assistance' => $totalAssitance,
+            'assistance' => round($totalAssitance, 2),
             'tasks' => $tasks,
             'evaluations' => $evaluations
         ];

@@ -5,6 +5,7 @@ namespace App\Classes;
 use App\Models\ClassroomStudent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 class ClassroomStudentService
 {
@@ -51,9 +52,9 @@ class ClassroomStudentService
         $ratings = ClassroomStudent::whereHas('assignmentStudent.assignments.class.course', function (Builder $query) use ($course_type_id) {
             $query->where('course_type_id', '=', $course_type_id);
         })
-            ->where('student_id', Auth::user()->student->id)->with(['assignmentStudent.assignments.class.course.subject', 'assignmentStudent.assignments.assignmenttype'])
+        ->where('student_id', Auth::user()->student->id)->with(['assignmentStudent.assignments.class.course.subject', 'assignmentStudent.assignments.assignmenttype'])
+        ->first();
 
-            ->first();
         if ($ratings) {
             foreach ($ratings['assignmentStudent'] as $key => $value) {
                 if ($value->assignment_status_id === 3) {
@@ -61,9 +62,11 @@ class ClassroomStudentService
                     $ratingParse[] = [
                         // 'title' => [
                         'name' => $value->assignments->class->course->subject->name,
+                        'name_task' => $value->assignments->title,
                         'score_assignment' => $value->assignments->score,
                         'score_student' => $value->score,
                         'assignment_type' => $value->assignments->assignmenttype->name,
+                        'date' => Carbon::parse($value->assignments->created_at)->format('d/m/Y')
                         // ]
 
                     ];
