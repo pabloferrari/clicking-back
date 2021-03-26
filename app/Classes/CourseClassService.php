@@ -80,7 +80,7 @@ class CourseClassService
         //     ->get();
         // dd($assistance);
         $user = Auth::user();
-        if ($user->hasRole('teacher')) {
+        if ($user->hasRole('teacher') || $user->hasRole('institution')) {
             
             $classes = CourseClass::where('course_id', $id)->get()->pluck('id')->toArray();
             $meetings = Meeting::where('model', 'class')->whereIn('model_id', $classes)->get()->pluck('id')->toArray();
