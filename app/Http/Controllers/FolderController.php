@@ -46,7 +46,8 @@ class FolderController extends Controller
     public function show($id)
     {
         $folder = FolderService::getFolder($id);
-        return response()->json(['data' => $folder]);
+        $info = FolderService::getFolderFirst($id);
+        return response()->json(['data' => $folder, 'info' => $info]);
     }
 
     /**

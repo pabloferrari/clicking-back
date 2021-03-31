@@ -28,9 +28,7 @@ class CourseClassController extends Controller
      */
     public function store(CreateCourseClassRequest $request)
     {
-
         try {
-
             $newCourseClass = CourseClassService::createCourseClass($request->all());
             Log::debug(__METHOD__ . ' - NEW CLASS CREATED ' . json_encode($newCourseClass));
             return response()->json(['data' => $newCourseClass]);

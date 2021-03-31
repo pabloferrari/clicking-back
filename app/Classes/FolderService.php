@@ -6,7 +6,7 @@ use App\Models\Folder;
 use Log;
 use DB;
 use Illuminate\Support\Facades\Auth;
-use App\Classes\UserService;
+use App\Classes\{UserService, CourseService};
 
 class FolderService
 {
@@ -50,17 +50,17 @@ class FolderService
 
     public static function getFolderFirst($id)
     {
-        //return Folder::where('course_id', $id)->get();
+        $couseService = new CourseService();
         $institution_id = Auth::user()->institution_id;
-
-        return DB::table('folders')
-            ->where('folders.id', $id)
-            ->where('folders.institution_id', $institution_id)
-            ->select(
-                'folders.*',
-                'folders.name AS folders_name'
-            )
-            ->first();
+        $folder = DB::table('folders')->where('folders.id', $id)->where('folders.institution_id', $institution_id)
+        ->select('folders.*','folders.name AS folders_name')->first();
+        try {
+            $course = $couseService->getSubjectByCourseId($folder->course_id);
+            $folder->subject = $course->subject->name;
+        } catch (\Throwable $th) {
+            $folder->subject = false;
+        }
+        return $folder;
     }
 
     public static function createFolder($data, $request)
@@ -92,6 +92,22 @@ class FolderService
             DB::rollback();
             return false;
         }
+    }
+
+    public static function createFolderEmpty($data)
+    {
+        $newFolder = new Folder();
+        $newFolder->name = $data['name'];
+        $newFolder->course_id = $data['course_id'];
+        $newFolder->path = str_replace(' ', '_', $data['name']);
+        $newFolder->institution_id = Auth::user()->institution_id;
+        $newFolder->save();
+        return $newFolder;
+    }
+
+    public static function getFolderByClass($class)
+    {
+        return Folder::where('name', $class->title)->where('course_id', $class->course_id)->first();
     }
 
     public static function createFileFolder($data, $request)

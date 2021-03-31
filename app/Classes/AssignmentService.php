@@ -8,7 +8,7 @@ use DB;
 use Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use App\Classes\{EventService, UserService};
+use App\Classes\{EventService, UserService, FolderService};
 
 class AssignmentService
 {
@@ -222,9 +222,12 @@ class AssignmentService
 
     public static function getAssignmentByCourse($id)
     {
+        $folderService = new FolderService();
         return CourseClass::where('course_id', $id)->with([
             'assignments.assignmenttype',
-        ])->get();
+        ])->get()->each(function ($class) use ($folderService) {
+            $class->folder = $folderService->getFolderByClass($class);
+        });
     }
 
     public static function getAssignmentByTeacher($id, $status)

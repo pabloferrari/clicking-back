@@ -30,6 +30,11 @@ class CourseService
             ->get();
     }
 
+    public static function getSubjectByCourseId($id)
+    {
+        return Course::where('id', $id)->with('subject')->first();
+    }
+
     public static function getCourseClassesCount($id)
     {
 

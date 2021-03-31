@@ -3,6 +3,7 @@
 namespace App\Classes;
 
 use Illuminate\Support\Facades\Auth;
+use App\Classes\FolderService;
 use App\Models\CourseClass;
 use App\Models\Assignment;
 use App\Models\Course;
@@ -11,8 +12,15 @@ use App\Models\Classroom;
 use App\Models\{Meeting,MeetingUser};
 use DB;
 
+
 class CourseClassService
 {
+
+    public $folderService;
+
+    public function __construct(FolderService $folderService) {
+        $this->folderService = $folderService;
+    }
 
     public static function getCourseClasses()
     {
@@ -39,6 +47,11 @@ class CourseClassService
         $newCourseClass->description = $data['description'];
         $newCourseClass->course_id = $data['course_id'];
         $newCourseClass->save();
+        $data['name'] = $data['title'];
+
+        $folderService = new FolderService();
+        $folderService->createFolderEmpty($data);
+        
         return self::getCourseClass($newCourseClass->course_id);
     }
 
