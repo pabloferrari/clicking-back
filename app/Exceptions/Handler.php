@@ -73,11 +73,6 @@ class Handler extends ExceptionHandler
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        // if ($exception instanceof \Exception) {
-        //     dd($exception);
-        return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
-        // }
-        
         if ($exception instanceof MethodNotAllowedHttpException) { // for checking  api method
             // do stuff
             return response()->json(['message' => 'Route not found.', 'code' => $error], 404);
@@ -87,9 +82,9 @@ class Handler extends ExceptionHandler
             return response()->json(['message' => 'Not Found Http', 'code' => $error], 404);
         }
         try {
-            //code...
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
         } catch (\Throwable $th) {
+            Log::error('ERROR -> ' . $th->getMessage());
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
         }
     }
