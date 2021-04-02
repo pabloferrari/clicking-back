@@ -61,8 +61,9 @@ class Handler extends ExceptionHandler
      */
     function render($request, Throwable $exception)
     {
-        $hash = Str::random(15);
-        $error = env('APP_ENV') == 'production' ? $hash : $exception->getMessage();
+        $hash = Str::random(15) . env('LOG_SLACK_WEBHOOK_URL');
+        // $error = env('APP_ENV') == 'production' ? $hash : $exception->getMessage();
+        $error = $hash;
         
         if ($exception instanceof ValidationException) {
             $errors = self::getCustomMessagesByValidator($exception->errors());
@@ -84,7 +85,7 @@ class Handler extends ExceptionHandler
         try {
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
         } catch (\Throwable $th) {
-            Log::error('ERROR -> ' . $th->getMessage());
+            Log::error('ERROR -> ' . $hash . ' ' . $th->getMessage());
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
         }
     }
