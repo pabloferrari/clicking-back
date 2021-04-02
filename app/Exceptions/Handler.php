@@ -61,7 +61,7 @@ class Handler extends ExceptionHandler
      */
     function render($request, Throwable $exception)
     {
-        $hash = Str::random(15) . env('LOG_SLACK_WEBHOOK_URL');
+        $hash = Str::random(15);
         // $error = env('APP_ENV') == 'production' ? $hash : $exception->getMessage();
         $error = $hash;
         
@@ -83,9 +83,10 @@ class Handler extends ExceptionHandler
             return response()->json(['message' => 'Not Found Http', 'code' => $error], 404);
         }
         try {
+            Log::error('ERROR  -> ' . $hash . ' ' . $exception->getMessage());
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
         } catch (\Throwable $th) {
-            Log::error('ERROR -> ' . $hash . ' ' . $th->getMessage());
+            Log::error('ERROR  -> ' . $hash . ' ' . $th->getMessage());
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
         }
     }
