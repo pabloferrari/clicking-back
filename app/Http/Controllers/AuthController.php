@@ -32,7 +32,7 @@ class AuthController extends Controller
         }
         $token->save();
 
-        Log::channel('login')->debug('AuthController@login ' . $this->lsi() . ' User: ' . $user->id . ' ' . $user->email . ' Roles ' . json_encode($user->getRoles()));
+        Log::channel(['login', 'slack'])->debug('AuthController@login ' . $this->lsi() . ' User: ' . $user->id . ' ' . $user->email . ' Roles ' . json_encode($user->getRoles()));
 
         $user = User::with(['roles'])->find($user->id);
         return response()->json([
