@@ -7,6 +7,7 @@ use Log;
 use DB;
 use Illuminate\Support\Facades\Auth;
 use App\Classes\{UserService, CourseService};
+use Illuminate\Support\Str;
 
 class FolderService
 {
@@ -81,7 +82,8 @@ class FolderService
             'request'    => $request,
             'user_id'    => Auth::user()->id
         );
-        $nameFolder = $newFolder->institution_id . '-' . $newFolder->course_id . '-' . $newFolder->name;
+        $nameFolder = Str::slug($newFolder->institution_id . ' ' . $newFolder->course_id . ' ' . $newFolder->name, '-');
+        Log::debug("NAME FOLDER $nameFolder");
         $resultFile = $handleFilesUploadService->createFile($dataFile, $nameFolder);
 
         if ($resultFile) {
@@ -129,7 +131,8 @@ class FolderService
             'request'    => $request,
             'user_id'    => Auth::user()->id
         );
-        $nameFolder = $data->institution_id . '-' . $data->course_id . '-' . $data->name;
+        $nameFolder = Str::slug($data->institution_id . ' ' . $data->course_id . ' ' . $data->name, '-');
+        Log::debug("NAME FOLDER $nameFolder");
         $resultFile = $handleFilesUploadService->createFile($dataFile, $nameFolder);
 
         if ($resultFile) {

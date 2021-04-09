@@ -51,8 +51,9 @@ class handleFilesUploadService
             $resp = true;
             foreach ($resultFile as $value) {
                 if ($value) { // Nota TDD: Se debe trabajar como una transacción... (FALTA)
-
-                    $urlFile = env('API_URL') . '/' . Storage::url($value);
+                    $storageUrl = Storage::url($value);
+                    
+                    $urlFile = env('API_URL') . Storage::url($value);
                     Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' File ' . $urlFile);
                     $new = new File();
                     $new->name        =  trim(str_replace('public/', '', $value)); //Generate
