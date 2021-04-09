@@ -248,6 +248,11 @@ Route::get('/storage/{img}', [ImageController::class, 'index']);
 //     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => "/$any", 'url' => env('APP_URL')]);
 // })->where('any', '.*');
 
+Route::get('/', function () {
+    return response()->json(['url' => env('API_URL')]);
+});
+
+
 Route::fallback(function ($route) {
     return response()->json(['name' => "Clicking Api", 'version' => 0.1, 'path' => $route, 'url' => env('APP_URL') . '/api/'], 404);
 });
