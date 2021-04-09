@@ -241,7 +241,7 @@ Route::get('meeting', [MeetingController::class, 'joinToMeeting']);
 
 Route::get('socket', [NotificationsController::class, 'testSocket']);
 
-Route::get('/storage/{img}', [ImageController::class, 'index']);
+Route::get('/storage/{img}', [ImageController::class, 'index'])->where('img', '.*');;
 
 
 // Route::get('/{any}', function ($any) {
