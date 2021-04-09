@@ -116,4 +116,27 @@ class FolderController extends Controller
             return response()->json(["message" => "Error creating folder"], 400);
         }
     }
+
+    public function folderDeleteFile($id)
+    {
+        try {
+            $deleted = FolderService::deleteFileFolder($id);
+            Log::debug(__METHOD__ . ' - FILE FOLDER DELETED id: ' . $id);
+            return response()->json(['data' => $deleted]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "Error deleting folder"], 400);
+        }
+    }
+    public function folderCourseDelete($id)
+    {
+        try {
+            $deleted = FolderService::deleteCourseFolder($id);
+            Log::debug(__METHOD__ . ' - FOLDER DELETED id: ' . $id);
+            return response()->json(['data' => $deleted]);
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' - ' . $th->getMessage() . ' - req: ' . $id);
+            return response()->json(["message" => "Error deleting folder"], 400);
+        }
+    }
 }

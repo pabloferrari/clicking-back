@@ -132,6 +132,8 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::get('assignments/detail/student/{id}', [AssignmentController::class, 'assignmentStudentDetailById']);
         Route::get('folders/byCourse/{id}', [FolderController::class, 'folderByCourse']);
         Route::post('folders/addFileFolder', [FolderController::class, 'folderAddFile']);
+        Route::post('folders/deleteFileFolder/{id}', [FolderController::class, 'folderDeleteFile']);
+        Route::post('folders/deleteCourseFolder/{id}', [FolderController::class, 'folderCourseDelete']);
 
         // Route::resource('classes', CourseClassController::class);
 

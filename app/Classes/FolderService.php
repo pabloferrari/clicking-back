@@ -2,7 +2,7 @@
 
 namespace App\Classes;
 
-use App\Models\Folder;
+use App\Models\{Folder, File};
 use Log;
 use DB;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +23,8 @@ class FolderService
             ->join('files', 'files.model_id', '=', 'folders.id')
             ->where('files.model_name', 'Folder')
             ->where('folders.institution_id', $institution_id)
+            ->where('folders.deleted_at', null)
+            ->where('files.deleted_at', null)
             ->select(
                 'folders.*',
                 'files.*',
@@ -41,6 +43,8 @@ class FolderService
             ->where('files.model_name', 'Folder')
             ->where('folders.id', $id)
             ->where('folders.institution_id', $institution_id)
+            ->where('folders.deleted_at', null)
+            ->where('files.deleted_at', null)
             ->select(
                 'folders.*',
                 'files.*',
@@ -54,7 +58,7 @@ class FolderService
         $couseService = new CourseService();
         $institution_id = Auth::user()->institution_id;
         $folder = DB::table('folders')->where('folders.id', $id)->where('folders.institution_id', $institution_id)
-        ->select('folders.*','folders.name AS folders_name')->first();
+            ->select('folders.*', 'folders.name AS folders_name')->first();
         try {
             $course = $couseService->getSubjectByCourseId($folder->course_id);
             $folder->subject = $course->subject->name;
@@ -161,6 +165,55 @@ class FolderService
         return Folder::where('id', $id)->delete();
     }
 
+    public static function deleteFileFolder($id)
+    {
+        // Load File FileUpload
+
+        //$data = self::getFolderFirst($id);
+        $data = File::where('id', '=', $id)->get();
+
+        if ($data) {
+            DB::beginTransaction();
+            $handleFilesUploadService = new handleFilesUploadService();
+
+            $result = $handleFilesUploadService->deleteFile($id);
+            $resultFile = $handleFilesUploadService->deleteFileStorage($data[0]->name);
+
+            if ($result && $resultFile) {
+                DB::commit();
+                Log::debug(__METHOD__ . ' -> DELETE FILE FOLDER' . json_encode($id));
+                return self::getFolder($data[0]->model_id);
+            } else {
+                DB::rollback();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static function deleteCourseFolder($id)
+    {
+        // Load File FileUpload
+
+        $data = self::getFolderFirst($id);
+
+        DB::beginTransaction();
+        $handleFilesUploadService = new handleFilesUploadService();
+
+        $result = Folder::where('id', $id)->delete();
+
+        if ($result) {
+            DB::commit();
+            Log::debug(__METHOD__ . ' -> DELETE FOLDER' . json_encode($id));
+            return self::getFolderByCourse($data->course_id);
+        } else {
+            DB::rollback();
+            return false;
+        }
+    }
+
+
     public static function getFolderByCourse($id)
     {
         //return Folder::where('course_id', $id)->get();
@@ -169,6 +222,7 @@ class FolderService
         return DB::table('folders')
             ->where('folders.course_id', $id)
             ->where('folders.institution_id', $institution_id)
+            ->where('folders.deleted_at', null)
             ->select(
                 'folders.*',
                 'folders.name AS folders_name'
