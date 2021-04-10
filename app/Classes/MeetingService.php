@@ -84,7 +84,7 @@ class MeetingService
                 'meeting_id' => $meeting->id,
                 'joined' => false,
                 'hash' => $hash,
-                'public_url' => env('APP_URL').'/api/meeting?token=' . $hash
+                'public_url' => env('API_URL').'/meeting?token=' . $hash
             ];
 
             $newMeetingUser = MeetingUser::create($newMeetingUserData);
