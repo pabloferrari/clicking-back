@@ -7,7 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 use App\Models\{Meeting,MeetingUser,Classroom,IntitutionClass,Teacher,Student,User, Notification};
-use App\Classes\{Helpers,UserService,TeacherService,StudentService,ClassroomService,CourseClassService,NotificationService};
+use App\Classes\{Helpers,UserService,TeacherService,StudentService,ClassroomService,CourseClassService,NotificationService, FolderService};
 use DB;
 use Log;
 
@@ -21,11 +21,12 @@ class MeetingService
     private $classroomService;
 
     public function __construct() {
+        $folderService = new FolderService();
         $this->userService = new UserService();
         $this->teacherService = new TeacherService();
         $this->studentService = new StudentService();
         $this->classroomService = new ClassroomService();
-        $this->courseClassService = new CourseClassService();
+        $this->courseClassService = new CourseClassService($folderService);
         $this->notificationService = new NotificationService();
 
     }
@@ -72,9 +73,11 @@ class MeetingService
     public function createMeetingUsers($meeting) {
         $users = $this->getUsersByMeetingModel($meeting);
         $response = [];
-        
-        foreach ($users as $user) {
 
+        $users[] = Auth::user()->id;
+
+        foreach ($users as $user) {
+            $isCreator = ($user === Auth::user()->id);
             $hash = Str::random(64);
             $newMeetingUserData = [
                 'user_id' => $user,
@@ -89,14 +92,15 @@ class MeetingService
             // CREATE NOTIFICATION
             $dataNotification['user_id'] = $user;
             $dataNotification['type'] = 'meeting';
-            $dataNotification['title'] = 'Nueva Clase';
-            $dataNotification['text'] = 'Ingresa a la clase';
+            $dataNotification['title'] = $isCreator ? 'Nueva clase creada' : 'Nueva Clase';
+            $dataNotification['text'] = $isCreator ? 'Ingresar' : 'Ingresa a la clase';
             $dataNotification['url'] = $newMeetingUser['public_url'];
             $dataNotification['model_id'] = $newMeetingUser['id'];
             $this->notificationService->createNotification($dataNotification);
 
             $response[] = $newMeetingUser;
             Log::channel('bbb')->debug(__METHOD__ . ' ' . Helpers::lsi() . ' New Meeting User -> ' . json_encode($newMeetingUser));
+        
         }
         
         return $response;
