@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Classes\InstitutionService;
 use App\Http\Requests\InstitutionRequests\{CreateInstitutionRequest, UpdateInstitutionRequest};
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Log;
 
 class InstitutionController extends Controller

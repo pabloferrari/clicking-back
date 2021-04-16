@@ -8,7 +8,7 @@ use App\Models\Teacher;
 use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\User;
-use App\Classes\Helpers;
+use App\Classes\{Helpers, UserService};
 use DB;
 
 class InstitutionService
@@ -80,8 +80,9 @@ class InstitutionService
     public static function deleteInstitution($id)
     {
         $inst = Institution::where('id', $id)->first();
-        $inst->email = $inst->email.time();
+        $inst->email = 'deleted.'.$inst->email;
         $inst->save();
+        UserService::deleteUserFromInstitution($id);
         return Institution::where('id', $id)->delete();
     }
 

@@ -36,7 +36,8 @@ use App\Http\Controllers\{
     EventsController,
     FolderController,
     NoteController,
-    NoteContentController
+    NoteContentController,
+    DashboardController
 };
 use App\Models\Assignment;
 use App\Models\Course;
@@ -86,6 +87,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::resource('note-contents', NoteContentController::class);
 
     Route::group(['middleware' => 'role:institution,teacher,admin,root,student'], function () {
+
+        Route::get('dashboard', [DashboardController::class, 'index']);
+
         Route::get('/testAdmin', [AuthController::class, 'test']);
         Route::resource('classrooms', ClassroomController::class);
         Route::resource('courses', CourseController::class);

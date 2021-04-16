@@ -83,10 +83,10 @@ class Handler extends ExceptionHandler
             return response()->json(['message' => 'Not Found Http', 'code' => $error], 404);
         }
         try {
-            Log::error('ERROR  -> ' . $hash . ' ' . $exception->getMessage());
-            return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], $exception->getStatusCode());
+            Log::error(__LINE__ . ' ERROR  -> ' . $hash . ' ' . $exception->getMessage());
+            return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
         } catch (\Throwable $th) {
-            Log::error('ERROR  -> ' . $hash . ' ' . $th->getMessage());
+            Log::error(__LINE__ . ' ERROR  -> ' . $hash . ' ' . $th->getMessage());
             return response()->json(['message' => 'Whoops, looks like something went wrong.', 'code' => $error], 500);
         }
     }

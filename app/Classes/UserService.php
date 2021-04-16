@@ -166,6 +166,17 @@ class UserService
         }
     }
 
+    public static function deleteUserFromInstitution($id) {
+        $users = User::where('institution_id', $id)->get();
+        collect($users)->map(function ($user) {
+            $user->email = 'deleted.'.$user->email;
+            $user->active = 0;
+            $user->save();
+            $user->delete();
+        });
+        return $users;
+    }
+
     // NOTIFICATIONS
     // public function createNotification($userId, $data) {
     //     $data['type'] = "meeting";

@@ -24,6 +24,9 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
+        if(!$user->institution) {
+            return response()->json(['message' => 'email or password incorrect'], 401);
+        }
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         if ($request->remember_me) {

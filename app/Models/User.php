@@ -82,4 +82,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Models\Ticket');
     }
+
+    public function institution()
+    {
+        return $this->belongsTo(\App\Models\Institution::class);
+    }
 }
