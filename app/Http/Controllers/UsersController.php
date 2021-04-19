@@ -74,6 +74,15 @@ class UsersController extends Controller
         $data = $request->all();
         $params = Helpers::paramBuilder('User', $data);
         $response = $this->userService->updateUser($request->user()->id, $params);
+
+        if(isset($data['linkedin'])) {
+            $this->userService->setSocialNetwork('linkedin', $data['linkedin']);
+        }
+
+        if(isset($data['cv'])) {
+            $this->userService->setSocialNetwork('cv', $data['cv']);
+        }
+
         return response()->json($response);
     }
 
@@ -97,6 +106,10 @@ class UsersController extends Controller
 
     public function getUsersInstitution($filter) {
         return response()->json($this->userService->getUsersInstitution($filter));
+    }
+
+    public function getProfile() {
+        return response()->json(['data' => $this->userService->getProfile()]);
     }
 
 }

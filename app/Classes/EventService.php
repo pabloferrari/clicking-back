@@ -12,6 +12,12 @@ use DB;
 
 class EventService {
 
+    private $notificationService;
+    
+    public function __construct() {
+        $this->notificationService = new NotificationService();
+
+    }
 
     public function getEvents() 
     {
@@ -58,6 +64,15 @@ class EventService {
             Log::debug(__METHOD__ . ' ' . Helpers::lsi() . ' -> ' . json_encode($data));
             $newEvent = Event::create($params);
 
+            // CREATE NOTIFICATION
+            $dataNotification['user_id'] = Auth::user()->id;
+            $dataNotification['type'] = 'event';
+            $dataNotification['title'] = 'Nuevo evento';
+            $dataNotification['text'] = $newEvent->title;
+            $dataNotification['url'] = $newEvent->external_link ?? '';
+            $dataNotification['model_id'] = $newEvent->id;
+            $this->notificationService->createNotification($dataNotification);
+
             $newEvent->participants = (isset($data['guests'])) ? $this->createUserEvent($newEvent, $data['guests']) : $this->createUserEvent($newEvent);
 
             DB::commit();
@@ -75,8 +90,17 @@ class EventService {
         $participants = [];
         $users = array_filter($users, function (int $i) { return $i != Auth::user()->id; });
         $participants[] = UserEvent::create(['event_id' => $event->id, 'user_id' => Auth::user()->id]);
+
         foreach ($users as $user) {
             $participants[] = UserEvent::create(['event_id' => $event->id, 'user_id' => $user]);
+            // CREATE NOTIFICATION
+            $dataNotification['user_id'] = $user;
+            $dataNotification['type'] = 'event';
+            $dataNotification['title'] = 'Nuevo evento';
+            $dataNotification['text'] = $event->title;
+            $dataNotification['url'] = $event->external_link ?? '';
+            $dataNotification['model_id'] = $event->id;
+            $this->notificationService->createNotification($dataNotification);
         }
         return $participants;
     }

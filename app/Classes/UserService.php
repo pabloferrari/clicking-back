@@ -7,7 +7,7 @@ use Log;
 use Hash;
 use DB;
 
-use App\Models\{ User, Role, RoleUser, Student, Teacher, ClassroomStudent};
+use App\Models\{ User, Role, RoleUser, Student, Teacher, ClassroomStudent, SocialNetwork};
 use App\Classes\{Helpers, NotificationService};
 
 class UserService
@@ -21,6 +21,11 @@ class UserService
     public function getUser($id)
     {
         return User::where('id', $id)->first();
+    }
+
+    public function getUserByEmail($email)
+    {
+        return User::where('email', $email)->first();
     }
 
     public function createInstitutionUser($data)
@@ -177,6 +182,29 @@ class UserService
         return $users;
     }
 
+    public function setSocialNetwork($network, $link) {
+        $sn = SocialNetwork::where('name', $network)->where('user_id', Auth::user()->id)->first();
+
+        if($sn) {
+            $sn->link = $link;
+            $sn->save();
+        } else {
+            $sn = SocialNetwork::create(['name' => $network, 'link' => $link, 'user_id' => Auth::user()->id, 'icon' => '']);
+        }
+
+        return $sn;
+    }
+
+    public function getProfile() {
+        $user = User::with(['roles'])->find(Auth::user()->id);
+
+        $sns = SocialNetwork::where('user_id', $user->id)->get();
+        foreach ($sns as $sn) {
+            $user->{$sn->name} = $sn->link;
+        }
+
+        return $user;
+    }
     // NOTIFICATIONS
     // public function createNotification($userId, $data) {
     //     $data['type'] = "meeting";

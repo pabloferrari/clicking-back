@@ -6,6 +6,7 @@ use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
 use App\Classes\UserService;
 use Log;
+use Hash;
 use DB;
 
 class StudentService
@@ -58,10 +59,14 @@ class StudentService
     {
         $updateStudent = Student::find($id);
         $updateStudent->name    = $data['name'];
-        // $updateStudent->phone   = $data['phone'];
-        // $updateStudent->user_id = $data['user_id'];
         $updateStudent->active  = $data['active'];
         $updateStudent->save();
+
+        $dataUpdateUser = ['email' => $data['email'], 'active' => $data['active']];
+        if(isset($data['password']) && $data['password'] != '') 
+        $dataUpdateUser['password'] = Hash::make($data['password']);
+        $userService = new UserService();
+        $userService->updateUser($updateStudent->user->id, $dataUpdateUser);
 
         return self::getStudent($id);
     }

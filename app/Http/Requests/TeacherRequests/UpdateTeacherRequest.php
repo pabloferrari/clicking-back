@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use App\Models\{Teacher, User};
 
 class UpdateTeacherRequest extends FormRequest
 {
@@ -28,22 +29,18 @@ class UpdateTeacherRequest extends FormRequest
     {
         return [
             'name' =>  [
-                'required',
+                'nullable',
                 'string',
             ],
-            'email' => [
-                'required',
-                'email',
-                Rule::unique('teachers')->where(function ($query) use ($request) {
-                    return $query
-                        ->where([
-                            ['email','=',$request->email],
-                            ['id','<>',$request->get('id')],
-
-                        ]);
-                }),
+            'id' =>  [
+                'required'
             ],
-            'phone' => 'nullable|regex:/([0-9])[0-9]{9}/',
+            'email' => [
+                'nullable',
+                'email'
+            ],
+            'phone' =>  'nullable|string',
+            'password' => 'nullable|string'
         ];
     }
 
@@ -62,5 +59,50 @@ class UpdateTeacherRequest extends FormRequest
             'email.email' => 'email must be valid',
             'phone.regex' => 'phone must be valid',
         ];
+    }
+
+    protected function getValidatorInstance()
+    {
+        return parent::getValidatorInstance()->after(function ($validator) {
+            $this->after($validator);
+        });
+    }
+
+    public function after($validator)
+    {
+        if(count($validator->errors()) === 0){
+
+            $teacher = Teacher::with('user')->where('id', $this->input('id'))->first();
+
+            if(!$this->input('institution_id')) {
+                
+                if(Auth::user()->institution_id === null)
+                $validator->errors()->add('institution_id', 'institution_id is required!');
+
+                if($teacher->user->institution_id !== Auth::user()->institution_id) {
+                    $validator->errors()->add('id', 'No tienes permisos para modificar este usuario.');
+                }
+
+            } else {
+
+                if(!Auth::user()->hasRole('admin') && Auth::user()->institution_id != $this->input('institution_id')){
+                    $validator->errors()->add('institution_id', 'institution_id is invalid!' . Auth::user()->institution_id);
+                }
+
+            }
+
+            if($this->input('email')) {
+
+                if($this->input('email') != $teacher->email) {
+                    $existsEmail = User::where('email', $this->input('email'))->first();
+
+                    if($existsEmail && $existsEmail->id != $teacher->user->id)
+                    $validator->errors()->add('email', 'El email esta en uso');
+
+                }
+                
+            }
+            
+        }
     }
 }

@@ -6,12 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-use App\Models\User;
-use App\Http\Requests\LoginRequest;
+use App\Models\{User, SocialNetwork};
+use App\Mail\ForgotPassword;
+use App\Http\Requests\{LoginRequest, RefreshRequest};
+use App\Classes\UserService;
 use Log;
+use Mail;
+use Str;
 
 class AuthController extends Controller
 {
+    public $userService;
+    public function __construct(UserService $userService) {
+        $this->userService = $userService;
+    }
 
     public function login(LoginRequest $request)
     {
@@ -24,7 +32,7 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
-        if(!$user->institution) {
+        if(!$user->institution || !$user->active) {
             if (!$user->hasRole('admin') && !$user->hasRole('root')) {
                 return response()->json(['message' => 'email or password incorrect'], 401);    
             }
@@ -40,6 +48,12 @@ class AuthController extends Controller
         Log::channel(['login', 'slack'])->debug('AuthController@login ' . $this->lsi() . ' User: ' . $user->id . ' ' . $user->email . ' Roles ' . json_encode($user->getRoles()));
 
         $user = User::with(['roles'])->find($user->id);
+
+        $sns = SocialNetwork::where('user_id', $user->id)->get();
+        foreach ($sns as $sn) {
+            $user->{$sn->name} = $sn->link;
+        }
+
         return response()->json([
             'data' => [
                 'access_token' => $tokenResult->accessToken,
@@ -48,6 +62,30 @@ class AuthController extends Controller
                 'user'         => $user
             ]
         ]);
+    }
+
+    public function refresh(RefreshRequest $request)
+    {
+
+        try {
+            $email = $request->email;
+            $user = $this->userService->getUserByEmail($email);
+            
+            $newPassword = Str::random(10);
+            $this->userService->resetPassword($user->id, $newPassword);
+            
+            $dataEmail = new \StdClass();
+            $dataEmail->name = $user->name;
+            $dataEmail->email = $user->email;
+            $dataEmail->password = $newPassword;
+            Mail::to($email)->send(new ForgotPassword($dataEmail));
+        
+        } catch (\Throwable $th) {
+            Log::error(__METHOD__ . ' ' . $request->email . ' ERROR -> ' . $th->getMessage());
+        }
+
+        return response()->json(['data' => 'Te enviamos un email con el nuevo acceso'], 204);
+        
     }
 
     public function logout(Request $request)
