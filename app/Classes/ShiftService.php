@@ -29,9 +29,9 @@ class ShiftService
 
     public static function updateShift($id, $data)
     {
-        unset($data['institution']);
-        $data['institution_id'] = isset($data['institution_id']) ? $data['institution_id'] : Auth::user()->institution_id;
-        Shift::where('id', $id)->update($data);
+        $shift = Shift::where('id', $id)->first();
+        $shift->name = $data['name'];
+        $shift->save();
         return self::getShift($id);
     }
 

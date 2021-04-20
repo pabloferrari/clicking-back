@@ -34,6 +34,7 @@ class AuthController extends Controller
         $user = $request->user();
         if(!$user->institution || !$user->active) {
             if (!$user->hasRole('admin') && !$user->hasRole('root')) {
+                Log::channel('login')->error('AuthController@login ' . $this->lsi() . ' ' . json_encode($credentials) . ' institution(' . $user->institution . ') active(' . $user->active . ')');
                 return response()->json(['message' => 'email or password incorrect'], 401);    
             }
         }
