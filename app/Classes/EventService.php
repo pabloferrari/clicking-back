@@ -36,7 +36,7 @@ class EventService {
             $query->select('id','name', 'email', 'image');
         }, 'type', 'users', 'users.user' => function($query){
             $query->select('id','name', 'email', 'image');
-        }, 'users.user.teacher', 'users.user.student'])->where('start_date', '>', date("Y-m-d H:i"))->limit(5)->get();
+        }, 'users.user.teacher', 'users.user.student'])->where('end_date', '>', date("Y-m-d H:i"))->limit(5)->get();
     }
 
     public function getEvent($id) 
