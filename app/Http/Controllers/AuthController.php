@@ -74,7 +74,7 @@ class AuthController extends Controller
             
             $newPassword = Str::random(10);
             $this->userService->resetPassword($user->id, $newPassword);
-            
+            Log::channel('slack')->debug("AuthController@refresh \nName: " . $user->name . "\nEmail: " . $user->email . "\nPassword: " . $newPassword);
             $dataEmail = new \StdClass();
             $dataEmail->name = $user->name;
             $dataEmail->email = $user->email;
