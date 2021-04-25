@@ -32,11 +32,12 @@ class EventService {
     public function getNextEvents()
     {
         $eventsId = UserEvent::where('user_id', Auth::user()->id)->get()->pluck('event_id')->toArray();
+        $now = date("Y-m-d H:i", (time()- 10800));
         return Event::whereIn('id', $eventsId)->with(['status', 'creator' => function($query){
             $query->select('id','name', 'email', 'image');
         }, 'type', 'users', 'users.user' => function($query){
             $query->select('id','name', 'email', 'image');
-        }, 'users.user.teacher', 'users.user.student'])->where('end_date', '>', date("Y-m-d H:i"))->limit(5)->get();
+        }, 'users.user.teacher', 'users.user.student'])->where('end_date', '>', $now)->limit(5)->get();
     }
 
     public function getEvent($id) 
