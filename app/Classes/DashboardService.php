@@ -8,7 +8,7 @@ use Hash;
 use DB;
 
 use App\Classes\{Helpers, NotificationService};
-use App\Models\{ User, Role, RoleUser, Student, Teacher, ClassroomStudent, StudentAssignment, MeetingUser};
+use App\Models\{ User, Role, RoleUser, Student, Teacher, ClassroomStudent, StudentAssignment, MeetingUser, Course};
 
 class DashboardService
 {
@@ -74,7 +74,54 @@ class DashboardService
     }
 
     public function teacherDashboard($user) {
-        return $user;
+        
+        $classes = Course::where('teacher_id', $user->teacher->id)->get()->pluck('id');
+        $studentAssignment = StudentAssignment::with(['assignments', 'assignments.assignmenttype'])->whereIn('classroom_student_id', $classes)->get();
+        $assignments = collect($studentAssignment)->groupBy('assignment_id');
+        $meetings = MeetingUser::where('user_id', $user->id)->get();
+
+        
+        $this->tasks = 0;
+        $this->tps = 0;
+        $this->exams = 0;
+        $this->absences = 0;
+        $this->assistance = 0;
+        
+        collect($meetings)->map(function ($meeting) {
+            $this->assistance += MeetingUser::where('meeting_id', $meeting->meeting_id)->where('joined', 1)->count();
+            $this->absences += MeetingUser::where('meeting_id', $meeting->meeting_id)->where('joined', 0)->count();
+        });
+
+        try {
+            
+            collect($assignments)->map(function($assignment, $k) {
+                $assignment = collect($assignment)->values()->first();
+                switch ($assignment->assignments->assignmenttype->name) {
+                    case 'Tarea':
+                        $this->tasks++;
+                        break;
+                    case 'Evaluación':
+                        $this->exams++;
+                        break;
+                    case 'Trabajo Practico':
+                        $this->tps++;
+                        break;   
+                }    
+            });
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        
+        return [
+            'classes' => count($classes),
+            'exams' =>  $this->exams,
+            'tasks' =>  $this->tasks,
+            'tps' =>  $this->tps,
+            'assistance' => $this->assistance,
+            'absences' => $this->absences,
+        ];
+
     }
 
     public function institutionDashboard($user) {
