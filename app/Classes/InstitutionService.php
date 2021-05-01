@@ -70,6 +70,24 @@ class InstitutionService
         ];
     }
 
+    public static function getInstitutionAdminCount($id)
+    {
+        $students = Student::with('user')->whereHas('user', function ($query) use ($id) {
+            return $query->where('institution_id', $id);
+        })->count();
+
+        $teachers = Teacher::with('user')->whereHas('user', function ($query) use ($id) {
+            return $query->where('institution_id', $id);
+        })->count();
+
+        $classrooms = Classroom::where('institution_id', $id)->count();
+        return [
+            'students' => $students,
+            'teachers' => $teachers,
+            'classrooms' => $classrooms
+        ];
+    }
+
     public static function updateInstitution($id, $data)
     {
         $params = Helpers::paramBuilder('Institution', $data);

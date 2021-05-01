@@ -53,7 +53,12 @@ class InstitutionController extends Controller
 
     public function institutionCount($id)
     {
-        $institutionCount = InstitutionService::getInstitutionCount($id);
+        $user = Auth::user();
+        if ($user->hasRole('institution')) {
+            $institutionCount = InstitutionService::getInstitutionAdminCount($user->institution_id);
+        } else {
+            $institutionCount = InstitutionService::getInstitutionCount($id);
+        }
         return response()->json(['data' => $institutionCount]);
     }
 
