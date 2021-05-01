@@ -22,7 +22,7 @@ class DashboardController extends Controller
         $user = Auth::user();
         if($user->hasRole('student')) {
             return response()->json([ 'data' => $this->dashboardService->studentDashboard($user)]);
-        } else if ($user->hasRole('treacher')) {
+        } else if ($user->hasRole('teacher')) {
             return response()->json([ 'data' => $this->dashboardService->teacherDashboard($user)]);
         } else if ($user->hasRole('institution')) {
             return response()->json([ 'data' => $this->dashboardService->institutionDashboard($user)]);
