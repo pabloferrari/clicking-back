@@ -83,7 +83,7 @@ class SubjectController extends Controller
     {
         try {
             $itIsInUse = Course::where('subject_id', $id)->first();
-            if($itIsInUse) return response()->json(['message' => 'No se puede eliminar una materia que esta en uso por un curso.'], 422);
+            if($itIsInUse) return response()->json(['message' => ['Materia' => 'No se puede eliminar una materia que esta en uso por un curso.']], 422);
 
             $deleted = SubjectService::deleteSubject($id);
             Log::debug(__METHOD__ . ' - SUBJECT DELETED id: ' . $id);

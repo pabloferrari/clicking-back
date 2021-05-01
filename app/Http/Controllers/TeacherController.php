@@ -84,7 +84,7 @@ class TeacherController extends Controller
     {
         try {
             $itIsInUse = Course::where('teacher_id', $id)->first();
-            if($itIsInUse) return response()->json(['message' => 'No se puede eliminar un profesor que esta en uso en un curso.'], 422);
+            if($itIsInUse) return response()->json(['message' => ['Profesor' => 'No se puede eliminar un profesor que esta en uso en un curso.']], 422);
 
             $deleted = TeacherService::deleteTeacher($id);
             Log::debug(__METHOD__ . ' - TEACHER DELETED id: ' . $id);

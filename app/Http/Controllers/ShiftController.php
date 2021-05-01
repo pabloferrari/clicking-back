@@ -81,7 +81,7 @@ class ShiftController extends Controller
     {
         try {
             $itIsInUse = Classroom::where('shift_id', $id)->first();
-            if($itIsInUse) return response()->json(['message' => 'No se puede eliminar un turno que esta en uso por un curso.'], 422);
+            if($itIsInUse) return response()->json(['message' => ['Turno' => 'No se puede eliminar un turno que esta en uso por un curso.']], 422);
 
             $deleted = ShiftService::deleteShift($id);
             Log::debug(__METHOD__ . ' - SHIFT DELETED id: ' . $id);
