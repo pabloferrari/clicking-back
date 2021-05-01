@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests\SubjectRequests\{CreateSubjectRequest, UpdateSubjectRequest};
 use App\Classes\SubjectService;
+use App\Models\Course;
 use Log;
 
 
@@ -81,6 +82,9 @@ class SubjectController extends Controller
     public function destroy($id)
     {
         try {
+            $itIsInUse = Course::where('subject_id', $id)->first();
+            if($itIsInUse) return response()->json(['message' => 'No se puede eliminar una materia que esta en uso por un curso.'], 422);
+
             $deleted = SubjectService::deleteSubject($id);
             Log::debug(__METHOD__ . ' - SUBJECT DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);

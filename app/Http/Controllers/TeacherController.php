@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Classes\TeacherService;
 use App\Http\Requests\TeacherRequests\{CreateTeacherRequest, UpdateTeacherRequest};
+use App\Models\Course;
 use Log;
 
 class TeacherController extends Controller
@@ -82,6 +83,9 @@ class TeacherController extends Controller
     public function destroy($id)
     {
         try {
+            $itIsInUse = Course::where('teacher_id', $id)->first();
+            if($itIsInUse) return response()->json(['message' => 'No se puede eliminar un profesor que esta en uso en un curso.'], 422);
+
             $deleted = TeacherService::deleteTeacher($id);
             Log::debug(__METHOD__ . ' - TEACHER DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);

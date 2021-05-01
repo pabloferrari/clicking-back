@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Classes\ShiftService;
 use Illuminate\Http\Request;
 use App\Http\Requests\ShiftRequests\{CreateShiftRequest, UpdateShiftRequest};
+use App\Models\Classroom;
 use Log;
 
 class ShiftController extends Controller
@@ -79,6 +80,9 @@ class ShiftController extends Controller
     public function destroy($id)
     {
         try {
+            $itIsInUse = Classroom::where('shift_id', $id)->first();
+            if($itIsInUse) return response()->json(['message' => 'No se puede eliminar un turno que esta en uso por un curso.'], 422);
+
             $deleted = ShiftService::deleteShift($id);
             Log::debug(__METHOD__ . ' - SHIFT DELETED id: ' . $id);
             return response()->json(['deleted' => $deleted]);
