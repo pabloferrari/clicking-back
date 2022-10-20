@@ -4,7 +4,7 @@ files:
     - source: /
       destination: /var/www/html/
 hooks:
-    BeforeInstall:
-        - location: scripts/BeforeInstall.sh
+#     BeforeInstall:
+#         - location: scripts/BeforeInstall.sh
     AfterInstall:
         - location: scripts/AfterInstall.sh
